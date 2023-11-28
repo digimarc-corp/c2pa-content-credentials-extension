@@ -1,0 +1,11 @@
+├─ MIT: 301
+├─ ISC: 23
+├─ BSD-2-Clause: 15
+├─ BSD-3-Clause: 13
+├─ Apache-2.0: 10
+├─ MIT*: 4
+├─ BSD*: 2
+├─ Python-2.0: 1
+├─ CC-BY-4.0: 1
+└─ (MIT OR CC0-1.0): 1
+

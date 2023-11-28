@@ -1,0 +1,16 @@
+{
+  "active_manifest": null,
+  "manifests": {},
+  "validation_status": [
+    {
+      "code": "assertion.hashedURI.mismatch",
+      "url": "self#jumbf=c2pa.assertions/c2pa.ingredient",
+      "explanation": "hash does not match assertion data: self#jumbf=c2pa.assertions/c2pa.ingredient"
+    },
+    {
+      "code": "claim.missing",
+      "url": "self#jumbf=/c2pa/adobebeef:urn:uuid:879beec2-74bb-4150-8245-9176dd6a8972",
+      "explanation": "ingredient not found"
+    }
+  ]
+}

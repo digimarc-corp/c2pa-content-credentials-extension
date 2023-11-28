@@ -1,0 +1,118 @@
+{
+  "_from": "c2pa@0.17.2",
+  "_id": "c2pa@0.17.2",
+  "_inBundle": false,
+  "_integrity": "sha512-mGbWlJBSAfbVpXUUaO+Z+E3OQ6v7rEO1F5iaaZjMWmVXZvggy577Y0phU3JzMU7TY0cbOdJO+cjG7w3LfvPmLw==",
+  "_location": "/c2pa",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "c2pa@0.17.2",
+    "name": "c2pa",
+    "escapedName": "c2pa",
+    "rawSpec": "0.17.2",
+    "saveSpec": null,
+    "fetchSpec": "0.17.2"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/c2pa/-/c2pa-0.17.2.tgz",
+  "_shasum": "7d0ac289d738f05f2623bd168a0581a676cf7168",
+  "_spec": "c2pa@0.17.2",
+  "_where": "/Users/etienneperche/Documents/ilat-dtl-cp2a-validator-browser-extension",
+  "browser": {
+    "child_process": false,
+    "fs": false,
+    "os": false,
+    "path": false
+  },
+  "bugs": {
+    "url": "https://github.com/contentauth/c2pa-js/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "Dave Kozma",
+      "email": "dkozma@adobe.com"
+    },
+    {
+      "name": "Eli Mensch",
+      "email": "mensch@adobe.com"
+    }
+  ],
+  "dependencies": {
+    "@contentauth/detector": "0.3.5",
+    "@contentauth/toolkit": "0.10.2",
+    "debug": "~4.3.4",
+    "lodash": "^4.17.21",
+    "make-error": "^1.3.6",
+    "p-props": "^5.0.0",
+    "traverse": "~0.6.7"
+  },
+  "deprecated": false,
+  "description": "SDK for the core C2PA (Coalition for Content Provenance and Authenticity) specification",
+  "devDependencies": {
+    "@contentauth/config": "1.0.0",
+    "@contentauth/testing": "1.0.0",
+    "@microsoft/api-extractor": "~7.31.1",
+    "@rollup/plugin-commonjs": "~22.0.0",
+    "@rollup/plugin-json": "~4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "~5.0.2",
+    "@rollup/plugin-strip": "~2.1.0",
+    "@rollup/plugin-typescript": "~8.3.2",
+    "@rollup/plugin-url": "~8.0.1",
+    "@rollup/plugin-wasm": "~5.1.2",
+    "@rushstack/eslint-config": "~2.6.0",
+    "@types/debug": "~4.1.7",
+    "@types/jasmine": "~4.0.3",
+    "@types/lodash": "~4.14.182",
+    "@types/traverse": "~0.6.33",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
+    "@web/dev-server-esbuild": "~0.3.0",
+    "@web/dev-server-rollup": "~0.3.17",
+    "@web/test-runner": "~0.13.27",
+    "@web/test-runner-browserstack": "~0.5.0",
+    "@web/test-runner-core": "~0.10.26",
+    "@web/test-runner-puppeteer": "~0.10.5",
+    "eslint": "~8.14.0",
+    "eslint-plugin-import": "^2.26.0",
+    "jasmine-core": "~4.1.0",
+    "rimraf": "^4.1.2",
+    "rollup": "~2.70.2",
+    "rollup-plugin-copy": "~3.4.0",
+    "rollup-plugin-terser": "~7.0.2",
+    "tslib": "~2.4.0",
+    "typescript": "~4.6.3",
+    "web-test-runner-jasmine": "~0.0.1"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "homepage": "https://github.com/contentauth/c2pa-js#readme",
+  "license": "MIT",
+  "main": "dist/c2pa.esm.js",
+  "module": "dist/c2pa.esm.js",
+  "name": "c2pa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contentauth/c2pa-js.git",
+    "directory": "packages/c2pa"
+  },
+  "scripts": {
+    "build": "rushx clean && rollup -c ./rollup.config.js --silent",
+    "build:release": "rushx build",
+    "build:verbose": "rushx clean && rollup -c ./rollup.config.js",
+    "clean": "rimraf dist",
+    "dev": "rollup -c ./rollup.config.js -w",
+    "extract-api": "api-extractor run",
+    "lint": "eslint .",
+    "test": "wtr"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "version": "0.17.2"
+}

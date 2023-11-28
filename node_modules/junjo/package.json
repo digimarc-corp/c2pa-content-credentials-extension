@@ -1,0 +1,22 @@
+{
+  "name": "junjo"
+, "version": "0.2.8"
+, "description": "Yet Another Flow Control (YAFC)"
+, "tags": ["flow-control", "node", "async", "callback", "stream"]
+, "author": "SHIN Suzuki <shinout310@gmail.com>"
+, "repository": 
+  { "type": "git"
+  ,  "url": "https://github.com/shinout/Junjo.js.git"
+  }
+, "bugs": {"url": "https://github.com/shinout/Junjo.js/issues" }
+, "licences": 
+  [ { "type": "MIT"
+    , "url": "https://github.com/shinout/Junjo.js/raw/master/LICENCE"
+    }
+  ]
+, "devDependencies":
+  { "termcolor": ">=x.x.x"
+  , "u2r": ">=x.x.x"
+  }
+, "main": "./lib/Junjo.js"
+}

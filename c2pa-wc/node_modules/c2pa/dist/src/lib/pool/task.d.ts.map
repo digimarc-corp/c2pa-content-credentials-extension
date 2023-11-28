@@ -1,0 +1,1 @@
+{"version":3,"file":"task.d.ts","sourceRoot":"","sources":["../../../../src/lib/pool/task.ts"],"names":[],"mappings":"AAAA;;;;;;;GAOG;AAEH,OAAO,EAAE,aAAa,EAAE,MAAM,UAAU,CAAC;AAEzC,MAAM,WAAW,IAAI;IACnB,OAAO,EAAE,aAAa,CAAC;IACvB,OAAO,EAAE,CAAC,KAAK,EAAE,OAAO,KAAK,IAAI,CAAC;IAClC,MAAM,EAAE,CAAC,KAAK,EAAE,OAAO,KAAK,IAAI,CAAC;CAClC;AAED,wBAAgB,UAAU,CAAC,IAAI,EAAE,IAAI,QAEpC"}

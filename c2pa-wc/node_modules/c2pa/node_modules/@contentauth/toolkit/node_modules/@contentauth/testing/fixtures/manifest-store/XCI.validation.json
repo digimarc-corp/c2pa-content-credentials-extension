@@ -1,0 +1,52 @@
+[
+  {
+    "code": "claimSignature.validated",
+    "url": "self#jumbf=/c2pa/adobetest:urn:uuid:531a5311-4c10-4002-a950-9528e4bef035/c2pa.signature",
+    "explanation": "claim signature valid"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/c2pa.thumbnail.claim.jpeg",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.thumbnail.claim.jpeg"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/c2pa.thumbnail.ingredient.jpeg",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.thumbnail.ingredient.jpeg"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/c2pa.ingredient",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.ingredient"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/adobe.beta",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/adobe.beta"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/stds.schema-org.CreativeWork",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/stds.schema-org.CreativeWork"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/c2pa.actions",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.actions"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/adobe.dictionary",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/adobe.dictionary"
+  },
+  {
+    "code": "assertion.hashedURI.match",
+    "url": "self#jumbf=c2pa.assertions/c2pa.hash.data",
+    "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.hash.data"
+  },
+  {
+    "code": "assertion.dataHash.mismatch",
+    "url": "c2pa.hash.data",
+    "explanation": "asset hash error, name: jumbf manifest, error: hash verification( Hashes do not match )"
+  }
+]

@@ -1,0 +1,7 @@
+[tasks.test]
+command = "wasm-pack"
+args = ["test", "--chrome", "--headless"]
+
+[tasks.test-watch]
+command = "cargo"
+args = ["watch", "-s", "wasm-pack test --chrome --headless"]

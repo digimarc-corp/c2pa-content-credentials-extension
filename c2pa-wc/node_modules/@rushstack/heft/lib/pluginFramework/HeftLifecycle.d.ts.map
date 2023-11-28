@@ -1,0 +1,1 @@
+{"version":3,"file":"HeftLifecycle.d.ts","sourceRoot":"","sources":["../../src/pluginFramework/HeftLifecycle.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,iBAAiB,EAAE,MAAM,SAAS,CAAC;AAE5C,gBAAgB;AAChB,MAAM,WAAW,cAAc;IAC7B,KAAK,EAAE,kBAAkB,CAAC;CAC3B;AAED,gBAAgB;AAChB,qBAAa,kBAAkB;IACtB,SAAS,EAAE,iBAAiB,CAA2B;CAC/D"}

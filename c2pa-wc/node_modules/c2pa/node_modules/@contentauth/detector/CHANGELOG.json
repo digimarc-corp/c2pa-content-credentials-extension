@@ -1,0 +1,74 @@
+{
+  "name": "@contentauth/detector",
+  "entries": [
+    {
+      "version": "0.3.5",
+      "tag": "@contentauth/detector_v0.3.5",
+      "date": "Wed, 22 Mar 2023 18:52:56 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Adds the new `--weak-refs` and `--reference-types` flags now available in [wasm-pack 0.11.0](https://github.com/rustwasm/wasm-pack/blob/mast"
+          },
+          {
+            "comment": "Remove dependency on [wee_alloc](https://github.com/rustwasm/wee_alloc) since it is unmaintained and has a reported memory leak"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.4",
+      "tag": "@contentauth/detector_v0.3.4",
+      "date": "Tue, 14 Mar 2023 16:35:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix builds on Windows platforms"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.3",
+      "tag": "@contentauth/detector_v0.3.3",
+      "date": "Tue, 15 Nov 2022 19:56:02 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Support Safari 14"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.2",
+      "tag": "@contentauth/detector_v0.3.2",
+      "date": "Mon, 17 Oct 2022 18:22:56 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Support Safari 14"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.1",
+      "tag": "@contentauth/detector_v0.3.1",
+      "date": "Tue, 06 Sep 2022 20:05:32 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Detect remote manifest URLs"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.0",
+      "tag": "@contentauth/detector_v0.3.0",
+      "date": "Fri, 26 Aug 2022 16:47:09 GMT",
+      "comments": {}
+    }
+  ]
+}

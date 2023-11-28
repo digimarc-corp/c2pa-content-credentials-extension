@@ -1,0 +1,63 @@
+{
+  "name": "@rollup/plugin-strip",
+  "version": "2.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Remove debugger statements and functions like assert.equal and console.log from your code",
+  "license": "MIT",
+  "repository": {
+    "url": "rollup/plugins",
+    "directory": "packages/strip"
+  },
+  "author": "Rich Harris",
+  "homepage": "https://github.com/rollup/plugins/tree/master/packages/strip#readme",
+  "bugs": "https://github.com/rollup/plugins/issues",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "scripts": {
+    "build": "rollup -c",
+    "ci:coverage": "nyc pnpm test && nyc report --reporter=text-lcov > coverage.lcov",
+    "ci:lint": "pnpm lint",
+    "ci:lint:commits": "commitlint --from=${CIRCLE_BRANCH} --to=${CIRCLE_SHA1}",
+    "ci:test": "pnpm test -- --verbose",
+    "prerelease": "pnpm build",
+    "pretest": "pnpm build",
+    "release": "pnpm plugin:release --workspace-root -- --pkg $npm_package_name",
+    "test": "ava"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "keywords": [
+    "rollup",
+    "modules",
+    "debugging",
+    "javascript"
+  ],
+  "peerDependencies": {
+    "rollup": "^1.20.0 || ^2.0.0"
+  },
+  "dependencies": {
+    "@rollup/pluginutils": "^3.1.0",
+    "estree-walker": "^2.0.1",
+    "magic-string": "^0.25.7"
+  },
+  "devDependencies": {
+    "acorn": "^7.3.1",
+    "rollup": "^2.23.0"
+  },
+  "types": "./types/index.d.ts",
+  "ava": {
+    "babel": {
+      "compileEnhancements": false
+    },
+    "files": [
+      "!**/fixtures/**",
+      "!**/helpers/**",
+      "!**/recipes/**",
+      "!**/types.ts"
+    ]
+  }
+}

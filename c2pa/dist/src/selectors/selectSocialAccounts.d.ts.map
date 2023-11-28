@@ -1,0 +1,1 @@
+{"version":3,"file":"selectSocialAccounts.d.ts","sourceRoot":"","sources":["../../../src/selectors/selectSocialAccounts.ts"],"names":[],"mappings":"AAAA;;;;;;;GAOG;AAEH,OAAO,EAAE,MAAM,EAAE,MAAM,sBAAsB,CAAC;AAC9C,OAAO,EAAE,QAAQ,EAAE,MAAM,aAAa,CAAC;AAEvC;;;;;GAKG;AACH,wBAAgB,oBAAoB,CAAC,QAAQ,EAAE,QAAQ,GAAG,MAAM,EAAE,GAAG,IAAI,CAYxE"}

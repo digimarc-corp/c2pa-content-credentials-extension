@@ -1,0 +1,9 @@
+Invoking: rushx clean && rollup -c rollup.config.js --silent 
+Found configuration in /Users/clement-hecquet-evt/Documents/clement/node_test/c2pa-js/rush.json
+
+Rush Multi-Project Build Tool 5.90.2 - Node.js 18.18.2 (LTS)
+> "rimraf dist"
+
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme

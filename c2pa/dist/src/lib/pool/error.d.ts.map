@@ -1,0 +1,1 @@
+{"version":3,"file":"error.d.ts","sourceRoot":"","sources":["../../../../src/lib/pool/error.ts"],"names":[],"mappings":"AAAA;;;;;;;GAOG;AAEH,UAAU,eAAe;IACvB,CAAC,GAAG,EAAE,MAAM,GAAG,GAAG,CAAC;CACpB;AAGD,wBAAgB,cAAc,CAAC,KAAK,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,GAAG,eAAe,CAO1E;AAGD,wBAAgB,gBAAgB,CAAC,eAAe,EAAE,eAAe,GAAG,KAAK,CAUxE"}

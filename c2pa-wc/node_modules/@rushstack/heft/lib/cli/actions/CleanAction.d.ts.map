@@ -1,0 +1,1 @@
+{"version":3,"file":"CleanAction.d.ts","sourceRoot":"","sources":["../../../src/cli/actions/CleanAction.ts"],"names":[],"mappings":"AAKA,OAAO,EAAE,cAAc,EAAE,sBAAsB,EAAE,MAAM,kBAAkB,CAAC;AAG1E,qBAAa,WAAY,SAAQ,cAAc;IAC7C,OAAO,CAAC,gBAAgB,CAA4B;gBAEjC,OAAO,EAAE,sBAAsB;IAW3C,kBAAkB,IAAI,IAAI;cAWjB,kBAAkB,IAAI,OAAO,CAAC,IAAI,CAAC;CAUpD"}

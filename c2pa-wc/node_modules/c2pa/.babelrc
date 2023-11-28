@@ -1,0 +1,14 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": "commonjs",
+        "targets": {
+          "chrome": "58",
+          "node": "current"
+        }
+      }
+    ]
+  ]
+}

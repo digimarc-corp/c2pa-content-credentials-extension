@@ -1,0 +1,5 @@
+c2pa-toolkit
+target/
+src/
+Cargo.lock
+Cargo.toml
