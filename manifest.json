@@ -1,0 +1,63 @@
+{
+    "manifest_version": 3,
+    "name": "C2PA Content Credentials Extension",
+    "version": "0.0.1",
+    "description": "Display and verify images embedding C2PA Content Credentials.",
+    "icons": {
+        "16": "images/icons/info.png",
+        "32": "images/icons/info.png",
+        "48": "images/icons/info.png",
+        "128": "images/icons/info.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
+                "contentScript.js"
+            ],
+            "css": [
+                "content.css"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "images/icons/info.png"
+    },
+    "permissions": [
+        "tabs",
+        "scripting",
+        "storage"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ],
+    "sandbox": {
+        "pages": [
+            "sandbox.html"
+        ]
+    },
+    "content_security_policy": {
+        "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self'; worker-src 'self' blob: chrome-extension:;"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "sandbox.html",
+                "*.js",
+                "c2pa/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
