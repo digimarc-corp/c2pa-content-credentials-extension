@@ -17,10 +17,6 @@ Warning: This is an early release of this extension subject to material changes.
 The extension has been submitted to the Chrome Web Store and is pending approval. We will post a link here once it has been approved.
 Meanwhile you can fall back to a local installation as specified below.
 
-### Local installation
-
-TODO
-
 ## Usage
 
 Once the extension is installed, click on the plugin icon on the top right, it will display a popup window.
@@ -44,7 +40,7 @@ You can also check out the code and install the extension locally
 1. Clone this repository.
 2. Fetch the `c2pa-js` fork with: `git submodule update --init --recursive`
 3. Run: `git submodule update --remote`
-4. Run `npm install`.
+4. Run: `npm install`.
 5. Build the extension: `./build.sh`
 6. Open Chrome and go to `chrome://extensions`.
 7. Enable Developer Mode (top right corner).
