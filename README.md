@@ -17,10 +17,6 @@ Warning: This is an early release of this extension subject to material changes.
 The extension has been submitted to the Chrome Web Store and is pending approval. We will post a link here once it has been approved.
 Meanwhile you can fall back to a local installation as specified below.
 
-### Local installation
-
-TODO
-
 ## Usage
 
 Once the extension is installed, click on the plugin icon on the top right, it will display a popup window.
