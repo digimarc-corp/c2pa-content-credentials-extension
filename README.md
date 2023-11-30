@@ -4,20 +4,31 @@ In a world where misinformation or AI generated content can spread rapidly, esta
 
 This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPG images that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which image should and shouldn’t be trusted. 
 
-This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here. 
+This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here. 
 
 Warning: This is an early release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](issues). 
 
 ![Animation of extension](docs/c2pa-extension-digimarc.gif)
 
-## Getting Started
+## Getting started
 
-### Chrome Store
+### Chrome Web Store
 
 The extension has been submitted to the Chrome Web Store and is pending approval. We will post a link here once it has been approved.
 Meanwhile you can fall back to a local installation as specified below.
 
-## Usage
+
+### Local installation
+
+1. Download the zip archive of the [latest release](releases)
+2. Unzip the archive
+2. Open Chrome and go to `chrome://extensions`.
+3. Enable Developer Mode (top right corner).
+4. Click on `Load unpacked`.
+5. Select the unzipped folder.
+6. Try it out! (see Usage below)
+
+### Usage
 
 Once the extension is installed, click on the plugin icon on the top right, it will display a popup window.
 
@@ -145,5 +156,3 @@ This project has been built by the team at Digimarc Labs. [Digimarc](https://www
 
 This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work. 
 The [full list of libraries and their respective licenses](blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here. 
-
-
