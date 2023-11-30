@@ -20,7 +20,7 @@ Meanwhile you can fall back to a local installation as specified below.
 
 ### Local installation
 
-1. Download the zip archive of the [latest release](/releases)
+1. Download the zip archive of the [latest release](../../releases)
 2. Unzip the archive
 2. Open Chrome and go to `chrome://extensions`.
 3. Enable Developer Mode (top right corner).
