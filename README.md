@@ -155,4 +155,4 @@ This project has been built by the team at Digimarc Labs. [Digimarc](https://www
 ## Attributions
 
 This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work. 
-The [full list of libraries and their respective licenses](../../THIRD_PARTY_LICENSES.md) used in this project can be found here. 
+The [full list of libraries and their respective licenses](/blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here. 
