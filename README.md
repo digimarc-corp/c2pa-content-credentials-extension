@@ -6,7 +6,7 @@ This repository provides an implementation of a C2PA manifest validator running 
 
 This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here. 
 
-*Warning:* This is an early release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](issues). 
+*Warning:* This is an early release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues). 
 
 ![Animation of extension](docs/c2pa-extension-digimarc.gif)
 
