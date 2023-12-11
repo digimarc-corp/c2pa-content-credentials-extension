@@ -6,6 +6,8 @@ export const HANDLE_IMG_THRESHOLD = 0.2;
 
 export const REFRESH_ICON_INTERVAL = 30;
 
+export const MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS = 320;
+
 // not used in inject.js because the script is injected in another way and this is not a module
 export const MSG_SANDBOX_LOADED = 'sandbox-loaded';
 
