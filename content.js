@@ -38,6 +38,7 @@ window.addEventListener('message', (event) => {
       const image = document.getElementById(event.data.imageId);
       manifestSummary.manifestStore.thumbnail = image.src;
       caiIndicator.style.visibility = 'visible';
+      caiIndicator.classList.add('manifest-loaded');
     }
   }
 });
