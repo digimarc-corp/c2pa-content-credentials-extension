@@ -68,7 +68,6 @@ const validateC2pa = async (image) => {
 
 // register to window events to communicate with content script
 window.addEventListener('message', async (event) => {
-  console.log(event);
   if (event.data.type === EVENT_TYPE_C2PA_MANIFEST) { // request to load c2pa manifest
     let image = event.data.data.src;
     const imageDataURI = event.data.data.dataURI;
