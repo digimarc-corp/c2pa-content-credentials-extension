@@ -4,10 +4,8 @@ import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, MSG_SANDBO
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
-const c2pa = await createC2pa({
-  wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
-  workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
-});
+let c2pa;
+let c2paIsLoading = false;
 
 /**
  * Validates a C2PA image and returns its manifest and validationStatus.
@@ -19,6 +17,14 @@ const c2pa = await createC2pa({
  * @throws Will throw an error if the image cannot be read.
  */
 const validateC2pa = async (image) => {
+  if (!c2paIsLoading) {
+    c2paIsLoading = true;
+    c2pa = await createC2pa({
+      wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
+      workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
+    });
+  }
+
   try {
     // TODO improve the error handling
 
@@ -62,6 +68,7 @@ const validateC2pa = async (image) => {
 
 // register to window events to communicate with content script
 window.addEventListener('message', async (event) => {
+  console.log(event);
   if (event.data.type === EVENT_TYPE_C2PA_MANIFEST) { // request to load c2pa manifest
     let image = event.data.data.src;
     const imageDataURI = event.data.data.dataURI;
@@ -100,5 +107,5 @@ window.addEventListener('DOMContentLoaded', () => {
   window.parent.postMessage({ type: MSG_SANDBOX_LOADED }, '*');
 
   // remove the event listener to get only one event
-  window.removeEventListener('DOMContentLoaded', () => {});
+  window.removeEventListener('DOMContentLoaded', () => { });
 }, false);
