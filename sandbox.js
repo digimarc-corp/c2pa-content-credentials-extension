@@ -4,6 +4,11 @@ import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, MSG_SANDBO
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
+const c2pa = await createC2pa({
+  wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
+  workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
+});
+
 /**
  * Validates a C2PA image and returns its manifest and validationStatus.
  *
@@ -14,11 +19,6 @@ import debug from './lib/log.js';
  * @throws Will throw an error if the image cannot be read.
  */
 const validateC2pa = async (image) => {
-  const c2pa = await createC2pa({
-    wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
-    workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
-  });
-
   try {
     // TODO improve the error handling
 
