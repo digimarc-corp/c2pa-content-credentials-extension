@@ -41,6 +41,7 @@ window.addEventListener('message', (event) => {
       // as this cannot be done in the sandbox
       manifestSummary.manifestStore.thumbnail = image.src;
       caiIndicator.classList.add('manifest-loaded');
+      image.classList.add('manifest-loaded');
     }
   }
 });
