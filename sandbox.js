@@ -6,6 +6,8 @@ import debug from './lib/log.js';
 
 let c2pa;
 let c2paIsLoading = false;
+const messageQueue = [];
+let isProcessing = false;
 
 /**
  * Validates a C2PA image and returns its manifest and validationStatus.
@@ -18,11 +20,11 @@ let c2paIsLoading = false;
  */
 const validateC2pa = async (image) => {
   if (!c2paIsLoading) {
-    c2paIsLoading = true;
     c2pa = await createC2pa({
       wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
       workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
     });
+    c2paIsLoading = true;
   }
 
   try {
@@ -66,8 +68,14 @@ const validateC2pa = async (image) => {
   }
 };
 
-// register to window events to communicate with content script
-window.addEventListener('message', async (event) => {
+const processMessages = async () => {
+  if (isProcessing || messageQueue.length === 0) {
+    return;
+  }
+
+  isProcessing = true;
+  const event = messageQueue.shift();
+
   if (event.data.type === EVENT_TYPE_C2PA_MANIFEST) { // request to load c2pa manifest
     let image = event.data.data.src;
     const imageDataURI = event.data.data.dataURI;
@@ -99,6 +107,15 @@ window.addEventListener('message', async (event) => {
     // Send response to window
     event.source.postMessage(eventResponse, event.origin);
   }
+
+  isProcessing = false;
+  processMessages();
+};
+
+// register to window events to communicate with content script
+window.addEventListener('message', async (event) => {
+  messageQueue.push(event);
+  processMessages();
 });
 
 window.addEventListener('DOMContentLoaded', () => {
