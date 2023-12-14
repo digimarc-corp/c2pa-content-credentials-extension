@@ -8,6 +8,7 @@ let c2pa;
 let c2paIsLoading = false;
 const messageQueue = [];
 let isProcessing = false;
+const manifestMap = {};
 
 /**
  * Validates a C2PA image and returns its manifest and validationStatus.
@@ -18,7 +19,7 @@ let isProcessing = false;
  * validationStatus of the image, or null if an error occurs.
  * @throws Will throw an error if the image cannot be read.
  */
-const validateC2pa = async (image) => {
+const validateC2pa = async (image, imageId) => {
   if (!c2paIsLoading) {
     c2pa = await createC2pa({
       wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
@@ -36,6 +37,8 @@ const validateC2pa = async (image) => {
     }
 
     const { manifestStore } = await c2pa.read(image);
+
+    manifestMap[imageId] = manifestStore;
 
     if (!manifestStore) {
       return;
@@ -81,6 +84,17 @@ const processMessages = async () => {
     const imageDataURI = event.data.data.dataURI;
     const { imageId } = event.data.data;
 
+    // if imageId is already in the manifestMap, it means that the image has already been processed
+    // and we can return the manifest directly
+    if (manifestMap[imageId]) {
+      const eventResponse = {};
+      eventResponse.type = EVENT_TYPE_C2PA_MANIFEST_RESPONSE;
+      eventResponse.manifest = manifestMap[imageId];
+      eventResponse.imageId = imageId;
+      event.source.postMessage(eventResponse, event.origin);
+      return;
+    }
+
     const isAccessible = await isImageAccessible(image);
 
     if (!isAccessible) {
@@ -92,7 +106,7 @@ const processMessages = async () => {
       }
     }
 
-    const result = await validateC2pa(image);
+    const result = await validateC2pa(image, imageId);
 
     const eventResponse = {};
     eventResponse.type = EVENT_TYPE_C2PA_MANIFEST_RESPONSE;
