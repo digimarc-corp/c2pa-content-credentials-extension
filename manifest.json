@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "C2PA Content Credentials Extension",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Display and verify images embedding C2PA Content Credentials.",
     "icons": {
         "16": "images/icons/info.png",
