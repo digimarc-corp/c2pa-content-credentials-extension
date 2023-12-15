@@ -4,9 +4,9 @@ export const MAXIMAL_ID_LENGTH = 100;
 
 export const HANDLE_IMG_THRESHOLD = 0.2;
 
-export const REFRESH_ICON_INTERVAL = 30;
+export const REFRESH_ICON_INTERVAL = 20;
 
-export const MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS = 350;
+export const MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS = 365;
 
 // not used in inject.js because the script is injected in another way and this is not a module
 export const MSG_SANDBOX_LOADED = 'sandbox-loaded';
