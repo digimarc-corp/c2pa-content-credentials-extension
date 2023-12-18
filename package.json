@@ -1,12 +1,18 @@
 {
     "name": "c2pa-content-credentials-extension",
     "version": "0.0.2",
-    "description": "",
+    "description": "Verify and display manifests for images embedding C2PA Content Credentials.",
     "main": "content.js",
     "type": "module",
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "keywords": [
+        "C2PA",
+        "ContentCredentials",
+        "extension",
+        "GenAI",
+        "trust"
+    ],
+    "author": "Digimarc Labs",
+    "license": "MIT",
     "scripts": {
         "build": "./build.sh",
         "lint": "eslint . --fix",
