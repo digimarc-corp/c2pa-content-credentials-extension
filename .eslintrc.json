@@ -12,6 +12,7 @@
         "import/prefer-default-export": "off",
         "import/extensions": "off",
         "import/no-relative-packages": "off",
+        "import/no-extraneous-dependencies": "off",
         "no-empty-pattern": ["error", { "allowObjectPatternsAsParameters": true }]
     }
 }

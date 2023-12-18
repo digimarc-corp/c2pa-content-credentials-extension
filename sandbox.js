@@ -4,6 +4,12 @@ import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, MSG_SANDBO
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
+let c2pa;
+let c2paIsLoading = false;
+const messageQueue = [];
+let isProcessing = false;
+const manifestMap = {};
+
 /**
  * Validates a C2PA image and returns its manifest and validationStatus.
  *
@@ -13,11 +19,14 @@ import debug from './lib/log.js';
  * validationStatus of the image, or null if an error occurs.
  * @throws Will throw an error if the image cannot be read.
  */
-const validateC2pa = async (image) => {
-  const c2pa = await createC2pa({
-    wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
-    workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
-  });
+const validateC2pa = async (image, imageId) => {
+  if (!c2paIsLoading) {
+    c2pa = await createC2pa({
+      wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
+      workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
+    });
+    c2paIsLoading = true;
+  }
 
   try {
     // TODO improve the error handling
@@ -28,6 +37,8 @@ const validateC2pa = async (image) => {
     }
 
     const { manifestStore } = await c2pa.read(image);
+
+    manifestMap[imageId] = manifestStore;
 
     if (!manifestStore) {
       return;
@@ -60,39 +71,70 @@ const validateC2pa = async (image) => {
   }
 };
 
+const processMessages = async () => {
+  if (isProcessing || messageQueue.length === 0) {
+    return;
+  }
+
+  isProcessing = true;
+
+  try {
+    const event = messageQueue.shift();
+
+    if (event.data.type === EVENT_TYPE_C2PA_MANIFEST) { // request to load c2pa manifest
+      let image = event.data.data.src;
+      const imageDataURI = event.data.data.dataURI;
+      const { imageId } = event.data.data;
+
+      // if imageId is already in the manifestMap, it means that the image has already been
+      // processed and we can return the manifest directly
+      if (manifestMap[imageId]) {
+        const eventResponse = {};
+        eventResponse.type = EVENT_TYPE_C2PA_MANIFEST_RESPONSE;
+        eventResponse.manifest = manifestMap[imageId];
+        eventResponse.imageId = imageId;
+        event.source.postMessage(eventResponse, event.origin);
+        isProcessing = false;
+        processMessages();
+        return;
+      }
+
+      const isAccessible = await isImageAccessible(image);
+
+      if (!isAccessible) {
+        // debug('[sandbox] Image not accessible by sandbox, checking for Data URI');
+        if (imageDataURI) { // if url not accessible try with dataURI
+          // debug('[sandbox] Data URI found');
+          image = await convertDataURLtoBlob(imageDataURI);
+          // debug('[sandbox] Image converted to blob');
+        }
+      }
+
+      const result = await validateC2pa(image, imageId);
+
+      const eventResponse = {};
+      eventResponse.type = EVENT_TYPE_C2PA_MANIFEST_RESPONSE;
+      eventResponse.manifest = result?.manifest;
+      eventResponse.validationStatus = result?.validationStatus;
+      eventResponse.imageId = imageId;
+
+      if (isAccessible) {
+        // Generate the view more url only if the image is accessible as it goes to another website
+        eventResponse.viewMoreUrl = generateVerifyUrl(typeof image === 'string' ? image : image.src);
+      }
+      // Send response to window
+      event.source.postMessage(eventResponse, event.origin);
+    }
+  } catch (err) { /* empty */ }
+
+  isProcessing = false;
+  processMessages();
+};
+
 // register to window events to communicate with content script
 window.addEventListener('message', async (event) => {
-  if (event.data.type === EVENT_TYPE_C2PA_MANIFEST) { // request to load c2pa manifest
-    let image = event.data.data.src;
-    const imageDataURI = event.data.data.dataURI;
-    const { imageId } = event.data.data;
-
-    const isAccessible = await isImageAccessible(image);
-
-    if (!isAccessible) {
-      // debug('[sandbox] Image not accessible by sandbox, checking for Data URI');
-      if (imageDataURI) { // if url not accessible try with dataURI
-        // debug('[sandbox] Data URI found');
-        image = await convertDataURLtoBlob(imageDataURI);
-        // debug('[sandbox] Image converted to blob');
-      }
-    }
-
-    const result = await validateC2pa(image);
-
-    const eventResponse = {};
-    eventResponse.type = EVENT_TYPE_C2PA_MANIFEST_RESPONSE;
-    eventResponse.manifest = result?.manifest;
-    eventResponse.validationStatus = result?.validationStatus;
-    eventResponse.imageId = imageId;
-
-    if (isAccessible) {
-      // Generate the view more url only if the image is accessible as it goes to another website
-      eventResponse.viewMoreUrl = generateVerifyUrl(typeof image === 'string' ? image : image.src);
-    }
-    // Send response to window
-    event.source.postMessage(eventResponse, event.origin);
-  }
+  messageQueue.push(event);
+  processMessages();
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -100,5 +142,5 @@ window.addEventListener('DOMContentLoaded', () => {
   window.parent.postMessage({ type: MSG_SANDBOX_LOADED }, '*');
 
   // remove the event listener to get only one event
-  window.removeEventListener('DOMContentLoaded', () => {});
+  window.removeEventListener('DOMContentLoaded', () => { });
 }, false);
