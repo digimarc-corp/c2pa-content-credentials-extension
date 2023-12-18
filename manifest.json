@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "C2PA Content Credentials Extension",
+    "name": "C2PA Content Credentials",
     "version": "0.0.2",
-    "description": "Display and verify images embedding C2PA Content Credentials.",
+    "description": "Verify and display manifests for images embedding C2PA Content Credentials.",
     "icons": {
         "16": "images/icons/info.png",
         "32": "images/icons/info.png",
@@ -14,7 +14,9 @@
             "matches": [
                 "<all_urls>"
             ],
-            "exclude_matches": ["*://*.linkedin.com/*"],
+            "exclude_matches": [
+                "*://*.linkedin.com/*"
+            ],
             "js": [
                 "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
                 "contentScript.js"
