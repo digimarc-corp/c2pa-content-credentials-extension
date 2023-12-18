@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import { createC2pa, createL2ManifestStore, generateVerifyUrl } from './c2pa/packages/c2pa/dist/c2pa.esm.js';
-import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, MSG_SANDBOX_LOADED } from './config.js';
+import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, MSG_SANDBOX_LOADED, getComputeDataURL } from './config.js';
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
@@ -100,6 +100,9 @@ const processMessages = async () => {
       }
 
       const isAccessible = await isImageAccessible(image);
+      const computeDataURL = getComputeDataURL();
+
+      console.log('computeDataURL', computeDataURL);
 
       if (!isAccessible) {
         // debug('[sandbox] Image not accessible by sandbox, checking for Data URI');
