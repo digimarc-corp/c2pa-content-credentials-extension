@@ -14,13 +14,11 @@ This project is built on top of the open source C2PA-JS Library built by the [Co
 
 ### Chrome Web Store
 
-The extension has been submitted to the Chrome Web Store and is pending approval. We will post a link here once it has been approved.
-Meanwhile you can fall back to a local installation as specified below.
-
+The extension is available on the [Chrome Web Store](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en) and can be installed from there. 
 
 ### Local installation
 
-1. Download the zip archive of the [latest release](https://github.com/digimarc-corp/c2pa-content-credentials-extension/releases/download/v0.0.1-beta/c2pa-content-credentials-extension-v0.0.1-beta.zip)
+1. Download the zip archive of the [latest release](https://github.com/digimarc-corp/c2pa-content-credentials-extension/releases)
 2. Unzip the archive
 2. Open Chrome and go to `chrome://extensions`.
 3. Enable Developer Mode (top right corner).
