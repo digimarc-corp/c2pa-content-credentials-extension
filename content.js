@@ -6,25 +6,29 @@ import {
   MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
 } from './config.js';
-import { addC2PAIndicatorOnImgComponents, removeC2PAIndicatorOnImgComponents } from './lib/imageUtils.js';
+import { addC2PAIndicatorOnImgComponents, addIconForImage, removeC2PAIndicatorOnImgComponents } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
 // Register to window events
 window.addEventListener('message', (event) => {
   if (event.data.type === EVENT_TYPE_C2PA_MANIFEST_RESPONSE) {
-    // Configure the manifest summary
-    const manifestSummary = document.getElementById(
-      `manifest-${event.data.imageId}`,
-    );
-    manifestSummary.manifestStore = event.data.manifest;
-    manifestSummary.viewMoreUrl = event.data.viewMoreUrl;
-
-    const caiIndicator = document.getElementById(
-      `indicator-${event.data.imageId}`,
-    );
-
     // Validation indicator L1 rules
     if (event.data.manifest) {
+      // add the components linked to this image
+      const image = document.getElementById(event.data.imageId);
+      addIconForImage(image, event.data.imageId);
+
+      // Configure the manifest summary
+      const manifestSummary = document.getElementById(
+        `manifest-${event.data.imageId}`,
+      );
+      manifestSummary.manifestStore = event.data.manifest;
+      manifestSummary.viewMoreUrl = event.data.viewMoreUrl;
+
+      const caiIndicator = document.getElementById(
+        `indicator-${event.data.imageId}`,
+      );
+
       if (!event.data.manifest.error) {
         // ok
         caiIndicator.variant = 'info-light';
@@ -35,9 +39,9 @@ window.addEventListener('message', (event) => {
 
       // Get the image source to configure the Thumbnail,
       // as this cannot be done in the sandbox
-      const image = document.getElementById(event.data.imageId);
       manifestSummary.manifestStore.thumbnail = image.src;
-      caiIndicator.style.visibility = 'visible';
+      caiIndicator.classList.add('manifest-loaded');
+      image.classList.add('manifest-loaded');
     }
   }
 });
