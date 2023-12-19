@@ -112,7 +112,6 @@ const processMessages = async () => {
         // debug('[sandbox] Image not accessible by sandbox');
         if (computeDataURL) {
           // debug('[sandbox] settings computeDataURL is true');
-          console.log('test');
           if (imageDataURI) { // if url not accessible try with dataURI
             // debug('[sandbox] Data URI found');
             image = await convertDataURLtoBlob(imageDataURI);
