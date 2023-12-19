@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const tab = {};
 
+  // Set the version number from the manifest
+  document.getElementById('version-number').textContent = chrome.runtime.getManifest().version;
+
   // Get active tab in the current window
   await chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     // tabs is an array of tab objects that match the query

@@ -173,7 +173,7 @@
       background-color: white;
       border: 1px solid #DDD;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
-      padding: 10px;
+      padding: 8px;
       z-index: 1;
     }
 
@@ -228,6 +228,10 @@
       margin: 1px;
     }
 
+    .version-container {
+      text-align: right;
+      margin-right: 5px;
+    }
 
   </style>
 </head>
@@ -248,7 +252,11 @@
         <hr/>
         <div>
           <a href="https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md" target="_blank">Third-Party Software</a>
-        </div>  
+        </div> 
+        <hr/>
+        <div class="version-container">
+          <span>Version: <span id="version-number"></span></span>
+      </div>
       </div>
     </div>
   <div id="toggle-container">
