@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED, MSG_SANDBOX_LOADED } from './config.js';
+import { MSG_COMPUTE_DATA_URL, MSG_DO_NOT_COMPUTE_DATA_URL, MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED, MSG_SANDBOX_LOADED } from './config.js';
 import debug from './lib/log.js';
 
 // Set badge based on whether the extension is enabled or disabled
@@ -39,12 +39,17 @@ chrome.runtime.onMessage.addListener(async (message) => {
     });
   } else if (message.type === MSG_SANDBOX_LOADED) {
     // The sandbox iframe has been loaded and ready to receive messages
-    chrome.storage.local.get({ activated: false }, async (result) => {
+    chrome.storage.local.get({ activated: false, computeDataURL: false }, async (result) => {
       if (result.activated) {
         debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tabs.length > 0) {
           chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
+        }
+        if (result.computeDataURL) {
+          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_COMPUTE_DATA_URL });
+        } else {
+          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_DO_NOT_COMPUTE_DATA_URL });
         }
       }
     });

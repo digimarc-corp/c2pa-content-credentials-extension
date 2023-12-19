@@ -7,7 +7,6 @@ import {
   MSG_DO_NOT_COMPUTE_DATA_URL,
   MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
-  setComputeDataURL,
 } from './config.js';
 import { addC2PAIndicatorOnImgComponents, addIconForImage, removeC2PAIndicatorOnImgComponents } from './lib/imageUtils.js';
 import debug from './lib/log.js';
@@ -64,12 +63,11 @@ chrome.runtime.onMessage.addListener(async (message) => {
 });
 
 chrome.runtime.onMessage.addListener(async (message) => {
-  if (message.type === MSG_COMPUTE_DATA_URL) {
-    console.log('compute data url');
-    setComputeDataURL(true);
+  let iframe = document.getElementById('c2pa-sandbox');
+  if (message.type === MSG_COMPUTE_DATA_URL) {  
+    iframe.contentWindow.postMessage({ data:true, type:'valueFromSettings' }, '*');
   } else if (message.type === MSG_DO_NOT_COMPUTE_DATA_URL) {
-    console.log('do not compute data url');
-    setComputeDataURL(false);
+    iframe.contentWindow.postMessage({ data:false, type:'valueFromSettings' }, '*');
   }
 
   return true; // Indicates async sendResponse behavior

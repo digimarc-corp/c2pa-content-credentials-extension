@@ -1,4 +1,4 @@
-import { MSG_COMPUTE_DATA_URL, MSG_DO_NOT_COMPUTE_DATA_URL, MSG_REVERT_C2PA_INDICATOR, setComputeDataURL } from './config.js';
+import { MSG_COMPUTE_DATA_URL, MSG_DO_NOT_COMPUTE_DATA_URL, MSG_REVERT_C2PA_INDICATOR } from './config.js';
 
 /* eslint-disable no-undef */
 document.addEventListener('DOMContentLoaded', async () => {
@@ -66,8 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   computeDataURLcheckbox.addEventListener('change', async () => {
     // Save the state to storage
     chrome.storage.local.set({ computeDataURL: computeDataURLcheckbox.checked });
-
-    console.log('computeDataURLcheckbox.checked', computeDataURLcheckbox.checked)
 
     if(computeDataURLcheckbox.checked) {
       chrome.tabs.sendMessage(tab.id, { type: MSG_COMPUTE_DATA_URL });
