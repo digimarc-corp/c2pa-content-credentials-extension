@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 
-import { MSG_COMPUTE_DATA_URL, MSG_DO_NOT_COMPUTE_DATA_URL, MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED, MSG_SANDBOX_LOADED } from './config.js';
+import {
+  MSG_COMPUTE_DATA_URL, MSG_DO_NOT_COMPUTE_DATA_URL, MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED, MSG_SANDBOX_LOADED,
+} from './config.js';
 import debug from './lib/log.js';
 
 // Set badge based on whether the extension is enabled or disabled

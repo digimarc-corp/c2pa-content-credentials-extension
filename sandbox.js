@@ -11,8 +11,8 @@ let isProcessing = false;
 const manifestMap = {};
 let computeDataURL;
 
-window.addEventListener('message', function(event) {
-  if(event.data.type === 'valueFromSettings'){
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'valueFromSettings') {
     computeDataURL = event.data.data;
   }
 });
@@ -110,9 +110,9 @@ const processMessages = async () => {
 
       if (!isAccessible) {
         // debug('[sandbox] Image not accessible by sandbox');
-        if(computeDataURL){
+        if (computeDataURL) {
           // debug('[sandbox] settings computeDataURL is true');
-          console.log('test')
+          console.log('test');
           if (imageDataURI) { // if url not accessible try with dataURI
             // debug('[sandbox] Data URI found');
             image = await convertDataURLtoBlob(imageDataURI);

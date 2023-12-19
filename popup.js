@@ -62,12 +62,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       chrome.tabs.sendMessage(tab.id, { type: MSG_REVERT_C2PA_INDICATOR });
     }
   });
-  
+
   computeDataURLcheckbox.addEventListener('change', async () => {
     // Save the state to storage
     chrome.storage.local.set({ computeDataURL: computeDataURLcheckbox.checked });
 
-    if(computeDataURLcheckbox.checked) {
+    if (computeDataURLcheckbox.checked) {
       chrome.tabs.sendMessage(tab.id, { type: MSG_COMPUTE_DATA_URL });
     } else {
       chrome.tabs.sendMessage(tab.id, { type: MSG_DO_NOT_COMPUTE_DATA_URL });

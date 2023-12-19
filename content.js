@@ -63,11 +63,11 @@ chrome.runtime.onMessage.addListener(async (message) => {
 });
 
 chrome.runtime.onMessage.addListener(async (message) => {
-  let iframe = document.getElementById('c2pa-sandbox');
-  if (message.type === MSG_COMPUTE_DATA_URL) {  
-    iframe.contentWindow.postMessage({ data:true, type:'valueFromSettings' }, '*');
+  const iframe = document.getElementById('c2pa-sandbox');
+  if (message.type === MSG_COMPUTE_DATA_URL) {
+    iframe.contentWindow.postMessage({ data: true, type: 'valueFromSettings' }, '*');
   } else if (message.type === MSG_DO_NOT_COMPUTE_DATA_URL) {
-    iframe.contentWindow.postMessage({ data:false, type:'valueFromSettings' }, '*');
+    iframe.contentWindow.postMessage({ data: false, type: 'valueFromSettings' }, '*');
   }
 
   return true; // Indicates async sendResponse behavior
