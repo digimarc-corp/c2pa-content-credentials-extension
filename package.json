@@ -14,10 +14,10 @@
     "author": "Digimarc Labs",
     "license": "MIT",
     "scripts": {
-        "build": "./build.sh",
+        "build": "./scripts/build.sh",
         "lint": "eslint . --fix",
         "test": "playwright test",
-        "licenses": "./licenses.sh"
+        "licenses": "./scripts/licenses.sh"
     },
     "devDependencies": {
         "@playwright/test": "^1.39.0",

@@ -33,7 +33,7 @@ In particular, the extension embeds and makes extensive use of the open source [
 - **Licenses**: MIT
 - **Repository**: [https://github.com/eslint/eslintrc](https://github.com/eslint/eslintrc)
 - **Publisher**: Nicholas C. Zakas
-### @eslint/js@8.53.0
+### @eslint/js@8.54.0
 - **Licenses**: MIT
 - **Repository**: [https://github.com/eslint/eslint](https://github.com/eslint/eslint)
 ### @humanwhocodes/config-array@0.11.13
@@ -65,7 +65,7 @@ In particular, the extension embeds and makes extensive use of the open source [
 ### @nodelib/fs.walk@1.2.8
 - **Licenses**: MIT
 - **Repository**: [https://github.com/nodelib/nodelib/tree/master/packages/fs/fs.walk](https://github.com/nodelib/nodelib/tree/master/packages/fs/fs.walk)
-### @playwright/test@1.40.0
+### @playwright/test@1.40.1
 - **Licenses**: Apache-2.0
 - **Repository**: [https://github.com/microsoft/playwright](https://github.com/microsoft/playwright)
 - **Publisher**: Microsoft Corporation
@@ -76,7 +76,7 @@ In particular, the extension embeds and makes extensive use of the open source [
 - **Licenses**: MIT
 - **Repository**: [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)
 - **Publisher**: Jason Swearingen
-### @types/trusted-types@2.0.6
+### @types/trusted-types@2.0.7
 - **Licenses**: MIT
 - **Repository**: [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)
 ### @ungap/structured-clone@1.2.0
@@ -185,6 +185,9 @@ In particular, the extension embeds and makes extensive use of the open source [
 - **Licenses**: MIT*
 - **Repository**: [https://github.com/shinout/browser](https://github.com/shinout/browser)
 - **Publisher**: SHIN Suzuki
+### c2pa-content-credentials-extension@0.0.2
+- **Licenses**: MIT
+- **Publisher**: Digimarc Labs
 ### c2pa@0.17.2
 - **Licenses**: MIT
 - **Repository**: [https://github.com/contentauth/c2pa-js](https://github.com/contentauth/c2pa-js)
@@ -355,7 +358,7 @@ In particular, the extension embeds and makes extensive use of the open source [
 - **Licenses**: Apache-2.0
 - **Repository**: [https://github.com/eslint/eslint-visitor-keys](https://github.com/eslint/eslint-visitor-keys)
 - **Publisher**: Toru Nagashima
-### eslint@8.53.0
+### eslint@8.54.0
 - **Licenses**: MIT
 - **Repository**: [https://github.com/eslint/eslint](https://github.com/eslint/eslint)
 - **Publisher**: Nicholas C. Zakas
@@ -916,11 +919,11 @@ In particular, the extension embeds and makes extensive use of the open source [
 - **Licenses**: MIT
 - **Repository**: [https://github.com/sindresorhus/pkg-dir](https://github.com/sindresorhus/pkg-dir)
 - **Publisher**: Sindre Sorhus
-### playwright-core@1.40.0
+### playwright-core@1.40.1
 - **Licenses**: Apache-2.0
 - **Repository**: [https://github.com/microsoft/playwright](https://github.com/microsoft/playwright)
 - **Publisher**: Microsoft Corporation
-### playwright@1.40.0
+### playwright@1.40.1
 - **Licenses**: Apache-2.0
 - **Repository**: [https://github.com/microsoft/playwright](https://github.com/microsoft/playwright)
 - **Publisher**: Microsoft Corporation
