@@ -9,11 +9,11 @@ let c2paIsLoading = false;
 const messageQueue = [];
 let isProcessing = false;
 const manifestMap = {};
-let computeDataURL;
+let settings = {};
 
 window.addEventListener('message', (event) => {
   if (event.data.type === 'valueFromSettings') {
-    computeDataURL = event.data.data;
+    settings.computeDataURL = event.data.data;
   }
 });
 
@@ -108,7 +108,7 @@ const processMessages = async () => {
 
       const isAccessible = await isImageAccessible(image);
 
-      if (!isAccessible && computeDataURL && imageDataURI) {
+      if (!isAccessible && settings?.computeDataURL && imageDataURI) {
         // debug('[sandbox] Image not accessible by sandbox && computeDataURL is true');
         // debug('[sandbox] Data URI found');
         image = await convertDataURLtoBlob(imageDataURI);
