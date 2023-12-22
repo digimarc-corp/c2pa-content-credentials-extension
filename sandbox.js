@@ -108,16 +108,11 @@ const processMessages = async () => {
 
       const isAccessible = await isImageAccessible(image);
 
-      if (!isAccessible) {
-        // debug('[sandbox] Image not accessible by sandbox');
-        if (computeDataURL) {
-          // debug('[sandbox] settings computeDataURL is true');
-          if (imageDataURI) { // if url not accessible try with dataURI
-            // debug('[sandbox] Data URI found');
-            image = await convertDataURLtoBlob(imageDataURI);
-            // debug('[sandbox] Image converted to blob');
-          }
-        }
+      if (!isAccessible && computeDataURL && imageDataURI) {
+        // debug('[sandbox] Image not accessible by sandbox && computeDataURL is true');
+        // debug('[sandbox] Data URI found');
+        image = await convertDataURLtoBlob(imageDataURI);
+        // debug('[sandbox] Image converted to blob');
       }
 
       const result = await validateC2pa(image, imageId);
