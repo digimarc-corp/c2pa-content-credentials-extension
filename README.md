@@ -49,7 +49,7 @@ You can also check out the code and install the extension locally
 2. Fetch the `c2pa-js` fork with: `git submodule update --init --recursive`
 3. Run: `git submodule update --remote`
 4. Run `npm install`.
-5. Build the extension: `./build.sh`
+5. Build the extension: `npm run build` or `./scripts/build.sh`
 6. Open Chrome and go to `chrome://extensions`.
 7. Enable Developer Mode (top right corner).
 8. Click on `Load unpacked`.
@@ -137,7 +137,11 @@ When contributing, make sure to update the version of the library in the `packag
 
 In order to have a light version of the extension, where you have only the necessary files that the extension needs to work, you can run:
 ```
-./build.sh
+npm run build 
+```
+or
+```
+./scripts/build.sh
 ```
 
 It will create a `build` folder. This contains the final extension code.
