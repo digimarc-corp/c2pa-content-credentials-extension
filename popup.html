@@ -165,24 +165,30 @@
       height: 20px;
     }
     
-
     #settings-menu {
       position: absolute;
       top: 10px;
-      right: 50px;
+      right: 45px;
       background-color: white;
       border: 1px solid #DDD;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
-      padding: 10px;
+      padding: 8px;
+      z-index: 1;
     }
 
     #settings-menu a {
       display: block;
-      margin: 5px 0;
+      margin: 5px 2px;
+      text-align: left;
     }
 
     .hidden {
       display: none;
+    }
+
+    .version-container {
+      text-align: right;
+      margin-right: 5px;
     }
 
   </style>
@@ -197,6 +203,10 @@
       </button>
       <div id="settings-menu" class="hidden">
         <a href="https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md" target="_blank">Third-Party Software</a>
+        <hr/>
+        <div class="version-container">
+          <span>Version: <span id="version-number"></span></span>
+        </div>
       </div>
     </div>
   <div id="toggle-container">
