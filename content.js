@@ -3,6 +3,8 @@
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
+  MSG_COMPUTE_DATA_URL,
+  MSG_DO_NOT_COMPUTE_DATA_URL,
   MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
 } from './config.js';
@@ -55,6 +57,17 @@ chrome.runtime.onMessage.addListener(async (message) => {
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
+  }
+
+  return true; // Indicates async sendResponse behavior
+});
+
+chrome.runtime.onMessage.addListener(async (message) => {
+  const iframe = document.getElementById('c2pa-sandbox');
+  if (message.type === MSG_COMPUTE_DATA_URL) {
+    iframe.contentWindow.postMessage({ data: true, type: 'valueFromSettings' }, '*');
+  } else if (message.type === MSG_DO_NOT_COMPUTE_DATA_URL) {
+    iframe.contentWindow.postMessage({ data: false, type: 'valueFromSettings' }, '*');
   }
 
   return true; // Indicates async sendResponse behavior

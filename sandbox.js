@@ -9,6 +9,13 @@ let c2paIsLoading = false;
 const messageQueue = [];
 let isProcessing = false;
 const manifestMap = {};
+let settings = {};
+
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'valueFromSettings') {
+    settings.computeDataURL = event.data.data;
+  }
+});
 
 /**
  * Validates a C2PA image and returns its manifest and validationStatus.
@@ -101,13 +108,11 @@ const processMessages = async () => {
 
       const isAccessible = await isImageAccessible(image);
 
-      if (!isAccessible) {
-        // debug('[sandbox] Image not accessible by sandbox, checking for Data URI');
-        if (imageDataURI) { // if url not accessible try with dataURI
-          // debug('[sandbox] Data URI found');
-          image = await convertDataURLtoBlob(imageDataURI);
-          // debug('[sandbox] Image converted to blob');
-        }
+      if (!isAccessible && settings?.computeDataURL && imageDataURI) {
+        // debug('[sandbox] Image not accessible by sandbox && computeDataURL is true');
+        // debug('[sandbox] Data URI found');
+        image = await convertDataURLtoBlob(imageDataURI);
+        // debug('[sandbox] Image converted to blob');
       }
 
       const result = await validateC2pa(image, imageId);

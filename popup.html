@@ -186,11 +186,51 @@
       display: none;
     }
 
-    .version-container {
-      text-align: right;
-      margin-right: 5px;
+    /* Custom style for 'computeDataURL' checkbox */
+    #computeDataURL {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #555;
+      border-radius: 4px;
+      vertical-align: middle;
+      position: relative;
+      cursor: pointer;
+      outline: none;
     }
 
+    #computeDataURL:checked {
+      background-color: #47CAD1;
+      border-color: #47CAD1;
+    }
+
+    #computeDataURL:checked:after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 0px;
+      width: 3px;
+      height: 7px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+
+    label[for="computeDataURL"] {
+      vertical-align: middle;
+      line-height: 16px;
+      cursor: pointer;
+    }
+
+    h4 {
+      margin: 1px;
+    }
+
+    .third-party-container{
+      text-align: left;
+    }
   </style>
 </head>
 
@@ -202,7 +242,15 @@
         <img src="images/settings-icon.png" alt="Settings">
       </button>
       <div id="settings-menu" class="hidden">
-        <a href="https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md" target="_blank">Third-Party Software</a>
+        <h4>Configuration</h4>
+        <div>
+          <input type="checkbox" id="computeDataURL"/>
+          <label for="computeDataURL"> Support images behind login (slower) </label>
+        </div>
+        <hr/>
+        <div class="third-party-container">
+          <a href="https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md" target="_blank">Third-Party Software</a>
+        </div> 
         <hr/>
         <div class="version-container">
           <span>Version: <span id="version-number"></span></span>
