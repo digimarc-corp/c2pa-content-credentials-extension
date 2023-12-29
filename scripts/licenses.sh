@@ -4,8 +4,6 @@ echo "Extracting third-party licenses..."
 
 license-checker > provisory.txt
 
-license-checker --summary > THIRD_PARTY_LICENSES_SUMMARY.txt
-
 sed '/ILAT_DTL_C2PA_Validator_Browser_Extension@1.0.0/{N;d;}' provisory.txt | grep -v -e "email:" -e "url:" -e "path:" -e "licenseFile:" -e "noticeFile:" | tr -d '│├─' | tr -d '└' > filtered.txt
 sed -i '' '$ d' filtered.txt #remove last empty line
 

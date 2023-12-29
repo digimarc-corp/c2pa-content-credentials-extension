@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.storage.local.set({ activated: toggleSwitch.checked });
 
     if (toggleSwitch.checked) {
-      // Set the action badge to the next state
-      await chrome.action.setBadgeText({ text: 'ON' });
+      // Set the ON icon
+      chrome.action.setIcon({ path: './images/icons/icon-on.png' });
 
       // Inject iframe in main page to handle C2PA library
       chrome.scripting.executeScript({
@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         files: ['inject.js'],
       });
     } else {
-      // Set the action badge to OFF
-      await chrome.action.setBadgeText({ text: 'OFF' });
+      // Set the OFF icon
+      chrome.action.setIcon({ path: './images/icons/icon-off.png' });
 
       chrome.storage.local.set({ activated: false });
 
