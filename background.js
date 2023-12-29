@@ -14,6 +14,18 @@ chrome.runtime.onInstalled.addListener(async () => {
       chrome.action.setIcon({ path: './images/icons/icon-off.png' });
     }
   });
+  chrome.contextMenus.create({
+    id: "verifyImage",
+    title: "Verify image with C2PA", 
+    contexts: ["image"]
+  });
+});
+
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+  if (info.menuItemId === "verifyImage") {
+    console.log("You clicked the custom menu item!");
+    // Perform your action here
+  }
 });
 
 // Register to messages coming from the main page
@@ -36,6 +48,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
           });
         }
       });
+
+
     });
   } else if (message.type === MSG_SANDBOX_LOADED) {
     // The sandbox iframe has been loaded and ready to receive messages
