@@ -4,7 +4,7 @@ export const MAXIMAL_ID_LENGTH = 100;
 
 export const HANDLE_IMG_THRESHOLD = 0.2;
 
-export const REFRESH_ICON_INTERVAL = 20;
+export const REFRESH_ICON_INTERVAL = 30;
 
 export const MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS = 365;
 
