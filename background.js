@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 
-import { MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED, MSG_SANDBOX_LOADED } from './config.js';
+import {
+  MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED, MSG_SANDBOX_LOADED, MSG_VERIFY_SINGLE_IMAGE,
+} from './config.js';
 import debug from './lib/log.js';
 
 // Set badge based on whether the extension is enabled or disabled
@@ -15,16 +17,18 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
   });
   chrome.contextMenus.create({
-    id: "verifyImage",
-    title: "Verify image with C2PA", 
-    contexts: ["image"]
+    id: 'verifyImage',
+    title: 'Verify image with C2PA',
+    contexts: ['image'],
   });
 });
 
-chrome.contextMenus.onClicked.addListener(function(info, tab) {
-  if (info.menuItemId === "verifyImage") {
-    console.log("You clicked the custom menu item!");
-    // Perform your action here
+chrome.contextMenus.onClicked.addListener(async (info) => {
+  if (info.menuItemId === 'verifyImage') {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tabs.length > 0) {
+      chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
+    }
   }
 });
 
@@ -41,15 +45,11 @@ chrome.runtime.onMessage.addListener(async (message) => {
 
       // we only inject if the extension is activated
       chrome.storage.local.get({ activated: false }, (result) => {
-        if (result.activated) {
           chrome.scripting.executeScript({
             target: { tabId: currentTabId },
             files: ['inject.js'],
           });
-        }
       });
-
-
     });
   } else if (message.type === MSG_SANDBOX_LOADED) {
     // The sandbox iframe has been loaded and ready to receive messages

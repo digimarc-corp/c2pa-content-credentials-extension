@@ -5,8 +5,14 @@ import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
+  MSG_VERIFY_SINGLE_IMAGE,
 } from './config.js';
-import { addC2PAIndicatorOnImgComponents, addIconForImage, removeC2PAIndicatorOnImgComponents } from './lib/imageUtils.js';
+import {
+  addC2PAIndicatorOnImgComponents,
+  addIconForImage,
+  handleSingleImage,
+  removeC2PAIndicatorOnImgComponents,
+} from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
 // Register to window events
@@ -55,6 +61,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
+  } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
+    handleSingleImage(message.srcUrl);
   }
 
   return true; // Indicates async sendResponse behavior
