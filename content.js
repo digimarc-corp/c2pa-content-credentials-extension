@@ -3,6 +3,7 @@
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
+  MSG_GET_HTML_COMPONENT,
   MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
   MSG_VERIFY_SINGLE_IMAGE,
@@ -14,6 +15,9 @@ import {
   removeC2PAIndicatorOnImgComponents,
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
+
+// Variable to hold the right-clicked element
+let clickedEl = null;
 
 // Register to window events
 window.addEventListener('message', (event) => {
@@ -50,6 +54,82 @@ window.addEventListener('message', (event) => {
       image.classList.add('manifest-loaded');
     }
   }
+});
+
+// Listen for right clicks and save the clicked element
+document.addEventListener("contextmenu", function(event) {
+    clickedEl = event.target;
+}, true);
+
+// Function to compare dimensions within a certain percentage difference
+function isDimensionSimilar(dim1, dim2, percentage) {
+  let diff = Math.abs(dim1 - dim2);
+  let allowedDiff = (percentage / 100) * ((dim1 + dim2) / 2);
+  return diff <= allowedDiff;
+}
+
+// Function to find the largest image within the given element
+function findLargestImage(element) {
+  let images = element.getElementsByTagName('img'); // Get all image elements
+  let largestImage = null;
+  let maxArea = 0;
+
+  for (let img of images) {
+      let rect = img.getBoundingClientRect();
+      let area = rect.width * rect.height; // Calculate the area of the image
+
+      // Update the largestImage if this image has a larger area
+      if (area > maxArea) {
+          largestImage = img;
+          maxArea = area;
+      }
+  }
+
+  return largestImage; // This will be null if no images are found
+}
+
+function getMatchingParent(element) {
+  let currentElement = element;
+
+  while(currentElement.parentNode) {
+    let parentElement = currentElement.parentNode;
+
+    // Get dimensions of the current and parent elements
+    let currentRect = currentElement.getBoundingClientRect();
+    let parentRect = parentElement.getBoundingClientRect();
+
+    if (isDimensionSimilar(currentRect.width, parentRect.width, 10) && isDimensionSimilar(currentRect.height, parentRect.height, 10)) {
+        debug(`Found matching parent: ${parentElement}`);
+        currentElement = parentElement;
+    } else {
+        debug("No matching parent found.");
+        break;
+    }
+
+    // In case of reaching the top of the DOM without finding a match
+    if (currentElement === document.body || currentElement === document.documentElement) {
+        debug("Reached the top of the DOM. No matching parent found.");
+        break;
+    }
+  }
+
+  return currentElement;
+}
+
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type === MSG_GET_HTML_COMPONENT) {
+      let currentElement = getMatchingParent(clickedEl);
+
+      let largestImage = findLargestImage(currentElement);
+
+        if (largestImage) {
+            debug(`Found the largest image: ${largestImage.src}`);
+            handleSingleImage(largestImage.src);
+        } else {
+            debug("No images found within the current element.");
+        }
+    }
 });
 
 // Register to events coming from the background script
