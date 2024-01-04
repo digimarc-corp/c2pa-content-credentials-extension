@@ -43,7 +43,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
       }
       const currentTabId = tabs[0].id;
 
-      // we only inject if the extension is activated
       chrome.storage.local.get({ activated: false }, (result) => {
           chrome.scripting.executeScript({
             target: { tabId: currentTabId },
