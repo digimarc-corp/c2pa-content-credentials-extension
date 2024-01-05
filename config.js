@@ -14,6 +14,8 @@ export const MSG_SANDBOX_LOADED = 'sandbox-loaded';
 export const MSG_PAGE_LOADED = 'page-loaded';
 export const MSG_INJECT_C2PA_INDICATOR = 'inject-c2pa-indicator';
 export const MSG_REVERT_C2PA_INDICATOR = 'revert-c2pa-indicator';
+export const MSG_VERIFY_SINGLE_IMAGE = 'verify-single-image';
+export const MSG_GET_HTML_COMPONENT = 'get-html-component';
 
 export const EVENT_TYPE_C2PA_MANIFEST = 'c2pa-manifest';
 export const EVENT_TYPE_C2PA_MANIFEST_RESPONSE = 'c2pa-manifest-response';

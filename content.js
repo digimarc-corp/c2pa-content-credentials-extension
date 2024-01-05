@@ -3,11 +3,23 @@
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
+  MSG_GET_HTML_COMPONENT,
   MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
+  MSG_VERIFY_SINGLE_IMAGE,
 } from './config.js';
-import { addC2PAIndicatorOnImgComponents, addIconForImage, removeC2PAIndicatorOnImgComponents } from './lib/imageUtils.js';
+import {
+  addC2PAIndicatorOnImgComponents,
+  addIconForImage,
+  findLargestImage,
+  getMatchingParent,
+  handleSingleImage,
+  removeC2PAIndicatorOnImgComponents,
+} from './lib/imageUtils.js';
 import debug from './lib/log.js';
+
+// Variable to hold the right-clicked element
+let clickedEl = null;
 
 // Register to window events
 window.addEventListener('message', (event) => {
@@ -46,6 +58,27 @@ window.addEventListener('message', (event) => {
   }
 });
 
+// Listen for right clicks and save the clicked element
+document.addEventListener('contextmenu', (event) => {
+  clickedEl = event.target;
+}, true);
+
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener((request) => {
+  if (request.type === MSG_GET_HTML_COMPONENT) {
+    const currentElement = getMatchingParent(clickedEl);
+
+    const largestImage = findLargestImage(currentElement);
+
+    if (largestImage) {
+      debug(`Found the largest image: ${largestImage.src}`);
+      handleSingleImage(largestImage);
+    } else {
+      debug('No images found within the current element.');
+    }
+  }
+});
+
 // Register to events coming from the background script
 chrome.runtime.onMessage.addListener(async (message) => {
   if (message.type === MSG_INJECT_C2PA_INDICATOR) {
@@ -55,6 +88,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
+  } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
+    handleSingleImage(clickedEl);
   }
 
   return true; // Indicates async sendResponse behavior
