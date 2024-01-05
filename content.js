@@ -72,7 +72,7 @@ chrome.runtime.onMessage.addListener((request) => {
 
     if (largestImage) {
       debug(`Found the largest image: ${largestImage.src}`);
-      handleSingleImage(largestImage.src);
+      handleSingleImage(largestImage);
     } else {
       debug('No images found within the current element.');
     }
@@ -89,7 +89,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
-    handleSingleImage(message.srcUrl);
+    console.log(clickedEl);
+    handleSingleImage(clickedEl);
   }
 
   return true; // Indicates async sendResponse behavior

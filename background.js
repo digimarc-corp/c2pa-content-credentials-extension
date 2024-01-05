@@ -51,11 +51,9 @@ chrome.runtime.onMessage.addListener(async (message) => {
       }
       const currentTabId = tabs[0].id;
 
-      chrome.storage.local.get({ activated: false }, () => {
-        chrome.scripting.executeScript({
-          target: { tabId: currentTabId },
-          files: ['inject.js'],
-        });
+      chrome.scripting.executeScript({
+        target: { tabId: currentTabId },
+        files: ['inject.js'],
       });
     });
   } else if (message.type === MSG_SANDBOX_LOADED) {
