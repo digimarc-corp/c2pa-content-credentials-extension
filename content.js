@@ -89,7 +89,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
-    console.log(clickedEl);
     handleSingleImage(clickedEl);
   }
 
