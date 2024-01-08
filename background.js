@@ -22,7 +22,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   });
   chrome.contextMenus.create({
     id: 'verifyImage',
-    title: 'Verify image with C2PA',
+    title: 'Verify Content Credentials',
     contexts: ['all'],
   });
 });
