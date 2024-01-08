@@ -85,8 +85,8 @@ chrome.runtime.onMessage.addListener((request) => {
       if (singleImageVerification) {
         displayError('No images found within the current element.');
       }
-      singleImageVerification = false;
     }
+    singleImageVerification = false;
   }
 });
 
