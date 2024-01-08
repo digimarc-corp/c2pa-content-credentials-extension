@@ -4,7 +4,7 @@ import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   MSG_GET_HTML_COMPONENT,
-  MSG_INJECT_C2PA_INDICATOR, 
+  MSG_INJECT_C2PA_INDICATOR,
   MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
   MSG_VERIFY_SINGLE_IMAGE,
@@ -58,7 +58,7 @@ window.addEventListener('message', (event) => {
       caiIndicator.classList.add('manifest-loaded');
       image.classList.add('manifest-loaded');
     } else if (singleImageVerification) {
-        displayError('No Content Credentials found for this image.');
+      displayError('No Content Credentials found for this image.');
     }
     singleImageVerification = false;
   }
@@ -82,7 +82,7 @@ chrome.runtime.onMessage.addListener((request) => {
       handleSingleImage(largestImage);
     } else {
       debug('No images found within the current element.');
-      if(singleImageVerification) {
+      if (singleImageVerification) {
         displayError('No images found within the current element.');
       }
       singleImageVerification = false;
