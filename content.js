@@ -4,7 +4,8 @@ import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   MSG_GET_HTML_COMPONENT,
-  MSG_INJECT_C2PA_INDICATOR, MSG_PAGE_LOADED,
+  MSG_INJECT_C2PA_INDICATOR, 
+  MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
   MSG_VERIFY_SINGLE_IMAGE,
 } from './config.js';
@@ -17,9 +18,11 @@ import {
   removeC2PAIndicatorOnImgComponents,
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
+import { displayError } from './lib/errorUtils.js';
 
 // Variable to hold the right-clicked element
 let clickedEl = null;
+let singleImageVerification = false;
 
 // Register to window events
 window.addEventListener('message', (event) => {
@@ -54,7 +57,10 @@ window.addEventListener('message', (event) => {
       manifestSummary.manifestStore.thumbnail = image.src;
       caiIndicator.classList.add('manifest-loaded');
       image.classList.add('manifest-loaded');
+    } else if (singleImageVerification) {
+        displayError('No Content Credentials found for this image.');
     }
+    singleImageVerification = false;
   }
 });
 
@@ -66,6 +72,7 @@ document.addEventListener('contextmenu', (event) => {
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type === MSG_GET_HTML_COMPONENT) {
+    singleImageVerification = true;
     const currentElement = getMatchingParent(clickedEl);
 
     const largestImage = findLargestImage(currentElement);
@@ -75,6 +82,10 @@ chrome.runtime.onMessage.addListener((request) => {
       handleSingleImage(largestImage);
     } else {
       debug('No images found within the current element.');
+      if(singleImageVerification) {
+        displayError('No images found within the current element.');
+      }
+      singleImageVerification = false;
     }
   }
 });
@@ -90,6 +101,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
     removeC2PAIndicatorOnImgComponents();
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
     handleSingleImage(clickedEl);
+    singleImageVerification = true;
   }
 
   return true; // Indicates async sendResponse behavior
