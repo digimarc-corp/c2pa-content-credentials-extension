@@ -83,7 +83,7 @@ chrome.runtime.onMessage.addListener((request) => {
     } else {
       debug('No images found within the current element.');
       if (singleImageVerification) {
-        displayError('No images found within the current element.');
+        displayError('Unable to locate an image to verify.');
       }
     }
     singleImageVerification = false;
