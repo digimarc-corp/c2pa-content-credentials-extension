@@ -6,8 +6,30 @@ import {
   MSG_SANDBOX_LOADED,
   MSG_VERIFY_SINGLE_IMAGE,
   MSG_GET_HTML_COMPONENT,
+  MSG_DISABLE_RIGHT_CLICK,
+  MSG_ENABLE_RIGHT_CLICK,
 } from './config.js';
 import debug from './lib/log.js';
+
+function disableMenuItem(id) {
+  chrome.contextMenus.update(id, {
+    enabled: false
+  }, () => {
+    if (chrome.runtime.lastError) {
+      console.error(`Error: ${chrome.runtime.lastError.message}`);
+    }
+  });
+}
+
+function enableMenuItem(id) {
+  chrome.contextMenus.update("verifyImage", {
+    enabled: true
+  }, () => {
+    if (chrome.runtime.lastError) {
+      console.error(`Error: ${chrome.runtime.lastError.message}`);
+    }
+  });
+}
 
 // Set badge based on whether the extension is enabled or disabled
 chrome.runtime.onInstalled.addListener(async () => {
@@ -67,7 +89,12 @@ chrome.runtime.onMessage.addListener(async (message) => {
         }
       }
     });
+  } else if (message.type === MSG_DISABLE_RIGHT_CLICK) {
+    disableMenuItem("verifyImage");
+  } else if (message.type === MSG_ENABLE_RIGHT_CLICK) {
+    enableMenuItem("verifyImage");
   }
+
 
   return true;
 });
