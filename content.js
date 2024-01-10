@@ -98,11 +98,11 @@ chrome.runtime.onMessage.addListener(async (message) => {
     // Request from background to inject the C2PA indicator
     // Get all image elements on the page.
     addC2PAIndicatorOnImgComponents();
-    chrome.runtime.sendMessage({ type:  MSG_DISABLE_RIGHT_CLICK});
+    chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
-    chrome.runtime.sendMessage({ type:  MSG_ENABLE_RIGHT_CLICK});
+    chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
     handleSingleImage(clickedEl);
     singleImageVerification = true;

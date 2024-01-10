@@ -13,20 +13,20 @@ import debug from './lib/log.js';
 
 function disableMenuItem(id) {
   chrome.contextMenus.update(id, {
-    enabled: false
+    enabled: false,
   }, () => {
     if (chrome.runtime.lastError) {
-      console.error(`Error: ${chrome.runtime.lastError.message}`);
+      debug(`Error: ${chrome.runtime.lastError.message}`);
     }
   });
 }
 
 function enableMenuItem(id) {
-  chrome.contextMenus.update("verifyImage", {
-    enabled: true
+  chrome.contextMenus.update(id, {
+    enabled: true,
   }, () => {
     if (chrome.runtime.lastError) {
-      console.error(`Error: ${chrome.runtime.lastError.message}`);
+      debug(`Error: ${chrome.runtime.lastError.message}`);
     }
   });
 }
@@ -90,11 +90,10 @@ chrome.runtime.onMessage.addListener(async (message) => {
       }
     });
   } else if (message.type === MSG_DISABLE_RIGHT_CLICK) {
-    disableMenuItem("verifyImage");
+    disableMenuItem('verifyImage');
   } else if (message.type === MSG_ENABLE_RIGHT_CLICK) {
-    enableMenuItem("verifyImage");
+    enableMenuItem('verifyImage');
   }
-
 
   return true;
 });
