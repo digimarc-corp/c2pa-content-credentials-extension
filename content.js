@@ -3,6 +3,8 @@
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
+  MSG_DISABLE_RIGHT_CLICK,
+  MSG_ENABLE_RIGHT_CLICK,
   MSG_GET_HTML_COMPONENT,
   MSG_INJECT_C2PA_INDICATOR,
   MSG_PAGE_LOADED,
@@ -96,9 +98,11 @@ chrome.runtime.onMessage.addListener(async (message) => {
     // Request from background to inject the C2PA indicator
     // Get all image elements on the page.
     addC2PAIndicatorOnImgComponents();
+    chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
+    chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
     handleSingleImage(clickedEl);
     singleImageVerification = true;
