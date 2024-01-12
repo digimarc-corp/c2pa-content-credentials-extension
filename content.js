@@ -24,7 +24,7 @@ import { displayError } from './lib/errorUtils.js';
 
 // Variable to hold the right-clicked element
 let clickedEl = null;
-let singleImageVerification = false;
+let singleImageVerification = true;
 
 // Register to window events
 window.addEventListener('message', (event) => {
@@ -62,7 +62,6 @@ window.addEventListener('message', (event) => {
     } else if (singleImageVerification) {
       displayError('No Content Credentials found for this image.');
     }
-    singleImageVerification = false;
   }
 });
 
@@ -74,7 +73,6 @@ document.addEventListener('contextmenu', (event) => {
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type === MSG_GET_HTML_COMPONENT) {
-    singleImageVerification = true;
     const currentElement = getMatchingParent(clickedEl);
 
     const largestImage = findLargestImage(currentElement);
@@ -88,7 +86,6 @@ chrome.runtime.onMessage.addListener((request) => {
         displayError('Unable to locate an image to verify.');
       }
     }
-    singleImageVerification = false;
   }
 });
 
@@ -99,13 +96,14 @@ chrome.runtime.onMessage.addListener(async (message) => {
     // Get all image elements on the page.
     addC2PAIndicatorOnImgComponents();
     chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
+    singleImageVerification = false;
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
+    singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
     handleSingleImage(clickedEl);
-    singleImageVerification = true;
   }
 
   return true; // Indicates async sendResponse behavior
