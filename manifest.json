@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "C2PA Content Credentials",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Verify and display manifests for images embedding C2PA Content Credentials.",
     "icons": {
         "16": "images/icons/icon.png",
