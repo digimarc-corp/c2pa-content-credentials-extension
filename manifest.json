@@ -14,9 +14,6 @@
             "matches": [
                 "<all_urls>"
             ],
-            "exclude_matches": [
-                "*://*.linkedin.com/*"
-            ],
             "js": [
                 "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
                 "contentScript.js"
