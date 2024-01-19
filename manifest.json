@@ -1,21 +1,18 @@
 {
     "manifest_version": 3,
     "name": "C2PA Content Credentials",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Verify and display manifests for images embedding C2PA Content Credentials.",
     "icons": {
-        "16": "images/icons/info.png",
-        "32": "images/icons/info.png",
-        "48": "images/icons/info.png",
-        "128": "images/icons/info.png"
+        "16": "images/icons/icon.png",
+        "32": "images/icons/icon.png",
+        "48": "images/icons/icon.png",
+        "128": "images/icons/icon.png"
     },
     "content_scripts": [
         {
             "matches": [
                 "<all_urls>"
-            ],
-            "exclude_matches": [
-                "*://*.linkedin.com/*"
             ],
             "js": [
                 "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
@@ -32,12 +29,13 @@
     },
     "action": {
         "default_popup": "popup.html",
-        "default_icon": "images/icons/info.png"
+        "default_icon": "images/icons/icon.png"
     },
     "permissions": [
         "tabs",
         "scripting",
-        "storage"
+        "storage",
+        "contextMenus"
     ],
     "host_permissions": [
         "http://*/*",
