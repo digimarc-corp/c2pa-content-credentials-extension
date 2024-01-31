@@ -9,19 +9,6 @@ import {
 } from './config.js';
 import debug from './lib/log.js';
 
-chrome.contextMenus.onClicked.addListener(async (info) => {
-  if (info.menuItemId === 'verifyImage') {
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (info?.mediaType === 'image') {
-      if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
-      }
-    } else if (tabs.length > 0) {
-      chrome.tabs.sendMessage(tabs[0].id, { type: MSG_GET_HTML_COMPONENT });
-    }
-  }
-});
-
 // Register to messages coming from the main page
 chrome.runtime.onMessage.addListener(async (message) => {
   debug(`[background] Receiving ${message.type}`);
@@ -39,6 +26,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
       });
     });
   } else if (message.type === MSG_SANDBOX_LOADED) {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs.length > 0) {
       chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
     }
