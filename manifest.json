@@ -28,7 +28,6 @@
         "type": "module"
     },
     "action": {
-        "default_popup": "popup.html",
         "default_icon": "images/icons/icon.png"
     },
     "permissions": [
