@@ -56,7 +56,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
   if (message.type === MSG_INJECT_C2PA_INDICATOR) {
     // Request from background to inject the C2PA indicator
     // Get all image elements on the page.
-    debug('add indicator');
     addC2PAIndicatorOnImgComponents();
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator

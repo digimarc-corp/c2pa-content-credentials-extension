@@ -60,6 +60,8 @@ const validateC2pa = async (image, imageId) => {
 
     await Promise.all(promises);
 
+    console.log(manifestStore.validationStatus);
+
     return {
       manifest: l2ManifestStore,
       validationStatus: manifestStore.validationStatus,
