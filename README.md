@@ -133,6 +133,12 @@ or
 
 It will create a `build` folder. This contains the final extension code.
 
+## Testing
+
+```
+npm run test
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
