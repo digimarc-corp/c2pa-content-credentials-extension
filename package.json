@@ -33,7 +33,9 @@
     "dependencies": {
         "@webcomponents/webcomponentsjs": "^2.8.0",
         "browser": "^0.2.6",
-        "c2pa": "0.17.2"
+        "c2pa": "0.17.2",
+        "node-fetch": "^2.7.0",
+        "path": "^0.12.7"
     },
     "engines": {
         "npm": ">=10.2.2",
