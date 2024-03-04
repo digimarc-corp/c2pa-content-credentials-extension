@@ -1,14 +1,17 @@
 import { test as base, chromium } from '@playwright/test';
-import path from 'path';
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
 
 export const test = base.extend({
   context: async ({}, use) => {
-    const pathToExtension = path.join('', '../ilat-dtl-cp2a-validator-browser-extension');
+    // eslint-disable-next-line no-underscore-dangle
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const extensionPath = path.resolve(__dirname, '../');
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
-        `--disable-extensions-except=${pathToExtension}`,
-        `--load-extension=${pathToExtension}`,
+        `--disable-extensions-except=${extensionPath}`,
+        `--load-extension=${extensionPath}`,
       ],
     });
     await use(context);

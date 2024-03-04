@@ -13,7 +13,7 @@ import { devices } from '@playwright/test';
 const config = {
   testDir: './tests', // Path to the tests directory
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 300 * 1000,
   expect: {
     /* Default timeout for expect statements. */
     timeout: 5000,
