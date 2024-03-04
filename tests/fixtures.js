@@ -8,7 +8,7 @@ export const test = base.extend({
     const __dirname = dirname(fileURLToPath(import.meta.url));
     const extensionPath = path.resolve(__dirname, '../');
     const context = await chromium.launchPersistentContext('', {
-      headless: true,
+      headless: false,
       args: [
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
