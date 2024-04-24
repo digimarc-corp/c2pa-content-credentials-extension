@@ -1,4 +1,4 @@
-import { MSG_REVERT_C2PA_INDICATOR } from './config.js';
+import { MSG_INJECT_C2PA_INDICATOR, MSG_REVERT_C2PA_INDICATOR } from './config.js';
 
 /* eslint-disable no-undef */
 document.addEventListener('DOMContentLoaded', async () => {
@@ -36,14 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (toggleSwitch.checked) {
       // Set the ON icon
       chrome.action.setIcon({ path: './images/icons/icon-on.png' });
-
-      // Inject iframe in main page to handle C2PA library
-      chrome.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-        },
-        files: ['inject.js'],
-      });
+      chrome.tabs.sendMessage(tab.id, { type: MSG_INJECT_C2PA_INDICATOR });
     } else {
       // Set the OFF icon
       chrome.action.setIcon({ path: './images/icons/icon-off.png' });

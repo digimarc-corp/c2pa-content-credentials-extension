@@ -8,6 +8,7 @@ import {
   MSG_GET_HTML_COMPONENT,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
+  EVENT_TYPE_C2PA_MANIFEST,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -47,8 +48,25 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: 'Verify Content Credentials',
     contexts: ['all'],
   });
+  console.log('Checking for offscreen availability');
+  if (chrome.offscreen !== undefined) {
+    console.log('offscreen is available');
+    if (await chrome.offscreen.hasDocument()) {
+      return;
+    }
+    await chrome.offscreen
+      .createDocument({
+        url: 'offscreen.html',
+        reasons: [chrome.offscreen.Reason.DOM_PARSER],
+        justification: 'Private DOM access to parse HTML',
+      })
+      .catch((error) => {
+        console.error('Failed to create offscreen document', error);
+      });
+  }
 });
 
+// Call the function to send message
 chrome.contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId === 'verifyImage') {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -62,38 +80,53 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   }
 });
 
+const triggerInjectC2PAIndicator = async () => {
+  if (await chrome.offscreen.hasDocument()) {
+    setTimeout(triggerInjectC2PAIndicator, 1000);
+    return;
+  }
+  chrome.storage.local.get({ activated: false }, async (result) => {
+    if (result.activated) {
+      debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
+      }
+    }
+  });
+};
+
 // Register to messages coming from the main page
 chrome.runtime.onMessage.addListener(async (message) => {
   debug(`[background] Receiving ${message.type}`);
 
   if (message.type === MSG_PAGE_LOADED) {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length === 0) {
-        return;
-      }
-      const currentTabId = tabs[0].id;
-
-      chrome.scripting.executeScript({
-        target: { tabId: currentTabId },
-        files: ['inject.js'],
-      });
-    });
-  } else if (message.type === MSG_SANDBOX_LOADED) {
-    // The sandbox iframe has been loaded and ready to receive messages
-    chrome.storage.local.get({ activated: false }, async (result) => {
-      if (result.activated) {
-        debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tabs.length > 0) {
-          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
-        }
-      }
-    });
+    triggerInjectC2PAIndicator();
   } else if (message.type === MSG_DISABLE_RIGHT_CLICK) {
     disableMenuItem('verifyImage');
   } else if (message.type === MSG_ENABLE_RIGHT_CLICK) {
     enableMenuItem('verifyImage');
   }
-
-  return true;
 });
+
+const init = async () => {
+  if (chrome.offscreen !== undefined) {
+    console.log('offscreen is defined');
+    if (await chrome.offscreen.hasDocument()) {
+      console.log('it already has a document, returning...');
+      return;
+    }
+    console.log('creating offscreen');
+    await chrome.offscreen
+      .createDocument({
+        url: 'offscreen.html',
+        reasons: [chrome.offscreen.Reason.DOM_PARSER],
+        justification: 'Private DOM access to parse HTML',
+      })
+      .catch((error) => {
+        console.error('Failed to create offscreen document', error);
+      });
+  }
+};
+
+init();

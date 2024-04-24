@@ -32,6 +32,7 @@
         "default_icon": "images/icons/icon.png"
     },
     "permissions": [
+        "offscreen",
         "tabs",
         "scripting",
         "storage",
@@ -41,18 +42,13 @@
         "http://*/*",
         "https://*/*"
     ],
-    "sandbox": {
-        "pages": [
-            "sandbox.html"
-        ]
-    },
     "content_security_policy": {
-        "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self'; worker-src 'self' blob: chrome-extension:;"
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
     },
     "web_accessible_resources": [
         {
             "resources": [
-                "sandbox.html",
+                "offscreen.html",
                 "*.js",
                 "c2pa/*"
             ],
