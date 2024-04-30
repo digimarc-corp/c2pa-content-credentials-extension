@@ -40,7 +40,7 @@ chrome.runtime.onMessage.addListener((request) => {
 
     if (largestImage) {
       debug(`Found the largest image: ${largestImage.src}`);
-      handleSingleImage(largestImage);
+      handleSingleImage(largestImage, singleImageVerification);
     } else {
       debug('No images found within the current element.');
       if (singleImageVerification) {
@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
     singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
-    handleSingleImage(clickedEl);
+    handleSingleImage(clickedEl, singleImageVerification);
   }
   return true;
 });
