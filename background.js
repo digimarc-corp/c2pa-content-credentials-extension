@@ -47,23 +47,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: 'Verify Content Credentials',
     contexts: ['all'],
   });
-  debug('Checking for offscreen availability');
-  if (chrome.offscreen !== undefined) {
-    debug('offscreen is available');
-    if (await chrome.offscreen.hasDocument()) {
-      return;
-    }
-    await chrome.offscreen
-      .createDocument({
-        url: 'offscreen.html',
-        reasons: [chrome.offscreen.Reason.DOM_PARSER],
-        justification: 'Private DOM access to parse HTML',
-      })
-      .catch((error) => {
-        // eslint-disable-next-line
-        console.error('Failed to create offscreen document', error);
-      });
-  }
 });
 
 // Call the function to send message
@@ -115,13 +98,10 @@ chrome.runtime.onMessage.addListener(async (message) => {
 });
 
 const init = async () => {
-  if (chrome.offscreen !== undefined) {
-    debug('offscreen is defined');
     if (await chrome.offscreen.hasDocument()) {
-      debug('it already has a document, returning...');
       return;
     }
-    debug('creating offscreen');
+    debug('Creating offscreen...', error);
     await chrome.offscreen
       .createDocument({
         url: 'offscreen.html',

@@ -47,14 +47,13 @@ chrome.runtime.onMessage.addListener((request) => {
 
       const largestImage = findLargestImage(currentElement);
 
-      if (largestImage) {
-        debug(`Found the largest image: ${largestImage.src}`);
-        handleSingleImage(largestImage);
-      } else {
-        debug('No images found within the current element.');
-        if (singleImageVerification) {
-          displayError('Unable to locate an image to verify.');
-        }
+    if (largestImage) {
+      debug(`Found the largest image: ${largestImage.src}`);
+      handleSingleImage(largestImage, singleImageVerification);
+    } else {
+      debug('No images found within the current element.');
+      if (singleImageVerification) {
+        displayError('Unable to locate an image to verify.');
       }
     }
   }
@@ -77,9 +76,9 @@ chrome.runtime.onMessage.addListener(async (message) => {
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
     singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
-    handleSingleImage(clickedEl);
+    handleSingleImage(clickedEl, singleImageVerification);
   } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
-    handleSingleVideo(clickedEl);
+    handleSingleVideo(clickedEl, singleImageVerification);
   }
   return true;
 });

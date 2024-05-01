@@ -1,4 +1,6 @@
 /* eslint-disable consistent-return */
+/* eslint-disable no-undef */
+
 import { createC2pa, createL2ManifestStore, generateVerifyUrl } from './c2pa/packages/c2pa/dist/c2pa.esm.js';
 import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE } from './config.js';
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
@@ -77,7 +79,6 @@ const handleC2PAManifestMessage = async (event) => {
   } catch (error) {
     debug('[sandbox] Error processing message:');
     debug(error);
-    debug('sending response 3');
     return ({ error: error.message });
   }
 };
