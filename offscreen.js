@@ -1,6 +1,8 @@
 /* eslint-disable consistent-return */
+/* eslint-disable no-undef */
+
 import { createC2pa, createL2ManifestStore, generateVerifyUrl } from './c2pa/packages/c2pa/dist/c2pa.esm.js';
-import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, MSG_SANDBOX_LOADED } from './config.js';
+import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE } from './config.js';
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
@@ -32,7 +34,9 @@ const validateC2pa = async (image, imageId) => {
 
   const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStore);
   const promises = manifestStore.activeManifest.ingredients.map(async (ingredient) => {
-    const matchingIngredient = l2ManifestStore.ingredients.find((item) => item.documentId === ingredient.documentId);
+    const matchingIngredient = l2ManifestStore.ingredients.find(
+      (item) => item.documentId === ingredient.documentId,
+    );
     if (matchingIngredient) {
       matchingIngredient.thumbnail = await convertBlobToDataURL(ingredient.thumbnail.blob);
     }
@@ -58,7 +62,6 @@ const handleC2PAManifestMessage = async (event) => {
         manifest: manifestMap[imageId],
         imageId,
       });
-      return true;
     }
 
     if (!(await isImageAccessible(image)) && imageDataURI) {
@@ -76,7 +79,6 @@ const handleC2PAManifestMessage = async (event) => {
   } catch (error) {
     debug('[sandbox] Error processing message:');
     debug(error);
-    console.log('sending response 3');
     return ({ error: error.message });
   }
 };
