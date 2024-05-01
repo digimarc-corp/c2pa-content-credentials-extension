@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener((request) => {
     }
   }
   return true;
-});
+}});
 
 // Register to events coming from the background script
 chrome.runtime.onMessage.addListener(async (message) => {
