@@ -48,22 +48,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: 'Verify Content Credentials',
     contexts: ['all'],
   });
-  console.log('Checking for offscreen availability');
-  if (chrome.offscreen !== undefined) {
-    console.log('offscreen is available');
-    if (await chrome.offscreen.hasDocument()) {
-      return;
-    }
-    await chrome.offscreen
-      .createDocument({
-        url: 'offscreen.html',
-        reasons: [chrome.offscreen.Reason.DOM_PARSER],
-        justification: 'Private DOM access to parse HTML',
-      })
-      .catch((error) => {
-        console.error('Failed to create offscreen document', error);
-      });
-  }
 });
 
 // Call the function to send message
