@@ -23,7 +23,7 @@ import {
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 import { displayError } from './lib/errorUtils.js';
-import { findNearestVideo } from './lib/videoUtils.js';
+import { findNearestMedia, findNearestVideo } from './lib/videoUtils.js';
 
 // Variable to hold the right-clicked element
 let clickedEl = null;
@@ -37,24 +37,18 @@ document.addEventListener('contextmenu', (event) => {
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type === MSG_GET_HTML_COMPONENT) {
-    const nearestVideo = findNearestVideo(clickedEl);
-    if (nearestVideo) {
-      debug('Video found:', nearestVideo);
-      handleSingleVideo(nearestVideo, singleImageVerification);
+    const nearestMedia = findNearestMedia(clickedEl);
+    console.log('nearestMedia', nearestMedia.element);
+    if (nearestMedia.type === 'video') {
+      debug('Video found:', nearestMedia.element);
+      handleSingleVideo(nearestMedia.element, singleImageVerification);
+    } else if (nearestMedia.type === 'img') {
+      debug('Img found:', nearestMedia.element)
+      handleSingleImage(nearestMedia.element, singleImageVerification);
     } else {
-      debug('No video found nearby.');
-      const currentElement = getMatchingParent(clickedEl);
-
-      const largestImage = findLargestImage(currentElement);
-
-      if (largestImage) {
-        debug(`Found the largest image: ${largestImage.src}`);
-        handleSingleImage(largestImage, singleImageVerification);
-      } else {
-        debug('No images found within the current element.');
-        if (singleImageVerification) {
-          displayError('Unable to locate an image to verify.');
-        }
+      debug('No media found within the current element.');
+      if (singleImageVerification) {
+        displayError('Unable to locate a media to verify.');
       }
     }
     return true;
