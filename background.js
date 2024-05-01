@@ -3,12 +3,10 @@
 import {
   MSG_INJECT_C2PA_INDICATOR,
   MSG_PAGE_LOADED,
-  MSG_SANDBOX_LOADED,
   MSG_VERIFY_SINGLE_IMAGE,
   MSG_GET_HTML_COMPONENT,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
-  EVENT_TYPE_C2PA_MANIFEST,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -48,22 +46,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: 'Verify Content Credentials',
     contexts: ['all'],
   });
-  console.log('Checking for offscreen availability');
-  if (chrome.offscreen !== undefined) {
-    console.log('offscreen is available');
-    if (await chrome.offscreen.hasDocument()) {
-      return;
-    }
-    await chrome.offscreen
-      .createDocument({
-        url: 'offscreen.html',
-        reasons: [chrome.offscreen.Reason.DOM_PARSER],
-        justification: 'Private DOM access to parse HTML',
-      })
-      .catch((error) => {
-        console.error('Failed to create offscreen document', error);
-      });
-  }
 });
 
 // Call the function to send message
@@ -111,12 +93,10 @@ chrome.runtime.onMessage.addListener(async (message) => {
 
 const init = async () => {
   if (chrome.offscreen !== undefined) {
-    console.log('offscreen is defined');
     if (await chrome.offscreen.hasDocument()) {
-      console.log('it already has a document, returning...');
       return;
     }
-    console.log('creating offscreen');
+    debug('Creating offscreen...', error);
     await chrome.offscreen
       .createDocument({
         url: 'offscreen.html',
@@ -124,7 +104,7 @@ const init = async () => {
         justification: 'Private DOM access to parse HTML',
       })
       .catch((error) => {
-        console.error('Failed to create offscreen document', error);
+        debug('Failed to create offscreen document', error);
       });
   }
 };
