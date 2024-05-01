@@ -98,20 +98,20 @@ chrome.runtime.onMessage.addListener(async (message) => {
 });
 
 const init = async () => {
-    if (await chrome.offscreen.hasDocument()) {
-      return;
-    };
-    debug('Creating offscreen...');
-    await chrome.offscreen
-      .createDocument({
-        url: 'offscreen.html',
-        reasons: [chrome.offscreen.Reason.DOM_PARSER],
-        justification: 'Private DOM access to parse HTML',
-      })
-      .catch((error) => {
-        // eslint-disable-next-line
+  if (await chrome.offscreen.hasDocument()) {
+    return;
+  }
+  debug('Creating offscreen...');
+  await chrome.offscreen
+    .createDocument({
+      url: 'offscreen.html',
+      reasons: [chrome.offscreen.Reason.DOM_PARSER],
+      justification: 'Private DOM access to parse HTML',
+    })
+    .catch((error) => {
+      // eslint-disable-next-line
         console.error('Failed to create offscreen document', error);
-      });
-  };
+    });
+};
 
 init();
