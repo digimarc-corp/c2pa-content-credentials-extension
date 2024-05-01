@@ -2,7 +2,6 @@
 // eslint-disable-next-line
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
-  EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
   MSG_GET_HTML_COMPONENT,
@@ -15,7 +14,6 @@ import {
 import {
   addC2PAIndicatorOnImgComponents,
   addC2PAIndicatorOnVideoComponents,
-  addIconForImage,
   findLargestImage,
   getMatchingParent,
   handleSingleImage,
@@ -41,23 +39,23 @@ chrome.runtime.onMessage.addListener((request) => {
   if (request.type === MSG_GET_HTML_COMPONENT) {
     const nearestVideo = findNearestVideo(clickedEl);
     if (nearestVideo) {
-        debug('Video found:', nearestVideo);
-        handleSingleVideo(nearestVideo);
+      debug('Video found:', nearestVideo);
+      handleSingleVideo(nearestVideo);
     } else {
-        debug('No video found nearby.');
-        const currentElement = getMatchingParent(clickedEl);
+      debug('No video found nearby.');
+      const currentElement = getMatchingParent(clickedEl);
 
-        const largestImage = findLargestImage(currentElement);
+      const largestImage = findLargestImage(currentElement);
 
-        if (largestImage) {
-          debug(`Found the largest image: ${largestImage.src}`);
-          handleSingleImage(largestImage);
-        } else {
-          debug('No images found within the current element.');
-          if (singleImageVerification) {
-            displayError('Unable to locate an image to verify.');
-          }
+      if (largestImage) {
+        debug(`Found the largest image: ${largestImage.src}`);
+        handleSingleImage(largestImage);
+      } else {
+        debug('No images found within the current element.');
+        if (singleImageVerification) {
+          displayError('Unable to locate an image to verify.');
         }
+      }
     }
   }
   return true;
@@ -81,7 +79,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
     handleSingleImage(clickedEl);
   } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
-    handleSingleVideo(clickedEl)
+    handleSingleVideo(clickedEl);
   }
   return true;
 });

@@ -3,13 +3,11 @@
 import {
   MSG_INJECT_C2PA_INDICATOR,
   MSG_PAGE_LOADED,
-  MSG_SANDBOX_LOADED,
   MSG_VERIFY_SINGLE_IMAGE,
   MSG_GET_HTML_COMPONENT,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
   MSG_VERIFY_SINGLE_VIDEO,
-  EVENT_TYPE_C2PA_MANIFEST,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -49,9 +47,9 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: 'Verify Content Credentials',
     contexts: ['all'],
   });
-  console.log('Checking for offscreen availability');
+  debug('Checking for offscreen availability');
   if (chrome.offscreen !== undefined) {
-    console.log('offscreen is available');
+    debug('offscreen is available');
     if (await chrome.offscreen.hasDocument()) {
       return;
     }
@@ -62,6 +60,7 @@ chrome.runtime.onInstalled.addListener(async () => {
         justification: 'Private DOM access to parse HTML',
       })
       .catch((error) => {
+        // eslint-disable-next-line
         console.error('Failed to create offscreen document', error);
       });
   }
@@ -75,13 +74,12 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
       }
-    } else if (info?.mediaType === 'video'){
-      console.log(info.srcUrl)
+    } else if (info?.mediaType === 'video') {
+      debug(info.srcUrl);
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_VIDEO, srcUrl: info.srcUrl });
       }
-    } 
-    else if (tabs.length > 0) {
+    } else if (tabs.length > 0) {
       chrome.tabs.sendMessage(tabs[0].id, { type: MSG_GET_HTML_COMPONENT });
     }
   }
@@ -118,12 +116,12 @@ chrome.runtime.onMessage.addListener(async (message) => {
 
 const init = async () => {
   if (chrome.offscreen !== undefined) {
-    console.log('offscreen is defined');
+    debug('offscreen is defined');
     if (await chrome.offscreen.hasDocument()) {
-      console.log('it already has a document, returning...');
+      debug('it already has a document, returning...');
       return;
     }
-    console.log('creating offscreen');
+    debug('creating offscreen');
     await chrome.offscreen
       .createDocument({
         url: 'offscreen.html',
@@ -131,6 +129,7 @@ const init = async () => {
         justification: 'Private DOM access to parse HTML',
       })
       .catch((error) => {
+        // eslint-disable-next-line
         console.error('Failed to create offscreen document', error);
       });
   }
