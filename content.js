@@ -2,7 +2,6 @@
 // eslint-disable-next-line
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
-  EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
   MSG_GET_HTML_COMPONENT,
@@ -13,7 +12,6 @@ import {
 } from './config.js';
 import {
   addC2PAIndicatorOnImgComponents,
-  addIconForImage,
   findLargestImage,
   getMatchingParent,
   handleSingleImage,
