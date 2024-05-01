@@ -2,7 +2,6 @@
 // eslint-disable-next-line
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
-  EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
   MSG_GET_HTML_COMPONENT,
@@ -10,60 +9,23 @@ import {
   MSG_PAGE_LOADED,
   MSG_REVERT_C2PA_INDICATOR,
   MSG_VERIFY_SINGLE_IMAGE,
+  MSG_VERIFY_SINGLE_VIDEO,
 } from './config.js';
 import {
   addC2PAIndicatorOnImgComponents,
-  addIconForImage,
-  findLargestImage,
-  getMatchingParent,
+  addC2PAIndicatorOnVideoComponents,
   handleSingleImage,
+  handleSingleVideo,
   removeC2PAIndicatorOnImgComponents,
+  removeC2PAIndicatorOnVideoComponents,
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 import { displayError } from './lib/errorUtils.js';
+import { findNearestMedia } from './lib/videoUtils.js';
 
 // Variable to hold the right-clicked element
 let clickedEl = null;
 let singleImageVerification = true;
-
-// Register to window events
-window.addEventListener('message', (event) => {
-  if (event.data.type === EVENT_TYPE_C2PA_MANIFEST_RESPONSE) {
-    // Validation indicator L1 rules
-    if (event.data.manifest) {
-      // add the components linked to this image
-      const image = document.getElementById(event.data.imageId);
-      addIconForImage(image, event.data.imageId);
-
-      // Configure the manifest summary
-      const manifestSummary = document.getElementById(
-        `manifest-${event.data.imageId}`,
-      );
-      manifestSummary.manifestStore = event.data.manifest;
-      manifestSummary.viewMoreUrl = event.data.viewMoreUrl;
-
-      const caiIndicator = document.getElementById(
-        `indicator-${event.data.imageId}`,
-      );
-
-      if (!event.data.manifest.error) {
-        // ok
-        caiIndicator.variant = 'info-light';
-      } else if (event.data.manifest.error) {
-        // invalid
-        caiIndicator.variant = 'error';
-      }
-
-      // Get the image source to configure the Thumbnail,
-      // as this cannot be done in the sandbox
-      manifestSummary.manifestStore.thumbnail = image.src;
-      caiIndicator.classList.add('manifest-loaded');
-      image.classList.add('manifest-loaded');
-    } else if (singleImageVerification) {
-      displayError('No Content Credentials found for this image.');
-    }
-  }
-});
 
 // Listen for right clicks and save the clicked element
 document.addEventListener('contextmenu', (event) => {
@@ -73,20 +35,25 @@ document.addEventListener('contextmenu', (event) => {
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type === MSG_GET_HTML_COMPONENT) {
-    const currentElement = getMatchingParent(clickedEl);
-
-    const largestImage = findLargestImage(currentElement);
-
-    if (largestImage) {
-      debug(`Found the largest image: ${largestImage.src}`);
-      handleSingleImage(largestImage);
+    const nearestMedia = findNearestMedia(clickedEl);
+    if (!nearestMedia) {
+      displayError('Unable to locate a media to verify.');
+    }
+    if (nearestMedia.type === 'video') {
+      debug('Video found', nearestMedia.element);
+      handleSingleVideo(nearestMedia.element, singleImageVerification);
+    } else if (nearestMedia.type === 'img') {
+      debug('Img found', nearestMedia.element);
+      handleSingleImage(nearestMedia.element, singleImageVerification);
     } else {
-      debug('No images found within the current element.');
+      debug('No media found within the current element.');
       if (singleImageVerification) {
-        displayError('Unable to locate an image to verify.');
+        displayError('Unable to locate a media to verify.');
       }
     }
+    return true;
   }
+  return true;
 });
 
 // Register to events coming from the background script
@@ -95,18 +62,21 @@ chrome.runtime.onMessage.addListener(async (message) => {
     // Request from background to inject the C2PA indicator
     // Get all image elements on the page.
     addC2PAIndicatorOnImgComponents();
+    addC2PAIndicatorOnVideoComponents();
     chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
     singleImageVerification = false;
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
+    removeC2PAIndicatorOnVideoComponents();
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
     singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
-    handleSingleImage(clickedEl);
+    handleSingleImage(clickedEl, singleImageVerification);
+  } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
+    handleSingleVideo(clickedEl, singleImageVerification);
   }
-
-  return true; // Indicates async sendResponse behavior
+  return true;
 });
 
 export async function main() {

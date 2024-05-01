@@ -3,11 +3,11 @@
 import {
   MSG_INJECT_C2PA_INDICATOR,
   MSG_PAGE_LOADED,
-  MSG_SANDBOX_LOADED,
   MSG_VERIFY_SINGLE_IMAGE,
   MSG_GET_HTML_COMPONENT,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
+  MSG_VERIFY_SINGLE_VIDEO,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -49,6 +49,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   });
 });
 
+// Call the function to send message
 chrome.contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId === 'verifyImage') {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -56,44 +57,57 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
       }
+    } else if (info?.mediaType === 'video') {
+      debug(info.srcUrl);
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_VIDEO, srcUrl: info.srcUrl });
+      }
     } else if (tabs.length > 0) {
       chrome.tabs.sendMessage(tabs[0].id, { type: MSG_GET_HTML_COMPONENT });
     }
   }
 });
 
+const triggerInjectC2PAIndicator = async () => {
+  chrome.storage.local.get({ activated: false }, async (result) => {
+    if (result.activated) {
+      debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
+      }
+    }
+  });
+};
+
 // Register to messages coming from the main page
 chrome.runtime.onMessage.addListener(async (message) => {
   debug(`[background] Receiving ${message.type}`);
 
   if (message.type === MSG_PAGE_LOADED) {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length === 0) {
-        return;
-      }
-      const currentTabId = tabs[0].id;
-
-      chrome.scripting.executeScript({
-        target: { tabId: currentTabId },
-        files: ['inject.js'],
-      });
-    });
-  } else if (message.type === MSG_SANDBOX_LOADED) {
-    // The sandbox iframe has been loaded and ready to receive messages
-    chrome.storage.local.get({ activated: false }, async (result) => {
-      if (result.activated) {
-        debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tabs.length > 0) {
-          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
-        }
-      }
-    });
+    triggerInjectC2PAIndicator();
   } else if (message.type === MSG_DISABLE_RIGHT_CLICK) {
     disableMenuItem('verifyImage');
   } else if (message.type === MSG_ENABLE_RIGHT_CLICK) {
     enableMenuItem('verifyImage');
   }
-
-  return true;
 });
+
+const init = async () => {
+  if (await chrome.offscreen.hasDocument()) {
+    return;
+  }
+  debug('Creating offscreen...');
+  await chrome.offscreen
+    .createDocument({
+      url: 'offscreen.html',
+      reasons: [chrome.offscreen.Reason.DOM_PARSER],
+      justification: 'Private DOM access to parse HTML',
+    })
+    .catch((error) => {
+      // eslint-disable-next-line
+        console.error('Failed to create offscreen document', error);
+    });
+};
+
+init();
