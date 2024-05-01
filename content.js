@@ -40,7 +40,7 @@ chrome.runtime.onMessage.addListener((request) => {
     const nearestVideo = findNearestVideo(clickedEl);
     if (nearestVideo) {
       debug('Video found:', nearestVideo);
-      handleSingleVideo(nearestVideo);
+      handleSingleVideo(nearestVideo, singleImageVerification);
     } else {
       debug('No video found nearby.');
       const currentElement = getMatchingParent(clickedEl);

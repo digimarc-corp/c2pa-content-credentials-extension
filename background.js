@@ -100,8 +100,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
 const init = async () => {
     if (await chrome.offscreen.hasDocument()) {
       return;
-    }
-    debug('Creating offscreen...', error);
+    };
+    debug('Creating offscreen...');
     await chrome.offscreen
       .createDocument({
         url: 'offscreen.html',
@@ -112,7 +112,6 @@ const init = async () => {
         // eslint-disable-next-line
         console.error('Failed to create offscreen document', error);
       });
-  }
-};
+  };
 
 init();
