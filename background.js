@@ -69,10 +69,6 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 });
 
 const triggerInjectC2PAIndicator = async () => {
-  if (await chrome.offscreen.hasDocument()) {
-    setTimeout(triggerInjectC2PAIndicator, 1000);
-    return;
-  }
   chrome.storage.local.get({ activated: false }, async (result) => {
     if (result.activated) {
       debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
