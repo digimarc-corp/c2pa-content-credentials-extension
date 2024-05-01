@@ -83,6 +83,7 @@ const handleC2PAManifestMessage = async (event) => {
   }
 };
 
+// eslint-disable-next-line
 chrome.runtime.onMessage.addListener((event, sender, sendResponse) => {
   if (event.type === EVENT_TYPE_C2PA_MANIFEST) {
     handleC2PAManifestMessage(event).then((result) => { sendResponse(result); });

@@ -7,6 +7,7 @@ import {
   MSG_GET_HTML_COMPONENT,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
+  MSG_VERIFY_SINGLE_VIDEO,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -56,6 +57,11 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
       }
+    } else if (info?.mediaType === 'video') {
+      debug(info.srcUrl);
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_VIDEO, srcUrl: info.srcUrl });
+      }
     } else if (tabs.length > 0) {
       chrome.tabs.sendMessage(tabs[0].id, { type: MSG_GET_HTML_COMPONENT });
     }
@@ -92,7 +98,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
 });
 
 const init = async () => {
-  if (chrome.offscreen !== undefined) {
     if (await chrome.offscreen.hasDocument()) {
       return;
     }
@@ -104,7 +109,8 @@ const init = async () => {
         justification: 'Private DOM access to parse HTML',
       })
       .catch((error) => {
-        debug('Failed to create offscreen document', error);
+        // eslint-disable-next-line
+        console.error('Failed to create offscreen document', error);
       });
   }
 };
