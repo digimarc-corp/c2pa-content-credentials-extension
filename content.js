@@ -36,7 +36,7 @@ document.addEventListener('contextmenu', (event) => {
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type === MSG_GET_HTML_COMPONENT) {
     const nearestMedia = findNearestMedia(clickedEl);
-    if(!nearestMedia){
+    if (!nearestMedia) {
       displayError('Unable to locate a media to verify.');
     }
     if (nearestMedia.type === 'video') {
