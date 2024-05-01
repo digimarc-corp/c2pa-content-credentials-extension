@@ -30,45 +30,6 @@ import { findNearestVideo } from './lib/videoUtils.js';
 let clickedEl = null;
 let singleImageVerification = true;
 
-// Register to window events
-window.addEventListener('message', (event) => {
-  if (event.data.type === EVENT_TYPE_C2PA_MANIFEST_RESPONSE) {
-    // Validation indicator L1 rules
-    if (event.data.manifest) {
-      // add the components linked to this image
-      const image = document.getElementById(event.data.imageId);
-      addIconForImage(image, event.data.imageId);
-
-      // Configure the manifest summary
-      const manifestSummary = document.getElementById(
-        `manifest-${event.data.imageId}`,
-      );
-      manifestSummary.manifestStore = event.data.manifest;
-      manifestSummary.viewMoreUrl = event.data.viewMoreUrl;
-
-      const caiIndicator = document.getElementById(
-        `indicator-${event.data.imageId}`,
-      );
-
-      if (!event.data.manifest.error) {
-        // ok
-        caiIndicator.variant = 'info-light';
-      } else if (event.data.manifest.error) {
-        // invalid
-        caiIndicator.variant = 'error';
-      }
-
-      // Get the image source to configure the Thumbnail,
-      // as this cannot be done in the sandbox
-      manifestSummary.manifestStore.thumbnail = image.src;
-      caiIndicator.classList.add('manifest-loaded');
-      image.classList.add('manifest-loaded');
-    } else if (singleImageVerification) {
-      displayError('No Content Credentials found for this image.');
-    }
-  }
-});
-
 // Listen for right clicks and save the clicked element
 document.addEventListener('contextmenu', (event) => {
   clickedEl = event.target;
@@ -98,6 +59,7 @@ chrome.runtime.onMessage.addListener((request) => {
         }
     }
   }
+  return true;
 });
 
 // Register to events coming from the background script
@@ -119,8 +81,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
   } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
     handleSingleVideo(clickedEl)
   }
-
-  return true; // Indicates async sendResponse behavior
+  return true;
 });
 
 export async function main() {
