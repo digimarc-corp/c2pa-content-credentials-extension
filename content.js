@@ -21,6 +21,7 @@ import {
   handleSingleImage,
   handleSingleVideo,
   removeC2PAIndicatorOnImgComponents,
+  removeC2PAIndicatorOnVideoComponents,
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 import { displayError } from './lib/errorUtils.js';
@@ -74,6 +75,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
     removeC2PAIndicatorOnImgComponents();
+    removeC2PAIndicatorOnVideoComponents();
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
     singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
