@@ -9,7 +9,7 @@ fi
 mkdir -p ./build
 
 
-cp content.css sandbox.js sandbox.html background.html background.js config.js content.js contentScript.js inject.js popup.js popup.html manifest.json ./build/
+cp content.css offscreen.js offscreen.html background.html background.js config.js content.js contentScript.js popup.js popup.html manifest.json ./build/
 
 mkdir -p ./build/c2pa/packages/c2pa
 mkdir -p ./build/c2pa/packages/c2pa-wc
