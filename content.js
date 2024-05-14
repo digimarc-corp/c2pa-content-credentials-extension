@@ -30,6 +30,7 @@ let singleImageVerification = true;
 // Listen for right clicks and save the clicked element
 document.addEventListener('contextmenu', (event) => {
   clickedEl = event.target;
+  console.log(event.target)
 }, true);
 
 // Listen for messages from the background script
