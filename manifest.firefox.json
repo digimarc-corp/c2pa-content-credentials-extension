@@ -1,0 +1,59 @@
+{
+    "manifest_version": 3,
+    "name": "C2PA Content Credentials",
+    "version": "0.0.4",
+    "description": "Verify and display manifests for images embedding C2PA Content Credentials.",
+    "icons": {
+        "16": "images/icons/icon.png",
+        "32": "images/icons/icon.png",
+        "48": "images/icons/icon.png",
+        "128": "images/icons/icon.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
+                "contentScript.js"
+            ],
+            "css": [
+                "content.css"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "type": "module"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage",
+        "scripting",
+        "contextMenus"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "offscreen.html",
+                "*.js",
+                "c2pa/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
