@@ -67,14 +67,6 @@ You can also check out the code and install the extension locally
 10. Try it out! (see Usage)
 
 
-## Architecture
-
-This C2PA validator is built as a Chrome browser extension. When enabled, it will inject a script into the current webpage, that will create a hidden sandboxed iframe to handle the C2PA validation. This script will then look for all the images visible in the webpage and communicate with the sandbox to check if they contain a C2PA manifest. If they do, it will display the CR pin on top of the image. When the user hovers over the pin, it will display a popup window with the C2PA manifest information.
-
-The sandboxed iframe is used to ensure that the C2PA validation libraries [c2pa-js](https://opensource.contentauthenticity.org/docs/js-sdk/getting-started/overview/) can be accessed in a secure environment. The communication is carried out by sending window messages between the main script and the sandboxed iframe. The main script will send a message to the sandboxed iframe with the image information, and the sandboxed iframe will send back a message with the C2PA manifest information if available.
-
-![Architecture](docs/C2PABrowserExtensionArchitecture.png)
-
 ## Known limitations
 
 ### Restricted to JPEG images and MP4 videos
