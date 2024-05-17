@@ -2,11 +2,11 @@
 
 In a world where misinformation or AI generated content can spread rapidly, establishing trust and authenticity in digital media has never been more critical. The Coalition for Content Provenance and Authenticity [C2PA](https://c2pa.org/) is a cross-industry standards development organization addressing the prevalence of misleading information online. This timely issue is tackled through the development of open technical standards for certifying the source and history (or provenance) of media content referred to as [Content Credentials](https://contentcredentials.org/).
 
-This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPG images that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which image should and shouldn’t be trusted. 
+This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG images and MPEG videos that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which image should and shouldn’t be trusted. 
 
 This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here. 
 
-*Warning:* This is an early release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues). 
+*Warning:* This is an early and experimental release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues). 
 
 ![Animation of extension](docs/c2pa-extension-digimarc.gif)
 
@@ -32,10 +32,10 @@ Once the extension is installed, you have 2 ways of verifying and displaying Con
 
 #### Manual mode
 
-In this mode you need to actively seek verification. Right click on an image and select `Verify Content Credentials`. If a C2PA manifest is available the pin icon will appear. Hovering the mouse on the pin will display the provenance information.
+In this default mode you need to actively seek verification. Right click on an image and select `Verify Content Credentials`. If a C2PA manifest is available the pin icon will appear. Hovering the mouse on the pin will display the provenance information.
 
 #### Automatic mode
-In this mode all images are automatically scanned for C2PA manifest in the background. To activate this mode click on the plugin icon on the top right, it will display a popup window.
+In this experimental mode all images are automatically scanned for C2PA manifest in the background. To activate this mode click on the plugin icon on the top right, it will display a popup window.
 
 Switch the toggle `Automatically validate C2PA manifests` to `ON`.
 
@@ -48,7 +48,6 @@ Test the extension on the 2 images below. One of the photo was taken last year a
 ![Test image 1](https://raw.githubusercontent.com/digimarc-corp/c2pa-content-credentials-extension/main/docs/genai-picture-validate-protected.jpg)
 
 ![Test image 2](https://raw.githubusercontent.com/digimarc-corp/c2pa-content-credentials-extension/main/docs/photo-rddm-validate-protected.jpg)
-
 
 ## Building the extension from the source
 
@@ -66,19 +65,11 @@ You can also check out the code and install the extension locally
 10. Try it out! (see Usage)
 
 
-## Architecture
-
-This C2PA validator is built as a Chrome browser extension. When enabled, it will inject a script into the current webpage, that will create a hidden sandboxed iframe to handle the C2PA validation. This script will then look for all the images visible in the webpage and communicate with the sandbox to check if they contain a C2PA manifest. If they do, it will display the CR pin on top of the image. When the user hovers over the pin, it will display a popup window with the C2PA manifest information.
-
-The sandboxed iframe is used to ensure that the C2PA validation libraries [c2pa-js](https://opensource.contentauthenticity.org/docs/js-sdk/getting-started/overview/) can be accessed in a secure environment. The communication is carried out by sending window messages between the main script and the sandboxed iframe. The main script will send a message to the sandboxed iframe with the image information, and the sandboxed iframe will send back a message with the C2PA manifest information if available.
-
-![Architecture](docs/C2PABrowserExtensionArchitecture.png)
-
 ## Known limitations
 
-### Restricted to JPEG images
+### Restricted to JPEG images and MP4 videos
 
-The current version of the extension only supports JPG / JPEG images. We are working on adding support for more image types.
+The current version of the extension only supports JPG / JPEG images and MPEG (MP4) videos. We are working on adding support for more image and video types.
 
 ### Need to override existing C2PA components
 
