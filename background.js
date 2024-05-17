@@ -106,7 +106,7 @@ const init = async () => {
     })
     .catch((error) => {
       // eslint-disable-next-line
-        console.error('Failed to create offscreen document', error);
+      console.error('Failed to create offscreen document', error);
     });
 };
 
