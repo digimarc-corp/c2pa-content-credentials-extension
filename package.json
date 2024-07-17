@@ -1,6 +1,6 @@
 {
     "name": "c2pa-content-credentials-extension",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Verify and display manifests for images embedding C2PA Content Credentials.",
     "main": "content.js",
     "type": "module",
