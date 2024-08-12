@@ -3,7 +3,7 @@
 
 import { createC2pa, createL2ManifestStore, generateVerifyUrl } from './c2pa/packages/c2pa/dist/c2pa.esm.js';
 import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE } from './config.js';
-import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
+import { convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 
 let c2pa;
@@ -33,16 +33,7 @@ const validateC2pa = async (image, imageId) => {
   if (!manifestStore) throw new Error('No manifest available');
 
   const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStore);
-  const promises = manifestStore.activeManifest.ingredients.map(async (ingredient) => {
-    const matchingIngredient = l2ManifestStore.ingredients.find(
-      (item) => item.documentId === ingredient.documentId,
-    );
-    if (matchingIngredient) {
-      matchingIngredient.thumbnail = await convertBlobToDataURL(ingredient.thumbnail.blob);
-    }
-  });
 
-  await Promise.all(promises);
   return {
     manifest: l2ManifestStore,
     validationStatus: manifestStore.validationStatus,
@@ -69,6 +60,7 @@ const handleC2PAManifestMessage = async (event) => {
     }
 
     const result = await validateC2pa(image, imageId);
+
     return ({
       type: EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
       manifest: result.manifest,
