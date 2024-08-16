@@ -1,5 +1,9 @@
 # C2PA Content Credentials Browser Extension
 
+This project has been built by the team at Digimarc Labs. [Digimarc](https://www.digimarc.com/products/digital-content-authentication) is a digital watermarking leader committed to building an digital ecosystem of trust protecting content creators and consumers.
+
+To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark Embedding and Detection Tools to Device and Chip Manufacturers and Content Creation Platforms](https://www.digimarc.com/blog/offering-free-digital-watermark-embedding-and-detection-tools-device-and-chip-manufacturers). Contact us if you'd like to learn more about this offer.
+
 In a world where misinformation or AI generated content can spread rapidly, establishing trust and authenticity in digital media has never been more critical. The Coalition for Content Provenance and Authenticity [C2PA](https://c2pa.org/) is a cross-industry standards development organization addressing the prevalence of misleading information online. This timely issue is tackled through the development of open technical standards for certifying the source and history (or provenance) of media content referred to as [Content Credentials](https://contentcredentials.org/).
 
 This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG images and MPEG videos that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which image should and shouldn’t be trusted. 
