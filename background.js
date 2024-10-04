@@ -59,12 +59,10 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
       }
     } else if (info?.mediaType === 'video') {
-      debug(info.srcUrl);
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_VIDEO, srcUrl: info.srcUrl });
       }
     } else if (info?.mediaType === 'audio') {
-      debug(info.srcUrl);
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_AUDIO, srcUrl: info.srcUrl });
       }
