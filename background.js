@@ -8,6 +8,7 @@ import {
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
   MSG_VERIFY_SINGLE_VIDEO,
+  MSG_VERIFY_SINGLE_AUDIO,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -58,10 +59,14 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_IMAGE, srcUrl: info.srcUrl });
       }
     } else if (info?.mediaType === 'video') {
-      debug(info.srcUrl);
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_VIDEO, srcUrl: info.srcUrl });
       }
+    } else if (info?.mediaType === 'audio') {
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_AUDIO, srcUrl: info.srcUrl });
+      }
+
     } else if (tabs.length > 0) {
       chrome.tabs.sendMessage(tabs[0].id, { type: MSG_GET_HTML_COMPONENT });
     }
