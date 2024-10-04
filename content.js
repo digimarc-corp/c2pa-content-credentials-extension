@@ -10,14 +10,14 @@ import {
   MSG_REVERT_C2PA_INDICATOR,
   MSG_VERIFY_SINGLE_IMAGE,
   MSG_VERIFY_SINGLE_VIDEO,
+  MSG_VERIFY_SINGLE_AUDIO
 } from './config.js';
 import {
-  addC2PAIndicatorOnImgComponents,
-  addC2PAIndicatorOnVideoComponents,
   handleSingleImage,
   handleSingleVideo,
-  removeC2PAIndicatorOnImgComponents,
-  removeC2PAIndicatorOnVideoComponents,
+  handleSingleAudio,
+  addC2PAIndicatorOnAllComponents,
+  removeC2PAIndicatorOnAllComponents,
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
 import { displayError } from './lib/errorUtils.js';
@@ -39,6 +39,10 @@ chrome.runtime.onMessage.addListener((request) => {
     if (!nearestMedia) {
       displayError('Unable to locate a media to verify.');
     }
+    if (nearestMedia.type === 'audio') {
+      debug('Audio found', nearestMedia.element);
+      handleSingleAudio(nearestMedia.element, singleImageVerification);
+    } else
     if (nearestMedia.type === 'video') {
       debug('Video found', nearestMedia.element);
       handleSingleVideo(nearestMedia.element, singleImageVerification);
@@ -61,20 +65,20 @@ chrome.runtime.onMessage.addListener(async (message) => {
   if (message.type === MSG_INJECT_C2PA_INDICATOR) {
     // Request from background to inject the C2PA indicator
     // Get all image elements on the page.
-    addC2PAIndicatorOnImgComponents();
-    addC2PAIndicatorOnVideoComponents();
+    addC2PAIndicatorOnAllComponents();
     chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
     singleImageVerification = false;
   } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
     // Request from background to revert the C2PA indicator
-    removeC2PAIndicatorOnImgComponents();
-    removeC2PAIndicatorOnVideoComponents();
+    removeC2PAIndicatorOnAllComponents();
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
     singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
     handleSingleImage(clickedEl, singleImageVerification);
   } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
     handleSingleVideo(clickedEl, singleImageVerification);
+  } else if (message.type === MSG_VERIFY_SINGLE_AUDIO) {
+    handleSingleAudio(clickedEl, singleImageVerification);
   }
   return true;
 });
