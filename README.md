@@ -71,9 +71,14 @@ You can also check out the code and install the extension locally
 
 ## Known limitations
 
-### Restricted to JPEG images and MP4 videos
+### Restricted to JPEG and PNG images, MP4 videos and MP3 and WAV audio files
 
-The current version of the extension only supports JPG / JPEG images and MPEG (MP4) videos. We are working on adding support for more image and video types.
+The current version of the extension supports:
+- JPG / JPEG and PNG images
+- MPEG (MP4) videos
+- MP3 and WAV audio files
+
+We are working on adding support for more image, video and audio types.
 
 ### Need to override existing C2PA components
 
