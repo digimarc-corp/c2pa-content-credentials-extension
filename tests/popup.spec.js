@@ -26,7 +26,7 @@ test('C2PA icons are correctly added to the DOM', async ({ page, extensionId }) 
   // get all its children
   const children = await iconContainer.$$('*');
   // compare the list of children id to the expected list
-  const expectedChildrenIds = ['icon-c2pa-/wm-c2pa-samples.netlify.app/static/media/genai-picture-validate-protected', 'icon-c2pa-https://wm-c2pa-samples.netlify.app/static/media/genai-picture', 'icon-c2pa-https://wm-c2pa-samples.netlify.app/static/media/swap'];
+  const expectedChildrenIds = ['icon-c2pa-https://wm-c2pa-samples.netlify.app/static/media/video-crowd-protected', 'icon-c2pa-https://wm-c2pa-samples.netlify.app/static/media/video-manifest-swap'];
   const childrenIds = (await Promise.all(children.map((child) => child.getAttribute('id')))).filter((id) => id?.startsWith('icon-c2pa')).sort();
   // remove the part after the last 2 '.' in the id for each element of the list
   childrenIds.forEach((id, index) => {
@@ -82,10 +82,12 @@ test('Manifests are correctly displayed on contentcredentials.org', async ({ pag
   const contentChildren = await contentSummary.$$('span');
   const contentChildrenText = (await Promise.all(contentChildren
     .map((child) => child.textContent())));
-  expect(contentChildrenText[0]).toContain('This content was generated with an AI tool.');
+  expect(contentChildrenText[0]).toContain('This image combines multiple pieces of content. At least one was generated with an AI tool.');
 
-  const sectionAssetsUsed = await iconElement.$('.section-assets-used-dm-plugin');
-  const sectionAssetsUsedChildren = await sectionAssetsUsed.$$('cai-thumbnail-dm-plugin');
-  // expect that sectionAssetsUsed has 46 thumbnails
-  expect(sectionAssetsUsedChildren.length).toBe(46);
+
+  // this section does not exists anymore! 
+  // const sectionAssetsUsed = await iconElement.$('.section-assets-used-dm-plugin');
+  // const sectionAssetsUsedChildren = await sectionAssetsUsed.$$('cai-thumbnail-dm-plugin');
+  // // expect that sectionAssetsUsed has 46 thumbnails
+  // expect(sectionAssetsUsedChildren.length).toBe(46);
 });
