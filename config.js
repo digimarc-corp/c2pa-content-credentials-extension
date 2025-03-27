@@ -23,6 +23,14 @@ export const MSG_VERIFY_SINGLE_AUDIO = 'verify-single-audio';
 export const MSG_GET_HTML_COMPONENT = 'get-html-component';
 export const MSG_DISABLE_RIGHT_CLICK = 'disable-right-click';
 export const MSG_ENABLE_RIGHT_CLICK = 'enable-right-click';
+export const MSG_DISABLE_LOOK_FOR_WATERMARK = 'disable-look-for-watermark';
+export const MSG_ENABLE_LOOK_FOR_WATERMARK = 'enable-look-for-watermark';
 
 export const EVENT_TYPE_C2PA_MANIFEST = 'c2pa-manifest';
 export const EVENT_TYPE_C2PA_MANIFEST_RESPONSE = 'c2pa-manifest-response';
+
+export const WHITELISTED_WM_AUTO_URLS = [
+  'non-existing-url',
+];
+
+export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';

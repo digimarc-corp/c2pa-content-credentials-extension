@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 
 <head>
@@ -22,12 +21,12 @@
       width: 100%;
     }
 
-    #toggle-container span {
+    .toggle-container span {
       font-size: 16px;
       margin-left: 10px;
     }
 
-    #toggle-container label {
+    .toggle-container label {
       margin-right: 10px;
     }
 
@@ -36,13 +35,16 @@
       width: 100%
     }
 
-    #toggle-container {
+    .toggle-container {
       width: 100%;
-      height: 60px;
+      height: 40px;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .boxShadow {
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
     }
 
@@ -63,7 +65,7 @@
       margin-right: 10px;
     }
 
-    #toggle {
+    .toggle {
       appearance: none;
       width: 40px;
       height: 15px;
@@ -76,7 +78,7 @@
       border: 1px solid #D1D1D1;
     }
 
-    #toggle:before {
+    .toggle:before {
       content: '';
       position: absolute;
       top: -5px;
@@ -89,23 +91,23 @@
       transform: translateX(0);
     }
 
-    #toggle:checked:before {
+    .toggle:checked:before {
       transform: translateX(20px);
       /* Adjusted for the increased width and smaller circle size */
       background-color: #0E686C;
     }
 
-    #toggle:checked {
+    .toggle:checked {
       background-color: #D3E6E7;
       /* This can be a lighter shade when the toggle is ON for added effect */
     }
 
     /* Add hover effect for better user interaction */
-    #toggle:hover {
+    .toggle:hover {
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
 
-    #toggle:hover:before {
+    .toggle:hover:before {
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
 
@@ -209,12 +211,21 @@
         </div>
       </div>
     </div>
-  <div id="toggle-container">
+  <div class="toggle-container">
     <span>Automatically validate C2PA manifests</span>
-    <label id="toggle-label">
-      <input type="checkbox" id="toggle" />
-      <div id="toggle-background">
-        <div id="toggle-knob"></div>
+    <label class="toggle-label">
+      <input type="checkbox" class="toggle" id="toggle"/>
+      <div class="toggle-background">
+        <div class="toggle-knob"></div>
+      </div>
+    </label>
+  </div>  
+  <div class="toggle-container boxShadow">
+    <span>Look for watermarks</span>
+    <label class="toggle-label">
+      <input type="checkbox" class="toggle" id="toggle-wm"/>
+      <div class="toggle-background">
+        <div class="toggle-knob"></div>
       </div>
     </label>
   </div>

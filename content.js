@@ -2,7 +2,9 @@
 // eslint-disable-next-line
 import * as c2paWC from './c2pa/packages/c2pa-wc/dist/index.js';
 import {
+  MSG_DISABLE_LOOK_FOR_WATERMARK,
   MSG_DISABLE_RIGHT_CLICK,
+  MSG_ENABLE_LOOK_FOR_WATERMARK,
   MSG_ENABLE_RIGHT_CLICK,
   MSG_GET_HTML_COMPONENT,
   MSG_INJECT_C2PA_INDICATOR,
@@ -10,13 +12,13 @@ import {
   MSG_REVERT_C2PA_INDICATOR,
   MSG_VERIFY_SINGLE_IMAGE,
   MSG_VERIFY_SINGLE_VIDEO,
-  MSG_VERIFY_SINGLE_AUDIO
+  MSG_VERIFY_SINGLE_AUDIO,
 } from './config.js';
 import {
+  addC2PAIndicatorOnAllComponents,
+  handleSingleAudio,
   handleSingleImage,
   handleSingleVideo,
-  handleSingleAudio,
-  addC2PAIndicatorOnAllComponents,
   removeC2PAIndicatorOnAllComponents,
 } from './lib/imageUtils.js';
 import debug from './lib/log.js';
@@ -26,6 +28,7 @@ import { findNearestMedia } from './lib/videoUtils.js';
 // Variable to hold the right-clicked element
 let clickedEl = null;
 let singleImageVerification = true;
+let lookForWatermark = false;
 
 // Listen for right clicks and save the clicked element
 document.addEventListener('contextmenu', (event) => {
@@ -41,14 +44,13 @@ chrome.runtime.onMessage.addListener((request) => {
     }
     if (nearestMedia.type === 'audio') {
       debug('Audio found', nearestMedia.element);
-      handleSingleAudio(nearestMedia.element, singleImageVerification);
-    } else
-    if (nearestMedia.type === 'video') {
+      handleSingleAudio(nearestMedia.element, singleImageVerification, lookForWatermark);
+    } else if (nearestMedia.type === 'video') {
       debug('Video found', nearestMedia.element);
-      handleSingleVideo(nearestMedia.element, singleImageVerification);
+      handleSingleVideo(nearestMedia.element, singleImageVerification, lookForWatermark);
     } else if (nearestMedia.type === 'img') {
       debug('Img found', nearestMedia.element);
-      handleSingleImage(nearestMedia.element, singleImageVerification);
+      handleSingleImage(nearestMedia.element, singleImageVerification, lookForWatermark);
     } else {
       debug('No media found within the current element.');
       if (singleImageVerification) {
@@ -64,7 +66,6 @@ chrome.runtime.onMessage.addListener((request) => {
 chrome.runtime.onMessage.addListener(async (message) => {
   if (message.type === MSG_INJECT_C2PA_INDICATOR) {
     // Request from background to inject the C2PA indicator
-    // Get all image elements on the page.
     addC2PAIndicatorOnAllComponents();
     chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
     singleImageVerification = false;
@@ -74,11 +75,15 @@ chrome.runtime.onMessage.addListener(async (message) => {
     chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
     singleImageVerification = true;
   } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
-    handleSingleImage(clickedEl, singleImageVerification);
+    handleSingleImage(clickedEl, singleImageVerification, lookForWatermark);
   } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
-    handleSingleVideo(clickedEl, singleImageVerification);
+    handleSingleVideo(clickedEl, singleImageVerification, lookForWatermark);
   } else if (message.type === MSG_VERIFY_SINGLE_AUDIO) {
-    handleSingleAudio(clickedEl, singleImageVerification);
+    handleSingleAudio(clickedEl, singleImageVerification, lookForWatermark);
+  } else if (message.type === MSG_DISABLE_LOOK_FOR_WATERMARK) {
+    lookForWatermark = false;
+  } else if (message.type === MSG_ENABLE_LOOK_FOR_WATERMARK) {
+    lookForWatermark = true;
   }
   return true;
 });

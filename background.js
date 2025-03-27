@@ -1,14 +1,17 @@
 /* eslint-disable no-undef */
 
 import {
-  MSG_INJECT_C2PA_INDICATOR,
   MSG_PAGE_LOADED,
   MSG_VERIFY_SINGLE_IMAGE,
+  MSG_VERIFY_SINGLE_VIDEO,
+  MSG_VERIFY_SINGLE_AUDIO,
   MSG_GET_HTML_COMPONENT,
   MSG_DISABLE_RIGHT_CLICK,
   MSG_ENABLE_RIGHT_CLICK,
-  MSG_VERIFY_SINGLE_VIDEO,
-  MSG_VERIFY_SINGLE_AUDIO,
+  MSG_INJECT_C2PA_INDICATOR,
+  MSG_DISABLE_LOOK_FOR_WATERMARK,
+  MSG_ENABLE_LOOK_FOR_WATERMARK,
+  WHITELISTED_WM_AUTO_URLS,
 } from './config.js';
 import debug from './lib/log.js';
 
@@ -66,7 +69,6 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: MSG_VERIFY_SINGLE_AUDIO, srcUrl: info.srcUrl });
       }
-
     } else if (tabs.length > 0) {
       chrome.tabs.sendMessage(tabs[0].id, { type: MSG_GET_HTML_COMPONENT });
     }
@@ -74,28 +76,60 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 });
 
 const triggerInjectC2PAIndicator = async () => {
-  chrome.storage.local.get({ activated: false }, async (result) => {
-    if (result.activated) {
-      debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
+  try {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.storage.local.get({ activated: false, lookForWatermark: false }, async (result) => {
+      const tabUrl = tabs[0]?.url;
+
+      if (result.activated) {
+        debug(`[background] Sending ${MSG_INJECT_C2PA_INDICATOR} to the active tab`);
+        if (tabs.length > 0) {
+          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
+        }
       }
-    }
-  });
+
+      if (WHITELISTED_WM_AUTO_URLS.some((whitelistedUrl) => tabUrl.startsWith(whitelistedUrl))) {
+        debug('[background] Whitelisted URL');
+        if (tabs.length > 0) {
+          if (!result.activated) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: MSG_INJECT_C2PA_INDICATOR });
+          }
+          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
+        }
+      } else if (result.lookForWatermark) {
+        debug('[background] Watermark search is enabled');
+        if (tabs.length > 0) {
+          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
+        }
+      } else {
+        debug('[background] Watermark search is disabled');
+        if (tabs.length > 0) {
+          chrome.tabs.sendMessage(tabs[0].id, { type: MSG_DISABLE_LOOK_FOR_WATERMARK });
+        }
+      }
+    });
+  } catch (error) {
+    debug(`Error: ${error.message}`);
+  }
 };
 
+
 // Register to messages coming from the main page
-chrome.runtime.onMessage.addListener(async (message) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   debug(`[background] Receiving ${message.type}`);
 
   if (message.type === MSG_PAGE_LOADED) {
-    triggerInjectC2PAIndicator();
+    await triggerInjectC2PAIndicator();
+    sendResponse({ success: true });
   } else if (message.type === MSG_DISABLE_RIGHT_CLICK) {
     disableMenuItem('verifyImage');
+    sendResponse({ success: true });
   } else if (message.type === MSG_ENABLE_RIGHT_CLICK) {
     enableMenuItem('verifyImage');
+    sendResponse({ success: true });
   }
+
+  return true; // This tells Chrome you will send a response asynchronously
 });
 
 const init = async () => {
