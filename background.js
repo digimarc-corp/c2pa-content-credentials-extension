@@ -40,10 +40,10 @@ chrome.runtime.onInstalled.addListener(async () => {
   chrome.storage.local.get({ activated: false }, (result) => {
     if (result.activated) {
       debug('[background] Extension is installed and enabled, displaying ON icon');
-      chrome.action.setIcon({ path: './images/icons/icon-on.png' });
+      chrome.action.setIcon({ path: 'assets/icons/icon-on.png' });
     } else {
       debug('[background] Extension is installed but not enabled, displaying OFF icon');
-      chrome.action.setIcon({ path: './images/icons/icon-off.png' });
+      chrome.action.setIcon({ path: 'assets/icons/icon-off.png' });
     }
   });
   chrome.contextMenus.create({

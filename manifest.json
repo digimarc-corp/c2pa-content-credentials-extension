@@ -1,13 +1,12 @@
 {
     "manifest_version": 3,
     "name": "C2PA Content Credentials",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "description": "Verify and display manifests for images, audio and videos embedding C2PA Content Credentials.",
     "icons": {
-        "16": "images/icons/icon.png",
-        "32": "images/icons/icon.png",
-        "48": "images/icons/icon.png",
-        "128": "images/icons/icon.png"
+        "16": "assets/icons/icon-16.png",
+        "48": "assets/icons/icon-48.png",        
+        "128": "assets/icons/icon-128.png"
     },
     "content_scripts": [
         {
@@ -29,7 +28,11 @@
     },
     "action": {
         "default_popup": "popup.html",
-        "default_icon": "images/icons/icon.png"
+        "default_icon": {
+            "16": "assets/icons/icon-16.png",
+            "48": "assets/icons/icon-48.png",
+            "128": "assets/icons/icon-128.png"
+          }
     },
     "permissions": [
         "offscreen",
@@ -49,6 +52,7 @@
         {
             "resources": [
                 "offscreen.html",
+                "assets/icons/*",
                 "*.js",
                 "c2pa/*"
             ],
