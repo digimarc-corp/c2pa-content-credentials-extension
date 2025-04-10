@@ -34,3 +34,4 @@ export const WHITELISTED_WM_AUTO_URLS = [
 ];
 
 export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
+export const API_SBR_DIGIMARC_TOKEN = '';
