@@ -40,14 +40,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const disableAutomaticToggle = () => {
     automaticToggle.checked = false;
     chrome.storage.local.set({ activated: false });
+    
     // Set the OFF icon
-    chrome.action.setIcon({ path: 'assets/icons/icon-off.png' });
+    const path = chrome.runtime.getURL('assets/icons/icon-off.png');
+    chrome.action.setIcon({ path });
+    
     chrome.tabs.sendMessage(tab.id, { type: MSG_REVERT_C2PA_INDICATOR });
   };
 
   const enableAutomaticToggle = () => {
     // Set the ON icon
-    chrome.action.setIcon({ path: 'assets/icons/icon-on.png' });
+    const path = chrome.runtime.getURL('assets/icons/icon-on.png');
+    chrome.action.setIcon({ path });
+
     disableWatermarkToggle();
     chrome.tabs.sendMessage(tab.id, { type: MSG_INJECT_C2PA_INDICATOR });
   };

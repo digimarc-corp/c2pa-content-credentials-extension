@@ -15,15 +15,15 @@
             ],
             "js": [
                 "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
-                "contentScript.js"
+                "content/contentScript.js"
             ],
             "css": [
-                "content.css"
+                "content/content.css"
             ]
         }
     ],
     "background": {
-        "service_worker": "background.js",
+        "service_worker": "background/background.js",
         "type": "module"
     },
     "action": {
@@ -51,9 +51,12 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "offscreen.html",
                 "assets/icons/*",
-                "*.js",
+                "content/*",   
+                "background/*",
+                "lib/*",    
+                "offscreen.html",
+                "config.js",
                 "c2pa/*"
             ],
             "matches": [
