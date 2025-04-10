@@ -182,7 +182,7 @@ const init = async () => {
   Logger.info('Creating offscreen document');
   await chrome.offscreen
     .createDocument({
-      url: 'offscreen.html',
+      url: 'offscreen/offscreen.html',
       reasons: [chrome.offscreen.Reason.DOM_PARSER],
       justification: 'Private DOM access to parse HTML',
     })

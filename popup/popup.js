@@ -3,7 +3,7 @@ import {
   MSG_ENABLE_LOOK_FOR_WATERMARK,
   MSG_INJECT_C2PA_INDICATOR,
   MSG_REVERT_C2PA_INDICATOR,
-} from './config.js';
+} from '../config.js';
 
 /* eslint-disable no-undef */
 document.addEventListener('DOMContentLoaded', async () => {

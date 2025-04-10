@@ -1,11 +1,13 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-undef */
 
-import { createC2pa, createL2ManifestStore, generateVerifyUrl } from './c2pa/packages/c2pa/dist/c2pa.esm.js';
-import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE } from './config.js';
-import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from './lib/imageUtils.js';
-import debug from './lib/log.js';
-import { fetchManifestFromDecoupledAPI } from './lib/manifestUtils.js';
+import { createC2pa, createL2ManifestStore, generateVerifyUrl } from '../c2pa/packages/c2pa/dist/c2pa.esm.js';
+import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE } from '../config.js';
+import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible } from '../lib/imageUtils.js';
+import Logger from '../lib/logger.js';
+import { fetchManifestFromDecoupledAPI } from '../lib/manifestUtils.js';
+
+Logger.setLevel(Logger.LOG_LEVELS.DEBUG); // Set the desired log level
 
 let c2pa;
 let c2paIsLoading = false;
@@ -13,11 +15,13 @@ const manifestMap = {};
 
 async function initializeC2pa() {
   if (!c2paIsLoading) {
+    Logger.info('Initializing C2PA...');
     c2pa = await createC2pa({
-      wasmSrc: './c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
-      workerSrc: './c2pa/packages/c2pa/dist/c2pa.worker.min.js',
+      wasmSrc: '../c2pa/packages/c2pa/dist/assets/wasm/toolkit_bg.wasm',
+      workerSrc: '../c2pa/packages/c2pa/dist/c2pa.worker.min.js',
     });
     c2paIsLoading = true;
+    Logger.info('C2PA initialized successfully');
   }
 }
 
@@ -25,16 +29,22 @@ const validateC2pa = async (image, imageId) => {
   await initializeC2pa();
 
   if (!image) {
-    debug('[offscreen] Image not available');
+    Logger.warn('Image not available for validation', { imageId });
     return;
   }
 
+  Logger.debug('Reading manifest for the image', { imageId });
+
   const { manifestStore } = await c2pa.read(image);
   manifestMap[imageId] = manifestStore;
-  if (!manifestStore) return;
+
+  if (!manifestStore) {
+    Logger.warn('No manifest store found for the image', { imageId });
+    return;
+  }
 
   const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStore);
-  debug('[offscreen] L2ManifestStore:', l2ManifestStore);
+  Logger.info('L2ManifestStore created successfully', { imageId });
 
   return {
     manifest: l2ManifestStore,
@@ -43,41 +53,40 @@ const validateC2pa = async (image, imageId) => {
 };
 
 async function sha256(blob) {
-  // Use the Web Crypto API to calculate SHA-256
   const arrayBuffer = await blob.arrayBuffer();
   const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
-  const hashHex = hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex string
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  Logger.debug('SHA-256 hash calculated', { hash: hashHex });
   return hashHex;
 }
 
 function convertManifest(input) {
+  Logger.debug('Converting manifest to internal format');
   const output = {
     manifests: {},
     activeManifest: null,
   };
 
   Object.entries(input.manifests).forEach(([key, manifest]) => {
-    // Ensure assertions and its data are always properly initialized as arrays
     const assertions = Array.isArray(manifest.assertions) ? manifest.assertions : [];
 
     const newManifest = {
       thumbnail: {
-        blob: new Blob([], { type: 'image/jpeg' }), // Empty blob
+        blob: new Blob([], { type: 'image/jpeg' }),
         contentType: 'image/jpeg',
-        getUrl: () => URL.createObjectURL(new Blob([])), // Create an object URL from an empty blob
-        hash: () => sha256(new Blob([])), // Calculate the SHA-256 hash of the empty blob
+        getUrl: () => URL.createObjectURL(new Blob([])),
+        hash: () => sha256(new Blob([])),
       },
       instanceId: manifest.instance_id,
       format: manifest.format,
-      ingredients: [], // No ingredients taken into account
+      ingredients: [],
       claimGenerator: manifest.claim_generator,
       claimGeneratorHints: null,
       claimGeneratorInfos: [],
       assertions: {
         data: assertions,
-        get(label) { // Use method shorthand syntax
-          // Use filter to ensure an array is returned
+        get(label) {
           return this.data.filter((assertion) => assertion.label === label);
         },
       },
@@ -96,33 +105,33 @@ function convertManifest(input) {
     output.manifests[key] = newManifest;
   });
 
-  // Set the active manifest
   const activeManifestKey = input.active_manifest;
   if (activeManifestKey && output.manifests[activeManifestKey]) {
     output.activeManifest = output.manifests[activeManifestKey];
   }
 
+  Logger.info('Manifest conversion completed');
   return output;
 }
 
 const getManifestFromWatermark = async (file) => {
+  Logger.info('Fetching manifest from watermark');
   const manifestResult = await fetchManifestFromDecoupledAPI(file);
 
   if (!manifestResult.success) {
+    Logger.warn('Failed to fetch manifest from watermark');
     return { success: false };
   }
 
   const manifestStore = convertManifest(manifestResult.manifestData);
 
   if (!manifestStore) {
+    Logger.warn('Failed to convert manifest from watermark');
     return { success: false };
   }
 
-  // Convert the manifestStore to a web component friendly L2 format
-  const { manifestStore: l2ManifestStore } = await createL2ManifestStore(
-    manifestStore,
-  );
-
+  const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStore);
+  Logger.info('Successfully fetched and converted manifest from watermark');
   return {
     success: true,
     manifest: l2ManifestStore,
@@ -131,6 +140,7 @@ const getManifestFromWatermark = async (file) => {
 };
 
 function dataUrlToFile(dataUrl, filename) {
+  Logger.debug('Converting data URL to file', { filename });
   const arr = dataUrl.split(',');
   const mime = arr[0].match(/:(.*?);/)[1];
   const bstr = atob(arr[1]);
@@ -144,35 +154,40 @@ function dataUrlToFile(dataUrl, filename) {
   const blob = new Blob([u8arr], { type: mime });
   const file = new File([blob], filename, { type: mime });
 
+  Logger.info('Data URL converted to file successfully', { filename });
   return file;
 }
 
 const handleC2PAManifestMessage = async (event) => {
   try {
+    Logger.info('Processing C2PA manifest message', { imageId: event.data.imageId });
+    
     let image = event.data.src;
     const imageDataURI = event.data.dataURI;
     const { imageId, lookForWm } = event.data;
-
     const file = dataUrlToFile(imageDataURI, 'filename');
 
+    Logger.info('Looking up C2PA manifest in memory cache', { imageId });
     if (manifestMap[imageId]) {
-      // todo: validationStatus in this case as well?
-      return ({
+      Logger.info('C2PA Manifest found in memory cache', { imageId });
+      return {
         type: EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
         manifest: manifestMap[imageId],
         imageId,
-      });
+      };
     }
 
-    const isAccessible = await isImageAccessible(image);
+    Logger.info('C2PA manifest not found, starting retrieval process');
 
+    // Check if the image is accessible, convert from data URL if necessary
+    const isAccessible = await isImageAccessible(image);
     if (!isAccessible && imageDataURI) {
       image = await convertDataURLtoBlob(imageDataURI);
-    }
+    }   
 
-    console.log('getting manifest');
-    let localResult; let
-      wmResult;
+    Logger.debug('Fetching manifest for image', { imageId });
+    let localResult;
+    let wmResult;
 
     if (lookForWm) {
       [localResult, wmResult] = await Promise.all([
@@ -197,26 +212,37 @@ const handleC2PAManifestMessage = async (event) => {
     }
 
     if (isAccessible) {
-      // Generate the view more url only if the image is accessible as it goes to another website
       res.viewMoreUrl = generateVerifyUrl(typeof image === 'string' ? image : image.src);
     } else if (lookForWm && wmResult?.success) {
       res.viewMoreUrl = wmResult.url;
     }
 
+    Logger.info('Manifest message processed successfully', { imageId });
     return res;
   } catch (error) {
-    debug('[offscreen] Error processing message:');
-    debug(error);
-    return ({ error: error.message });
+    Logger.error('Error processing manifest message', { error: error.message });
+    return { error: error.message };
   }
 };
 
-// eslint-disable-next-line
 chrome.runtime.onMessage.addListener((event, sender, sendResponse) => {
   if (event.type === EVENT_TYPE_C2PA_MANIFEST) {
-    handleC2PAManifestMessage(event).then((result) => { sendResponse(result); });
+    Logger.info('Received C2PA manifest event', { type: event.type });    
+
+    handleC2PAManifestMessage(event)
+      .then((result) => {
+        sendResponse(result); // Send response on success
+      })
+      .catch((error) => {
+        Logger.error('Error handling C2PA manifest message', { error: error.message });
+        sendResponse({ error: error.message }); // Send response on error
+      });
+  } else {
+    Logger.warn('Unhandled event type', { type: event.type });
+    sendResponse({ error: 'Unhandled event type' }); // Fallback response
   }
-  return true;
+
+  return true; // Indicate async response
 });
 
 initializeC2pa();
