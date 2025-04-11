@@ -5,7 +5,7 @@
     "description": "Verify and display manifests for images, audio and videos embedding C2PA Content Credentials.",
     "icons": {
         "16": "assets/icons/icon-16.png",
-        "48": "assets/icons/icon-48.png",        
+        "48": "assets/icons/icon-48.png",
         "128": "assets/icons/icon-128.png"
     },
     "content_scripts": [
@@ -15,7 +15,11 @@
             ],
             "js": [
                 "./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
-                "content/contentScript.js"
+                "content/contentScript.js",
+                "lib/trustmark/js/deps/bch_ecc.min.js",
+                "lib/trustmark/js/deps/ort.webgpu.min.js",
+                "lib/trustmark/js/tm_datalayer.js",
+                "lib/trustmark/js/tm_watermark.js"
             ],
             "css": [
                 "content/content.css"
@@ -32,7 +36,7 @@
             "16": "assets/icons/icon-16.png",
             "48": "assets/icons/icon-48.png",
             "128": "assets/icons/icon-128.png"
-          }
+        }
     },
     "permissions": [
         "offscreen",
@@ -48,13 +52,25 @@
     "content_security_policy": {
         "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
     },
+    "offscreen_documents": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "offscreen/offscreen.js"
+            ]
+        }
+    ],
     "web_accessible_resources": [
         {
             "resources": [
                 "assets/icons/*",
-                "content/*",   
+                "content/*",
                 "background/*",
-                "lib/*",    
+                "lib/*",
+                "lib/trustmark/js/*",
+                "lib/trustmark/deps/*",
                 "popup/*",
                 "offscreen/*",
                 "config.js",
