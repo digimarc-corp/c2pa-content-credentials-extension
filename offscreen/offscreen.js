@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 
 import { createC2pa, createL2ManifestStore, generateVerifyUrl } from '../c2pa/packages/c2pa/dist/c2pa.esm.js';
-import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE } from '../config.js';
+import { EVENT_TYPE_C2PA_MANIFEST, EVENT_TYPE_C2PA_MANIFEST_RESPONSE, API_SBR_ADOBE_MANIFEST, API_SBR_ADOBE } from '../config.js';
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob } from '../lib/imageUtils.js';
 import Logger from '../lib/logger.js';
 import { fetchManifestFromDecoupledAPI } from '../lib/manifestUtils.js';
@@ -288,12 +288,12 @@ const handleC2PAManifestMessage = async (event) => {
         sbrHeaders.append("content-type", "image/jpeg");
         sbrHeaders.append("x-api-key", "cai-digimarc");
 
-        const SBR_ADOBE_API = 'https://cai-msb.adobe.io/sbapi/matches/byContent';
+        
         const fingerPrintAlg = 'com.adobe.icn.dense';
         const hintAlg = event.data.softBinding.alg;
         const hintValue = btoa(event.data.softBinding.blocks[0].value);
 
-        const requestUrl = `${SBR_ADOBE_API}?alg=${fingerPrintAlg}&hintAlg=${hintAlg}&hintValue=${hintValue}`;
+        const requestUrl = `${API_SBR_ADOBE}?alg=${fingerPrintAlg}&hintAlg=${hintAlg}&hintValue=${hintValue}`;
         const requestOptions = {
           method: 'POST',
           headers: sbrHeaders,
@@ -319,10 +319,10 @@ const handleC2PAManifestMessage = async (event) => {
           Logger.info('Manifest match returned by SBR', { manifestId });
 
           //TODO temporary default until endpoint is returned by Adobe SBR
-          const endpoint = manifestMatch.endpoint ? manifestMatch.endpoint : 'https://cai-manifests.adobe.com/manifests';
+          const endpoint = manifestMatch.endpoint ? manifestMatch.endpoint : `${API_SBR_ADOBE_MANIFEST}/${encodeURIComponent(manifestId)}`;
           
           //No Accept header will return binary JUMBF data
-          const manifestsResponse = await fetch(`${endpoint}/${encodeURIComponent(manifestId)}`, {
+          const manifestsResponse = await fetch(`${endpoint}`, {
             method: 'GET',
             redirect: "follow"
           });
