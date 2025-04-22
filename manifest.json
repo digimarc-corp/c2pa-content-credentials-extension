@@ -52,16 +52,6 @@
     "content_security_policy": {
         "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
     },
-    "offscreen_documents": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "offscreen/offscreen.js"
-            ]
-        }
-    ],
     "web_accessible_resources": [
         {
             "resources": [
@@ -71,10 +61,11 @@
                 "lib/*",
                 "lib/trustmark/js/*",
                 "lib/trustmark/deps/*",
+                "lib/trustmark/models/*",
                 "popup/*",
                 "offscreen/*",
                 "config.js",
-                "c2pa/*"
+                "c2pa/packages/c2pa-wc/*"
             ],
             "matches": [
                 "<all_urls>"
