@@ -37,8 +37,8 @@ export const C2PA_VERSION = '0.30.4';
 
 //export const API_SBR_DIGIMARC = 'https://c2pa-decoupled-api-zyciyb2wfa-ue.a.run.app';
 export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
-export const API_SBR_DIGIMARC_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJEaWdpbWFyYy1DMlBBLUNocm9tZS1FeHRlbnNpb24iLCJqdGkiOiJjYjJlZTRiYS0wMDBlLTQ2MmQtYThiNS1mOTU0YTJlMzM3M2IiLCJpYXQiOjE3NDQyODY5MTgsImlzcyI6IkRpZ2ltYXJjIn0.d2hRntIxUFz-9w6wzpfCDBLgG2DNBppIFtWZUzba7iZmM8Jv1q-PS-iQfbFZ_oRan4Q8LLDHSPvw86Sb8-YdfUIvsRENLDTgbav6lYsRBKskUGtQNseYufOmfaPu3hrrQXQEleNvFWggy-6_S67jp87Y39VZvdx5_SM8h2jyQb4zdn6Fw1VhUVtY1jxI7yGaJInOAaFE-aNlnmRs8Gr2tp9r726wTbZdyj57XU5gfOcJSbX-a3bhK0asoyl9PzsMHC6LQo-pIO3I3Imgo-ietscmG6TGrCf1Tvvj3CDtkdm_KyywdlShh7SygOxMmDBUxYgLUWcsJniJ7avG0cCFqm-pZFeBNBna26qNACSVMh4WEwC4XYqPs3mefloEOLon3CfISi3kdT3djF8F3F-FTJRbdSc3hYCLlj3OwFfpTWZtEJ0WIzLVa0hmqSbNBVKgkCeEMqlLX4biH4CQNVWKSR0VvyUr2RL-2NvMLblGYQbeoZLcr5N6vGH8H0nLDtBF6N1pCQE6chh4-gsb9um7PLSik44oEoVLFt2eyoFxG9-Qh4u-t4sApjqq94kgI25uaqlnj9MVVvaS99Mv8oWKyrP2I3F-yjBIwhTeE8z73kqJIbD205VrNqUD4rbTUmoPh9nBj11-DR6LN8X2vE5fPGcYW5b5lqiutvaij5vvhsE';
+export const API_SBR_DIGIMARC_TOKEN = '';
 
 export const API_SBR_ADOBE = 'https://cai-msb.adobe.io/sbapi/matches/byContent';
-export const API_SBR_ADOBE_TOKEN = 'cai-digimarc';
+export const API_SBR_ADOBE_TOKEN = '';
 export const API_SBR_ADOBE_MANIFEST = 'https://cai-manifests.adobe.com/manifests';
