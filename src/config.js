@@ -35,10 +35,5 @@ export const WHITELISTED_WM_AUTO_URLS = [
 
 export const C2PA_VERSION = '0.30.4';
 
-//export const API_SBR_DIGIMARC = 'https://c2pa-decoupled-api-zyciyb2wfa-ue.a.run.app';
 export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
 export const API_SBR_DIGIMARC_TOKEN = '';
-
-export const API_SBR_ADOBE = 'https://cai-msb.adobe.io/sbapi/matches/byContent';
-export const API_SBR_ADOBE_TOKEN = '';
-export const API_SBR_ADOBE_MANIFEST = 'https://cai-manifests.adobe.com/manifests';
