@@ -16,7 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Dynamically find all JavaScript files in src/
-const entries = glob.sync('./src/**/*.js', { ignore: ['./src/lib/trustmark/js/**/*.js'] }).reduce((entries, filePath) => {
+const entries = glob.sync('./src/**/*.js', { ignore: [] }).reduce((entries, filePath) => {
     const fileName = path.relative('./src', filePath).replace('.js', '');
     console.log(`Adding entry: ${fileName} -> ${filePath}`);
     entries[fileName] = './' + filePath;
@@ -41,17 +41,7 @@ export default (env, argv) => {
             extensions: ['.js', '.css'], // Add .css extension support
         },
         module: {
-            rules: [
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules|src\/lib\/trustmark\/js\/deps/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: ['@babel/preset-env'],
-                        },
-                    },
-                },
+            rules: [                
                 {
                     test: /\.css$/, // Add rule for .css files
                     use: [
@@ -82,9 +72,7 @@ export default (env, argv) => {
                     { from: './src/offscreen/offscreen.html', to: 'offscreen/offscreen.html' },
                     { from: './node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js', to: 'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js' },
                     { from: './node_modules/c2pa/dist/assets/wasm/toolkit_bg.wasm', to: 'node_modules/c2pa/dist/assets/wasm/toolkit_bg.wasm' },
-                    { from: './node_modules/c2pa/dist/c2pa.worker.min.js', to: 'node_modules/c2pa/dist/c2pa.worker.min.js' }, 
-                    { from: './src/lib/trustmark/models/*.onnx', to: 'lib/trustmark/models/[name][ext]' },
-                    { from: './src/lib/trustmark/js', to: 'lib/trustmark/js' },
+                    { from: './node_modules/c2pa/dist/c2pa.worker.min.js', to: 'node_modules/c2pa/dist/c2pa.worker.min.js' }
                 ],
             }),
             new ExtensionReloader({

@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "C2PA Content Credentials",
-    "version": "0.1.2",
+    "version": "0.1.1",
     "description": "Verify and display manifests for images, audio and videos embedding C2PA Content Credentials.",
     "icons": {
         "16": "assets/icons/icon-16.png",
@@ -15,10 +15,6 @@
             ],
             "js": [
                 "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
-                "lib/trustmark/js/deps/ort.webgpu.min.js",
-                "lib/trustmark/js/deps/bch_ecc.min.js",
-                "lib/trustmark/js/tm_datalayer.js",
-                "lib/trustmark/js/tm_watermark.js",
                 "content/contentScript.js"
             ],
             "css": [
@@ -59,9 +55,6 @@
                 "content/*",
                 "background/*",
                 "lib/*",
-                "lib/trustmark/js/*",
-                "lib/trustmark/deps/*",
-                "lib/trustmark/models/*",
                 "popup/*",
                 "offscreen/*",
                 "config.js",

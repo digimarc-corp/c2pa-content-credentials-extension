@@ -113,18 +113,6 @@ const displayManifest = (
   Logger.info('Manifest loaded', { manifest });
 };
 
-
-const decodeTrustmark = async (imageURL) => {
-  const imageFetched = await fetch(imageURL);
-  const imageAsBlob = await imageFetched.blob();
-  const imageAsBase64 = await getBase64FromBlob(imageAsBlob);
-
-  //Detect signpost watermark (trustmark)
-  const trustmarkInfo = await runwmark(imageAsBase64);
-  Logger.info('Decoded Watermark Results', { trustmarkInfo });
-  return trustmarkInfo;
-}
-
 /**
  * Send a message to the sandbox to get the C2PA manifest for the image.
  * @param {HTMLImageElement} imageElement - The image element to get the C2PA manifest for.
@@ -145,33 +133,8 @@ export const getC2PAManifest = async (imageElement, addIconForImage, singleImage
   };
 
   if (lookForWatermark) {
-    //Check for signpost
-    const trustmarkInfo = await decodeTrustmark(imageElement.src);
-    if (trustmarkInfo.watermark_present) {
-      if (trustmarkInfo.schema === 'BCH_SUPER') {
-        //Signpost
-        Logger.info('Signpost watermark detected', { trustmarkInfo });
-        const payloadBlocks = trustmarkInfo.watermark.match(/.{1,10}/g); // Regular expression to split into chunks of 10
-        const availableWatermarks = payloadBlocks.map(block => parseInt(block, 2)); // Use parseInt with base 2 for binary
-        Logger.info('Watermarks available', { availableWatermarks });
-
-        for (const watermark of availableWatermarks) {
-          if (watermark === 1) {
-            event.data.watermarkType = 'digimarc';
-            break;
-          }
-        }
-      }
-      else {
-        //Trustmark watermark but no signpost
-        event.data.watermarkType = 'trustmark';
-        event.data.softBinding = trustmarkInfo.c2padata['c2pa.soft-binding']
-      }
-    }
-    else {
       //Set digimarc type as the watermark to try to detect
       event.data.watermarkType = 'digimarc';
-    }
   }
 
   try {

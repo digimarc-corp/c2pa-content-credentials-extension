@@ -17,7 +17,6 @@
         "build:dev": "webpack --mode development",
         "build:prod": "webpack --mode production",
         "watch:dev": "webpack --mode development --watch",
-        "build": "./scripts/build.sh",
         "lint": "eslint . --fix",
         "test": "playwright test",
         "licenses": "./scripts/licenses.sh"
@@ -44,7 +43,7 @@
     "dependencies": {
         "@webcomponents/webcomponentsjs": "^2.8.0",
         "browser": "^0.2.6",
-        "c2pa": "^0.30.4",
+        "c2pa": "^0.30.8",
         "c2pa-wc": "^0.14.6",
         "glob": "^11.0.1",
         "path": "^0.12.7"

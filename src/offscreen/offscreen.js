@@ -5,9 +5,6 @@ import { createC2pa, createL2ManifestStore, generateVerifyUrl } from 'c2pa';
 import {
   EVENT_TYPE_C2PA_MANIFEST,
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
-  API_SBR_ADOBE_MANIFEST,
-  API_SBR_ADOBE,
-  API_SBR_ADOBE_TOKEN,
   C2PA_VERSION
 } from '../config.js';
 import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob } from '../lib/imageUtils.js';
@@ -249,82 +246,8 @@ const handleC2PAManifestMessage = async (event) => {
     if (event.data.lookForWm) {
 
       Logger.info('Watermark detection enabled: Looking up C2PA manifest using watermark', { imageId });
-      if (event.data.watermarkType === 'trustmark') {
-        Logger.info('Processing trustmark watermark', { imageId: event.data.imageId });
-
-        const imageFetched = await fetch(event.data.src);
-        const imageAsBlob = await imageFetched.blob();
-
-        TimelineLogger.addToTimeline('c2pa', `Fetched local image for Trustmark`);
-
-        // Detect watermark via SBR (two-phase check based on fingerprint)
-        const sbrHeaders = new Headers();
-        sbrHeaders.append("content-type", "image/jpeg");
-        sbrHeaders.append("x-api-key", API_SBR_ADOBE_TOKEN);
-
-        const fingerPrintAlg = 'com.adobe.icn.dense';
-        const hintAlg = event.data.softBinding.alg;
-        const hintValue = btoa(event.data.softBinding.blocks[0].value);
-
-        const requestUrl = `${API_SBR_ADOBE}?alg=${fingerPrintAlg}&hintAlg=${hintAlg}&hintValue=${hintValue}`;
-        const requestOptions = {
-          method: 'POST',
-          headers: sbrHeaders,
-          body: imageAsBlob,
-          redirect: 'follow',
-        };
-        const matchByContentResponse = await fetch(requestUrl, requestOptions);
-
-        TimelineLogger.addToTimeline('c2pa', `Fetched /matchByContent Trustmark`);
-
-        if (!matchByContentResponse.ok) {
-          Logger.error('Server error during SBR matchByContent', { status: matchByContentResponse });
-          throw new Error(`Server error: ${matchByContentResponse.status}`);
-        }
-
-        const matchByContentResponseJSON = await matchByContentResponse.json();
-        Logger.info('Trustmark SBR matchByContent response', { matchByContentResponseJSON });
-
-        //Fetch manifest from SBR
-        const manifestMatch = matchByContentResponseJSON.matches[0];
-        if (manifestMatch) {
-          //TODO temporary fix for Adobe SBR manifests Ids
-          const manifestId = manifestMatch.manifestId.replace(/:/g, '-');
-          Logger.info('Manifest match returned by SBR', { manifestId });
-
-          //TODO temporary default until endpoint is returned by Adobe SBR
-          const endpoint = manifestMatch.endpoint ? manifestMatch.endpoint : `${API_SBR_ADOBE_MANIFEST}/${encodeURIComponent(manifestId)}`;
-
-          //No Accept header will return binary JUMBF data
-          const manifestsResponse = await fetch(`${endpoint}`, {
-            method: 'GET',
-            redirect: "follow"
-          });
-
-          TimelineLogger.addToTimeline('c2pa', `Fetched /manifests Trustmark`);
-
-          if (!manifestsResponse.ok) {
-            Logger.error('Server error during SBR manifest fetch', { status: manifestsResponse });
-            throw new Error(`Server error: ${manifestsResponse.status}`);
-          }
-
-          Logger.info('SBR manifest response', { manifestsResponse });
-          const responseBlob = await manifestsResponse.blob();
-          Logger.info('Manifest blob fetched successfully', { responseBlob });
-          const { manifestStore } = await c2pa.read(responseBlob);
-          Logger.info('SBR returned manifest store', { manifestStore });
-
-          const manifestStoreConversion = manifestStore;
-          const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStoreConversion);
-
-          response.retrievedManifest = l2ManifestStore;
-          //TODO update when Adobe SBR supports this
-          response.similarityScore = manifestMatch.similarityScore;
-
-          TimelineLogger.addToTimeline('c2pa', `Created retrieved manifest Trustmark`);
-        }
-      }
-      else if (event.data.watermarkType === 'digimarc') {
+      
+      if (event.data.watermarkType === 'digimarc') {
         Logger.info('Processing digimarc watermark', { imageId: event.data.imageId });
 
         const file = dataUrlToFile(event.data.dataURI, 'filename');
