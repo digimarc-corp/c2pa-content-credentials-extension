@@ -8,7 +8,7 @@ import {
   REFRESH_ICON_INTERVAL,
   WHITELISTED_WM_AUTO_URLS,
 } from '../config.js';
-import debug from './log.js';
+import Logger from './logger.js';
 // eslint-disable-next-line
 import { getC2PAManifest } from './manifestUtils.js';
 
@@ -39,6 +39,8 @@ function generateBaseId(imageElement) {
  */
 export function createC2PAComponents(baseId) {
   const caiPopover = document.createElement('cai-popover-dm-plugin');
+  Logger.info('Creating popover',{caiPopover});
+
   caiPopover.id = `popover-${baseId}`;
   caiPopover.interactive = true;
   caiPopover.style.position = 'absolute';
@@ -323,12 +325,13 @@ function prepareAndHandleAudio(audioElement, singleImageVerification, lookForWat
   // videoElement.id = baseId;
   handledMedias.push(baseId);
 
-  console.log('audioElement.src', audioElement.src);
-  console.log('baseId', baseId);
+  Logger.info('Audio element', audioElement);
+  Logger.info('Base ID', baseId);
 
   if (!audioElement.src) {
     const sourceElement = audioElement.querySelector('source');
-    console.log('sourceElement', sourceElement);
+    Logger.info('Audio Source', sourceElement);
+
     if (sourceElement) {
       sourceElement.setAttribute('c2paId', baseId);
       const src = sourceElement.getAttribute('src');
@@ -757,7 +760,7 @@ export async function isImageAccessible(imageURL) {
   }
 
   if (imageURL.startsWith('blob')) {
-    debug(`[imageUtils] Image ${imageURL} is a blob, marking as not accessible`);
+    Logger.info(`Image ${imageURL} is a blob, marking as not accessible`);
     isAccessible = false;
   }
   return isAccessible;
@@ -803,19 +806,40 @@ export function getMatchingParent(element) {
 
     if (isDimensionSimilar(currentRect.width, parentRect.width, 10)
       && isDimensionSimilar(currentRect.height, parentRect.height, 10)) {
-      debug(`Found matching parent: ${parentElement}`);
+      Logger.info('Found matching parent',{parentElement});
       currentElement = parentElement;
     } else {
-      debug('No matching parent found.');
+      Logger.warn('No matching parent found.');
       break;
     }
 
     // In case of reaching the top of the DOM without finding a match
     if (currentElement === document.body || currentElement === document.documentElement) {
-      debug('Reached the top of the DOM. No matching parent found.');
+      Logger.warn('Reached the top of the DOM. No matching parent found.');
       break;
     }
   }
 
   return currentElement;
+}
+
+export async function getBase64FromUrl(url) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result); // e.g. data:image/png;base64,iVBOR...
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+export async function getBase64FromBlob(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result); // e.g. data:image/png;base64,iVBOR...
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }

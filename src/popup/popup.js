@@ -3,7 +3,7 @@ import {
   MSG_ENABLE_LOOK_FOR_WATERMARK,
   MSG_INJECT_C2PA_INDICATOR,
   MSG_REVERT_C2PA_INDICATOR,
-} from './config.js';
+} from '../config.js';
 
 /* eslint-disable no-undef */
 document.addEventListener('DOMContentLoaded', async () => {
@@ -40,14 +40,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const disableAutomaticToggle = () => {
     automaticToggle.checked = false;
     chrome.storage.local.set({ activated: false });
+    
     // Set the OFF icon
-    chrome.action.setIcon({ path: './images/icons/icon-off.png' });
+    const path = chrome.runtime.getURL('assets/icons/icon-off.png');
+    chrome.action.setIcon({ path });
+    
     chrome.tabs.sendMessage(tab.id, { type: MSG_REVERT_C2PA_INDICATOR });
   };
 
   const enableAutomaticToggle = () => {
     // Set the ON icon
-    chrome.action.setIcon({ path: './images/icons/icon-on.png' });
+    const path = chrome.runtime.getURL('assets/icons/icon-on.png');
+    chrome.action.setIcon({ path });
+
     disableWatermarkToggle();
     chrome.tabs.sendMessage(tab.id, { type: MSG_INJECT_C2PA_INDICATOR });
   };

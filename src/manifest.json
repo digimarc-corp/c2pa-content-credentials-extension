@@ -1,0 +1,68 @@
+{
+    "manifest_version": 3,
+    "name": "C2PA Content Credentials",
+    "version": "0.1.1",
+    "description": "Verify and display manifests for images, audio and videos embedding C2PA Content Credentials.",
+    "icons": {
+        "16": "assets/icons/icon-16.png",
+        "48": "assets/icons/icon-48.png",
+        "128": "assets/icons/icon-128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
+                "content/contentScript.js"
+            ],
+            "css": [
+                "content/contentStyles.css"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "background/background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_popup": "popup/popup.html",
+        "default_icon": {
+            "16": "assets/icons/icon-16.png",
+            "48": "assets/icons/icon-48.png",
+            "128": "assets/icons/icon-128.png"
+        }
+    },
+    "permissions": [
+        "offscreen",
+        "tabs",
+        "scripting",
+        "storage",
+        "contextMenus"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+      },
+    "web_accessible_resources": [
+        {
+            "resources": [                
+                "assets/icons/*",
+                "content/*",
+                "background/*",
+                "lib/*",
+                "popup/*",
+                "offscreen/*",
+                "config.js",
+                "c2pa/packages/c2pa-wc/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
