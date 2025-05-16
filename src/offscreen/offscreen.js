@@ -10,7 +10,7 @@ import {
   API_SBR_ADOBE_TOKEN,
   C2PA_VERSION
 } from '../config.js';
-import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob } from '../lib/imageUtils.js';
+import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob, resizeImageBlobTo512 } from '../lib/imageUtils.js';
 import Logger from '../lib/logger.js';
 import TimelineLogger from '../lib/timeline.js';
 import { fetchManifestFromSBR } from '../lib/manifestUtils.js';
@@ -257,6 +257,9 @@ const handleC2PAManifestMessage = async (event) => {
         const imageFetched = await fetch(event.data.src);
         const imageAsBlob = await imageFetched.blob();
 
+        const resizedImageBlob = await resizeImageBlobTo512(imageAsBlob);
+        Logger.info('Resized image blob', { from: imageAsBlob.size, to: resizedImageBlob.size });
+
         TimelineLogger.addToTimeline('c2pa', `Fetched local image for Trustmark`);
 
         // Detect watermark via SBR (two-phase check based on fingerprint)
@@ -272,7 +275,7 @@ const handleC2PAManifestMessage = async (event) => {
         const requestOptions = {
           method: 'POST',
           headers: sbrHeaders,
-          body: imageAsBlob,
+          body: resizedImageBlob,
           redirect: 'follow',
         };
         const matchByContentResponse = await fetch(requestUrl, requestOptions);
