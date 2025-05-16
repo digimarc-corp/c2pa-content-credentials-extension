@@ -292,11 +292,12 @@ const handleC2PAManifestMessage = async (event) => {
           const manifestId = manifestMatch.manifestId.replace(/:/g, '-');
           Logger.info('Manifest match returned by SBR', { manifestId });
 
-          //TODO temporary default until endpoint is returned by Adobe SBR
-          const endpoint = manifestMatch.endpoint ? manifestMatch.endpoint : `${API_SBR_ADOBE_MANIFEST}/${encodeURIComponent(manifestId)}`;
+          //Manifest retrieval endpoint          
+          const manifestEndpoint = `${manifestMatch.endpoint}manifests/${manifestId}`;
+          //const endpoint = manifestMatch.endpoint ? `${manifestMatch.endpoint}manifests : `${API_SBR_ADOBE_MANIFEST}/${encodeURIComponent(manifestId)}`;
 
           //No Accept header will return binary JUMBF data
-          const manifestsResponse = await fetch(`${endpoint}`, {
+          const manifestsResponse = await fetch(`${manifestEndpoint}`, {
             method: 'GET',
             redirect: "follow"
           });
