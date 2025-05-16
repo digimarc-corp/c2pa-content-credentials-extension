@@ -165,7 +165,8 @@ const getManifestFromWatermark = async (file, contentType) => {
   return {
     success: true,
     manifest: l2ManifestStore,
-    hammingDistance: manifestResult.similarityScore
+    hammingDistance: manifestResult.similarityScore,
+    manifestUrl: manifestResult.manifestUrl,
   };
 };
 
@@ -229,8 +230,9 @@ const handleC2PAManifestMessage = async (event) => {
     }
     TimelineLogger.addToTimeline('c2pa', `Check image accesibility`);
 
-    //update ViewMore URL for the validation ui component
+    //update ViewMore URL for the validation ui component, using the manifest URL
     response.viewMoreUrl = generateVerifyUrl(typeof image === 'string' ? image : image.src);
+    Logger.info('ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
 
     //Check if the image has embedded a C2PA manifest
     Logger.debug('Checking C2PA manifest from embedded metadata', { imageId });
@@ -294,7 +296,6 @@ const handleC2PAManifestMessage = async (event) => {
 
           //Manifest retrieval endpoint          
           const manifestEndpoint = `${manifestMatch.endpoint}manifests/${manifestId}`;
-          //const endpoint = manifestMatch.endpoint ? `${manifestMatch.endpoint}manifests : `${API_SBR_ADOBE_MANIFEST}/${encodeURIComponent(manifestId)}`;
 
           //No Accept header will return binary JUMBF data
           const manifestsResponse = await fetch(`${manifestEndpoint}`, {
@@ -308,6 +309,10 @@ const handleC2PAManifestMessage = async (event) => {
             Logger.error('Server error during SBR manifest fetch', { status: manifestsResponse });
             throw new Error(`Server error: ${manifestsResponse.status}`);
           }
+
+          //Update ViewMore URL for the validation UI component, using the manifest URL
+          response.viewMoreUrl = generateVerifyUrl(manifestEndpoint);
+          Logger.info('Update ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
 
           Logger.info('SBR manifest response', { manifestsResponse });
           const responseBlob = await manifestsResponse.blob();
@@ -334,12 +339,16 @@ const handleC2PAManifestMessage = async (event) => {
         const contentType = CONTENT_TYPE.JUMBF;
         let wmResult = await getManifestFromWatermark(file, contentType);
         TimelineLogger.addToTimeline('c2pa', `Manifest obtained from SBR Digimarc`);
-
+        
         if (wmResult.success) {
           Logger.info('Watermark found in image', { imageId });
           response.retrievedManifest = wmResult.manifest;
           response.hammingDistance = wmResult.hammingDistance;
-          //response.viewMoreUrl = wmResult.url;
+          
+          //Update ViewMore URL for the validation UI component, using the manifest URL
+          response.viewMoreUrl = generateVerifyUrl(wmResult.manifestUrl);
+          Logger.info('Update ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
+
         }
       }
       else {

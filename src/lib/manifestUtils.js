@@ -234,7 +234,9 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
   const manifestId = matchesByContentResponseJSON?.matches?.[0]?.manifestId;
   if (!manifestId) return { success: false };
 
-  const manifestsResponse = await fetch(`${API_SBR_DIGIMARC}/manifests/${encodeURIComponent(manifestId)}`, {
+  const manifestUrl = `${API_SBR_DIGIMARC}/manifests/${encodeURIComponent(manifestId)}`;
+
+  const manifestsResponse = await fetch(manifestUrl, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${API_SBR_DIGIMARC_TOKEN}`,
@@ -248,6 +250,7 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
     success: true,
     manifestData: manifestsResponse,
     similarityScore: matchesByContentResponseJSON?.matches?.[0]?.similarityScore,
+    manifestUrl: `${manifestUrl}?access_token=${API_SBR_DIGIMARC_TOKEN}`,
   }
   return response;
 };
