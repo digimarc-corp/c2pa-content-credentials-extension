@@ -8,9 +8,11 @@ import {
   API_SBR_ADOBE_MANIFEST,
   API_SBR_ADOBE,
   API_SBR_ADOBE_TOKEN,
-  C2PA_VERSION
+  C2PA_VERSION,
+  API_SBR_DIGIMARC_RESIZE_PARAM,
+  API_SBR_ADOBE_RESIZE_PARAM
 } from '../config.js';
-import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob, resizeImageBlobTo512 } from '../lib/imageUtils.js';
+import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob, resizeImageBlob } from '../lib/imageUtils.js';
 import Logger from '../lib/logger.js';
 import TimelineLogger from '../lib/timeline.js';
 import { fetchManifestFromSBR } from '../lib/manifestUtils.js';
@@ -170,7 +172,7 @@ const getManifestFromWatermark = async (file, contentType) => {
   };
 };
 
-function dataUrlToFile(dataUrl, filename) {
+const dataUrlToFile = async (dataUrl, filename) => {
   Logger.debug('Converting data URL to file', { filename });
   const arr = dataUrl.split(',');
   const mime = arr[0].match(/:(.*?);/)[1];
@@ -183,7 +185,11 @@ function dataUrlToFile(dataUrl, filename) {
   }
 
   const blob = new Blob([u8arr], { type: mime });
-  const file = new File([blob], filename, { type: mime });
+  //const file = new File([blob], filename, { type: mime });
+
+  const resizedImageBlob = await resizeImageBlob(blob,API_SBR_DIGIMARC_RESIZE_PARAM);
+  Logger.info('Resized image blob (718)', { from: blob.size, to: resizedImageBlob.size });  
+  const file = new File([resizedImageBlob], filename, { type: mime });
 
   Logger.info('Data URL converted to file successfully', { filename });
   return file;
@@ -257,7 +263,7 @@ const handleC2PAManifestMessage = async (event) => {
         const imageFetched = await fetch(event.data.src);
         const imageAsBlob = await imageFetched.blob();
 
-        const resizedImageBlob = await resizeImageBlobTo512(imageAsBlob);
+        const resizedImageBlob = await resizeImageBlob(imageAsBlob,API_SBR_ADOBE_RESIZE_PARAM);
         Logger.info('Resized image blob', { from: imageAsBlob.size, to: resizedImageBlob.size });
 
         TimelineLogger.addToTimeline('c2pa', `Fetched local image for Trustmark`);
@@ -336,7 +342,7 @@ const handleC2PAManifestMessage = async (event) => {
       else if (event.data.watermarkType === 'digimarc') {
         Logger.info('Processing digimarc watermark', { imageId: event.data.imageId });
 
-        const file = dataUrlToFile(event.data.dataURI, 'filename');
+        const file = await dataUrlToFile(event.data.dataURI, 'filename');
         TimelineLogger.addToTimeline('c2pa', `Prepared file to read watermark Digimarc`);
 
         const contentType = CONTENT_TYPE.JUMBF;

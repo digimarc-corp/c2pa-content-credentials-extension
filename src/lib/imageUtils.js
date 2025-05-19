@@ -844,7 +844,7 @@ export async function getBase64FromBlob(blob) {
   });
 }
 
-export async function resizeImageBlobTo512(blob) {
+export async function resizeImageBlob(blob, maxDimension) {
   // Step 1: Check if the Blob is an image
   if (!blob.type.startsWith("image/")) {
       throw new Error("The provided Blob is not an image!");
@@ -866,7 +866,6 @@ export async function resizeImageBlobTo512(blob) {
   const ctx = canvas.getContext("2d");
 
   // Calculate the new dimensions
-  const maxDimension = 512;
   let width = img.width;
   let height = img.height;
 
