@@ -37,3 +37,4 @@ export const C2PA_VERSION = '0.30.8';
 
 export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
 export const API_SBR_DIGIMARC_TOKEN = '';
+export const API_SBR_DIGIMARC_RESIZE_PARAM = 1280;
