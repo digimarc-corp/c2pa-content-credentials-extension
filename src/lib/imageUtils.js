@@ -843,3 +843,57 @@ export async function getBase64FromBlob(blob) {
     reader.readAsDataURL(blob);
   });
 }
+
+export async function resizeImageBlob(blob, maxDimension) {
+  // Step 1: Check if the Blob is an image
+  if (!blob.type.startsWith("image/")) {
+      throw new Error("The provided Blob is not an image!");
+  }
+
+  // Step 2: Load the Blob as an Image
+  const imageUrl = URL.createObjectURL(blob);
+  const img = new Image();
+
+  // Wait for the image to load
+  await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = imageUrl;
+  });
+
+  // Step 3: Resize the Image
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  // Calculate the new dimensions
+  let width = img.width;
+  let height = img.height;
+
+  if (width > height) {
+      if (width > maxDimension) {
+          height = (height * maxDimension) / width;
+          width = maxDimension;
+      }
+  } else {
+      if (height > maxDimension) {
+          width = (width * maxDimension) / height;
+          height = maxDimension;
+      }
+  }
+
+  // Set canvas dimensions and draw the resized image
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(img, 0, 0, width, height);
+
+  // Convert the canvas back to a Blob
+  return new Promise((resolve) => {
+      canvas.toBlob(
+          (resizedBlob) => {
+              resolve(resizedBlob);
+          },
+          blob.type, // Keep the same MIME type as the original image
+          1.0 // High-quality compression
+      );
+  });
+}

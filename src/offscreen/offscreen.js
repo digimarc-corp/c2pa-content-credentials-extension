@@ -5,9 +5,10 @@ import { createC2pa, createL2ManifestStore, generateVerifyUrl } from 'c2pa';
 import {
   EVENT_TYPE_C2PA_MANIFEST,
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
-  C2PA_VERSION
+  C2PA_VERSION,
+  API_SBR_DIGIMARC_RESIZE_PARAM
 } from '../config.js';
-import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob } from '../lib/imageUtils.js';
+import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob, resizeImageBlob } from '../lib/imageUtils.js';
 import Logger from '../lib/logger.js';
 import TimelineLogger from '../lib/timeline.js';
 import { fetchManifestFromSBR } from '../lib/manifestUtils.js';
@@ -162,11 +163,12 @@ const getManifestFromWatermark = async (file, contentType) => {
   return {
     success: true,
     manifest: l2ManifestStore,
-    hammingDistance: manifestResult.similarityScore
+    hammingDistance: manifestResult.similarityScore,
+    manifestUrl: manifestResult.manifestUrl,
   };
 };
 
-function dataUrlToFile(dataUrl, filename) {
+const dataUrlToFile = async (dataUrl, filename) => {
   Logger.debug('Converting data URL to file', { filename });
   const arr = dataUrl.split(',');
   const mime = arr[0].match(/:(.*?);/)[1];
@@ -179,7 +181,9 @@ function dataUrlToFile(dataUrl, filename) {
   }
 
   const blob = new Blob([u8arr], { type: mime });
-  const file = new File([blob], filename, { type: mime });
+  const resizedImageBlob = await resizeImageBlob(blob,API_SBR_DIGIMARC_RESIZE_PARAM);
+  Logger.info('Resized image blob (718)', { from: blob.size, to: resizedImageBlob.size });  
+  const file = new File([resizedImageBlob], filename, { type: mime });
 
   Logger.info('Data URL converted to file successfully', { filename });
   return file;
@@ -228,6 +232,7 @@ const handleC2PAManifestMessage = async (event) => {
 
     //update ViewMore URL for the validation ui component
     response.viewMoreUrl = generateVerifyUrl(typeof image === 'string' ? image : image.src);
+    Logger.info('ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
 
     //Check if the image has embedded a C2PA manifest
     Logger.debug('Checking C2PA manifest from embedded metadata', { imageId });
@@ -250,7 +255,7 @@ const handleC2PAManifestMessage = async (event) => {
       if (event.data.watermarkType === 'digimarc') {
         Logger.info('Processing digimarc watermark', { imageId: event.data.imageId });
 
-        const file = dataUrlToFile(event.data.dataURI, 'filename');
+        const file = await dataUrlToFile(event.data.dataURI, 'filename');
         TimelineLogger.addToTimeline('c2pa', `Prepared file to read watermark Digimarc`);
 
         const contentType = CONTENT_TYPE.JUMBF;
@@ -261,7 +266,10 @@ const handleC2PAManifestMessage = async (event) => {
           Logger.info('Watermark found in image', { imageId });
           response.retrievedManifest = wmResult.manifest;
           response.hammingDistance = wmResult.hammingDistance;
-          //response.viewMoreUrl = wmResult.url;
+
+          //Update ViewMore URL for the validation UI component, using the manifest URL
+          response.viewMoreUrl = generateVerifyUrl(wmResult.manifestUrl);
+          Logger.info('Update ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });  
         }
       }
       else {
