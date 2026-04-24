@@ -5,14 +5,15 @@ import { createC2pa, createL2ManifestStore, generateVerifyUrl } from 'c2pa';
 import {
   EVENT_TYPE_C2PA_MANIFEST,
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
-  API_SBR_ADOBE_MANIFEST,
   API_SBR_ADOBE,
   API_SBR_ADOBE_TOKEN,
   C2PA_VERSION,
   API_SBR_DIGIMARC_RESIZE_PARAM,
-  API_SBR_ADOBE_RESIZE_PARAM
+  API_SBR_ADOBE_RESIZE_PARAM,
 } from '../config.js';
-import { convertBlobToDataURL, convertDataURLtoBlob, isImageAccessible, getBase64FromBlob, resizeImageBlob } from '../lib/imageUtils.js';
+import {
+  convertDataURLtoBlob, isImageAccessible, resizeImageBlob,
+} from '../lib/imageUtils.js';
 import Logger from '../lib/logger.js';
 import TimelineLogger from '../lib/timeline.js';
 import { fetchManifestFromSBR } from '../lib/manifestUtils.js';
@@ -23,12 +24,11 @@ const manifestMap = {};
 
 async function initializeC2pa() {
   if (!c2paIsLoading) {
-    Logger.info(`Initializing C2PA...${C2PA_VERSION}`);   
-    const versionConfig = 
-    {
+    Logger.info(`Initializing C2PA...${C2PA_VERSION}`);
+    const versionConfig = {
       wasmSrc: '../node_modules/c2pa/dist/assets/wasm/toolkit_bg.wasm?file',
       workerSrc: '../node_modules/c2pa/dist/c2pa.worker.min.js?file',
-    }
+    };
     c2pa = await createC2pa(versionConfig);
     c2paIsLoading = true;
     Logger.info(`C2PA ${C2PA_VERSION} initialized successfully`);
@@ -45,7 +45,7 @@ const validateC2pa = async (image, imageId) => {
 
   Logger.debug('Reading manifest for the image', { imageId });
 
-  const { manifestStore } = await c2pa.read(image);
+  const { manifestStore } = await c2pa.read(image); // eslint-disable-next-line max-len
   manifestMap[imageId] = manifestStore;
   Logger.info('ManifestStore read from Image successfully', { manifestStore });
 
@@ -131,9 +131,8 @@ const CONTENT_TYPE = {
 };
 
 const getManifestFromWatermark = async (file, contentType) => {
-
   const manifestResult = await fetchManifestFromSBR(file, contentType);
-  TimelineLogger.addToTimeline('c2pa', `Fetched manifest from SBR Digimarc`);
+  TimelineLogger.addToTimeline('c2pa', 'Fetched manifest from SBR Digimarc');
 
   if (!manifestResult.success) {
     Logger.warn('Failed to fetch manifest from watermark');
@@ -145,15 +144,14 @@ const getManifestFromWatermark = async (file, contentType) => {
     const responseJSON = await manifestResult.manifestData.json();
     manifestStore = convertManifest(responseJSON);
     Logger.info('Manifest store converted from JSON response', { manifestStore });
-  }
-  else if (contentType === CONTENT_TYPE.JUMBF) {
+  } else if (contentType === CONTENT_TYPE.JUMBF) {
     const responseBlob = await manifestResult.manifestData.blob();
     manifestStore = await c2pa.read(responseBlob);
     Logger.info('Manifest store converted from Blob response', { manifestStore });
     manifestStore = manifestStore.manifestStore;
   }
 
-  TimelineLogger.addToTimeline('c2pa', `Read manifestStore from JUMBF Blob`);
+  TimelineLogger.addToTimeline('c2pa', 'Read manifestStore from JUMBF Blob');
 
   if (!manifestStore) {
     Logger.warn('Failed to convert manifest from watermark');
@@ -161,9 +159,9 @@ const getManifestFromWatermark = async (file, contentType) => {
   }
 
   const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStore);
-  TimelineLogger.addToTimeline('c2pa', `Create c2pa-wc compatible l2ManifestStore`);
+  TimelineLogger.addToTimeline('c2pa', 'Create c2pa-wc compatible l2ManifestStore');
 
-  //TODO fix the hammingDistance calculation
+  // TODO fix the hammingDistance calculation
   return {
     success: true,
     manifest: l2ManifestStore,
@@ -185,18 +183,18 @@ const dataUrlToFile = async (dataUrl, filename) => {
   }
 
   const blob = new Blob([u8arr], { type: mime });
-  //const file = new File([blob], filename, { type: mime });
+  // const file = new File([blob], filename, { type: mime });
 
-  const resizedImageBlob = await resizeImageBlob(blob,API_SBR_DIGIMARC_RESIZE_PARAM);
-  Logger.info('Resized image blob (718)', { from: blob.size, to: resizedImageBlob.size });  
+  const resizedImageBlob = await resizeImageBlob(blob, API_SBR_DIGIMARC_RESIZE_PARAM);
+  Logger.info('Resized image blob (718)', { from: blob.size, to: resizedImageBlob.size });
   const file = new File([resizedImageBlob], filename, { type: mime });
 
   Logger.info('Data URL converted to file successfully', { filename });
   return file;
-}
+};
 
 const handleC2PAManifestMessage = async (event) => {
-  TimelineLogger.startTimeline("c2pa");
+  TimelineLogger.startTimeline('c2pa');
   try {
     Logger.info('Processing C2PA manifest message', { imageId: event.data.imageId });
 
@@ -212,8 +210,8 @@ const handleC2PAManifestMessage = async (event) => {
 
     let image = event.data.src;
     const { imageId } = event.data;
-    
-    //Check if manifest is already in memory cache
+
+    // Check if manifest is already in memory cache
     Logger.info('Looking up C2PA manifest in memory cache', { imageId });
     if (manifestMap[imageId]) {
       Logger.info('C2PA Manifest found in memory cache', { imageId });
@@ -223,39 +221,37 @@ const handleC2PAManifestMessage = async (event) => {
         imageId,
       };
     }
-    else {
-      Logger.info('C2PA manifest not found in memory cache, starting retrieval process');      
-    }
+
+    Logger.info('C2PA manifest not found in memory cache, starting retrieval process');
+
     TimelineLogger.addToTimeline('c2pa', 'Look-up in memory cache');
 
-    //Check if image is a blob or a URL and convert to blob if necessary
+    // Check if image is a blob or a URL and convert to blob if necessary
     Logger.info('Checking image accessibility', { imageId });
     const isAccessible = await isImageAccessible(event.data.src);
     if (!isAccessible && event.data.dataURI) {
       image = await convertDataURLtoBlob(event.data.dataURI);
     }
-    TimelineLogger.addToTimeline('c2pa', `Check image accesibility`);
+    TimelineLogger.addToTimeline('c2pa', 'Check image accesibility');
 
-    //update ViewMore URL for the validation ui component, using the manifest URL
+    // update ViewMore URL for the validation ui component, using the manifest URL
     response.viewMoreUrl = generateVerifyUrl(typeof image === 'string' ? image : image.src);
     Logger.info('ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
 
-    //Check if the image has embedded a C2PA manifest
+    // Check if the image has embedded a C2PA manifest
     Logger.debug('Checking C2PA manifest from embedded metadata', { imageId });
-    let embeddedC2PAValidation = await validateC2pa(image, imageId);
+    const embeddedC2PAValidation = await validateC2pa(image, imageId);
     if (!embeddedC2PAValidation?.manifest) {
       Logger.info('C2PA Manifest not found. Read from metadata completed', { embeddedC2PAValidation });
-    }
-    else {
+    } else {
       response.manifest = embeddedC2PAValidation.manifest;
       response.validationStatus = embeddedC2PAValidation.validationStatus;
       Logger.info('C2PA Manifest found from embedded metadata', { embeddedC2PAValidation });
     }
-    TimelineLogger.addToTimeline('c2pa', `Check embedded manifest`);
+    TimelineLogger.addToTimeline('c2pa', 'Check embedded manifest');
 
-    //Check if watermark detection is enabled
+    // Check if watermark detection is enabled
     if (event.data.lookForWm) {
-
       Logger.info('Watermark detection enabled: Looking up C2PA manifest using watermark', { imageId });
       if (event.data.watermarkType === 'trustmark') {
         Logger.info('Processing trustmark watermark', { imageId: event.data.imageId });
@@ -263,15 +259,15 @@ const handleC2PAManifestMessage = async (event) => {
         const imageFetched = await fetch(event.data.src);
         const imageAsBlob = await imageFetched.blob();
 
-        const resizedImageBlob = await resizeImageBlob(imageAsBlob,API_SBR_ADOBE_RESIZE_PARAM);
+        const resizedImageBlob = await resizeImageBlob(imageAsBlob, API_SBR_ADOBE_RESIZE_PARAM);
         Logger.info('Resized image blob', { from: imageAsBlob.size, to: resizedImageBlob.size });
 
-        TimelineLogger.addToTimeline('c2pa', `Fetched local image for Trustmark`);
+        TimelineLogger.addToTimeline('c2pa', 'Fetched local image for Trustmark');
 
         // Detect watermark via SBR (two-phase check based on fingerprint)
         const sbrHeaders = new Headers();
-        sbrHeaders.append("content-type", "image/jpeg");
-        sbrHeaders.append("x-api-key", API_SBR_ADOBE_TOKEN);
+        sbrHeaders.append('content-type', 'image/jpeg');
+        sbrHeaders.append('x-api-key', API_SBR_ADOBE_TOKEN);
 
         const fingerPrintAlg = 'com.adobe.icn.dense';
         const hintAlg = event.data.softBinding.alg;
@@ -286,7 +282,7 @@ const handleC2PAManifestMessage = async (event) => {
         };
         const matchByContentResponse = await fetch(requestUrl, requestOptions);
 
-        TimelineLogger.addToTimeline('c2pa', `Fetched /matchByContent Trustmark`);
+        TimelineLogger.addToTimeline('c2pa', 'Fetched /matchByContent Trustmark');
 
         if (!matchByContentResponse.ok) {
           Logger.error('Server error during SBR matchByContent', { status: matchByContentResponse });
@@ -296,30 +292,30 @@ const handleC2PAManifestMessage = async (event) => {
         const matchByContentResponseJSON = await matchByContentResponse.json();
         Logger.info('Trustmark SBR matchByContent response', { matchByContentResponseJSON });
 
-        //Fetch manifest from SBR
+        // Fetch manifest from SBR
         const manifestMatch = matchByContentResponseJSON.matches[0];
         if (manifestMatch) {
-          //TODO temporary fix for Adobe SBR manifests Ids
+          // TODO temporary fix for Adobe SBR manifests Ids
           const manifestId = manifestMatch.manifestId.replace(/:/g, '-');
           Logger.info('Manifest match returned by SBR', { manifestId });
 
-          //Manifest retrieval endpoint          
+          // Manifest retrieval endpoint
           const manifestEndpoint = `${manifestMatch.endpoint}manifests/${manifestId}`;
 
-          //No Accept header will return binary JUMBF data
+          // No Accept header will return binary JUMBF data
           const manifestsResponse = await fetch(`${manifestEndpoint}`, {
             method: 'GET',
-            redirect: "follow"
+            redirect: 'follow',
           });
 
-          TimelineLogger.addToTimeline('c2pa', `Fetched /manifests Trustmark`);
+          TimelineLogger.addToTimeline('c2pa', 'Fetched /manifests Trustmark');
 
           if (!manifestsResponse.ok) {
             Logger.error('Server error during SBR manifest fetch', { status: manifestsResponse });
             throw new Error(`Server error: ${manifestsResponse.status}`);
           }
 
-          //Update ViewMore URL for the validation UI component, using the manifest URL
+          // Update ViewMore URL for the validation UI component, using the manifest URL
           response.viewMoreUrl = generateVerifyUrl(manifestEndpoint);
           Logger.info('Update ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
 
@@ -330,37 +326,36 @@ const handleC2PAManifestMessage = async (event) => {
           Logger.info('SBR returned manifest store', { manifestStore });
 
           const manifestStoreConversion = manifestStore;
-          const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStoreConversion);
+          const { manifestStore: l2ManifestStore } = await createL2ManifestStore(
+            manifestStoreConversion,
+          );
 
           response.retrievedManifest = l2ManifestStore;
-          //TODO update when Adobe SBR supports this
+          // TODO update when Adobe SBR supports this
           response.similarityScore = manifestMatch.similarityScore;
 
-          TimelineLogger.addToTimeline('c2pa', `Created retrieved manifest Trustmark`);
+          TimelineLogger.addToTimeline('c2pa', 'Created retrieved manifest Trustmark');
         }
-      }
-      else if (event.data.watermarkType === 'digimarc') {
+      } else if (event.data.watermarkType === 'digimarc') {
         Logger.info('Processing digimarc watermark', { imageId: event.data.imageId });
 
         const file = await dataUrlToFile(event.data.dataURI, 'filename');
-        TimelineLogger.addToTimeline('c2pa', `Prepared file to read watermark Digimarc`);
+        TimelineLogger.addToTimeline('c2pa', 'Prepared file to read watermark Digimarc');
 
         const contentType = CONTENT_TYPE.JUMBF;
-        let wmResult = await getManifestFromWatermark(file, contentType);
-        TimelineLogger.addToTimeline('c2pa', `Manifest obtained from SBR Digimarc`);
-        
+        const wmResult = await getManifestFromWatermark(file, contentType);
+        TimelineLogger.addToTimeline('c2pa', 'Manifest obtained from SBR Digimarc');
+
         if (wmResult.success) {
           Logger.info('Watermark found in image', { imageId });
           response.retrievedManifest = wmResult.manifest;
           response.hammingDistance = wmResult.hammingDistance;
-          
-          //Update ViewMore URL for the validation UI component, using the manifest URL
+
+          // Update ViewMore URL for the validation UI component, using the manifest URL
           response.viewMoreUrl = generateVerifyUrl(wmResult.manifestUrl);
           Logger.info('Update ViewMore URL generated', { viewMoreUrl: response.viewMoreUrl });
-
         }
-      }
-      else {
+      } else {
         Logger.warn('Unknown watermark type', { imageId });
         response.error = 'Unknown watermark type';
       }
@@ -368,16 +363,15 @@ const handleC2PAManifestMessage = async (event) => {
 
     Logger.info('C2PA Manifest retrieval processed successfully', { response });
     return response;
-  }
-  catch (error) {
+  } catch (error) {
     Logger.error('Error processing manifest message', { error });
     return { error: error.message };
   } finally {
-    TimelineLogger.closeTimeline("c2pa");
+    TimelineLogger.closeTimeline('c2pa');
   }
 };
 
-//Event manager for messages from the content script
+// Event manager for messages from the content script
 chrome.runtime.onMessage.addListener((event, sender, sendResponse) => {
   if (event.type === EVENT_TYPE_C2PA_MANIFEST) {
     Logger.info('Received C2PA manifest event', { type: event.type });
@@ -387,7 +381,7 @@ chrome.runtime.onMessage.addListener((event, sender, sendResponse) => {
         sendResponse(result); // Send response on success
       })
       .catch((error) => {
-        Logger.error('Error handling C2PA manifest message', { error: error });
+        Logger.error('Error handling C2PA manifest message', { error });
         sendResponse({ error: error.message }); // Send response on error
       });
   } else {

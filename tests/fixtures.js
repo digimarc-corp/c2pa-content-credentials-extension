@@ -6,7 +6,7 @@ export const test = base.extend({
   context: async ({}, use) => {
     // eslint-disable-next-line no-underscore-dangle
     const __dirname = dirname(fileURLToPath(import.meta.url));
-    const extensionPath = path.resolve(__dirname, '../');
+    const extensionPath = path.resolve(__dirname, '../build');
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [

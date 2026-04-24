@@ -3,3 +3,5 @@ c2pa/
 c2pa-wc/
 code_samples.js
 build/
+src/lib/trustmark/
+src/lib/trustmark/js/deps/

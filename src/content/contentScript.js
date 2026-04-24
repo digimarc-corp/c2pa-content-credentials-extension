@@ -40,7 +40,7 @@ document.addEventListener('contextmenu', (event) => {
 }, true);
 
 // Register to messages coming from the background script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message) => {
   Logger.debug('Received message', { type: message.type });
 
   try {
@@ -70,36 +70,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           displayError('Unable to locate a media to verify.');
         }
       }
-    } 
-    else if (message.type === MSG_INJECT_C2PA_INDICATOR) {
+    } else if (message.type === MSG_INJECT_C2PA_INDICATOR) {
       Logger.info('Injecting C2PA indicator on all components');
       addC2PAIndicatorOnAllComponents();
       singleImageVerification = false;
       chrome.runtime.sendMessage({ type: MSG_DISABLE_RIGHT_CLICK });
-    } 
-    else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
+    } else if (message.type === MSG_REVERT_C2PA_INDICATOR) {
       Logger.info('Reverting C2PA indicators on all components');
       removeC2PAIndicatorOnAllComponents();
       singleImageVerification = true;
       chrome.runtime.sendMessage({ type: MSG_ENABLE_RIGHT_CLICK });
-    } 
-    else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
+    } else if (message.type === MSG_VERIFY_SINGLE_IMAGE) {
       Logger.info('Verifying single image', { clickedElement: clickedEl });
       handleSingleImage(clickedEl, singleImageVerification, lookForWatermark);
-    } 
-    else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
+    } else if (message.type === MSG_VERIFY_SINGLE_VIDEO) {
       Logger.info('Verifying single video', { clickedElement: clickedEl });
       handleSingleVideo(clickedEl, singleImageVerification, lookForWatermark);
-    } 
-    else if (message.type === MSG_VERIFY_SINGLE_AUDIO) {
+    } else if (message.type === MSG_VERIFY_SINGLE_AUDIO) {
       Logger.info('Verifying single audio', { clickedElement: clickedEl });
       handleSingleAudio(clickedEl, singleImageVerification, lookForWatermark);
-    } 
-    else if (message.type === MSG_DISABLE_LOOK_FOR_WATERMARK) {
+    } else if (message.type === MSG_DISABLE_LOOK_FOR_WATERMARK) {
       Logger.info('Disabling watermark detection');
       lookForWatermark = false;
-    } 
-    else if (message.type === MSG_ENABLE_LOOK_FOR_WATERMARK) {
+    } else if (message.type === MSG_ENABLE_LOOK_FOR_WATERMARK) {
       Logger.info('Enabling watermark detection');
       lookForWatermark = true;
     } else {

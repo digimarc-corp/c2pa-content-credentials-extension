@@ -30,9 +30,10 @@ const Logger = (() => {
     if (LOG_LEVELS[level] >= currentLogLevel) {
       const timestamp = new Date().toISOString();
       const callerFunctionName = getCallerFunctionName();
+      // eslint-disable-next-line no-console
       console[level.toLowerCase()](
         `[${timestamp}] [${level}] [${callerFunctionName}] ${message}`,
-        ...optionalParams
+        ...optionalParams,
       );
     }
   };
@@ -42,6 +43,7 @@ const Logger = (() => {
       if (Object.values(LOG_LEVELS).includes(level)) {
         currentLogLevel = level;
       } else {
+        // eslint-disable-next-line no-console
         console.warn(`[Logger] Invalid log level: ${level}`);
       }
     },

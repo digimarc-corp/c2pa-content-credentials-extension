@@ -2,15 +2,12 @@
 import {
   EVENT_TYPE_C2PA_MANIFEST,
   API_SBR_DIGIMARC,
-  API_SBR_DIGIMARC_TOKEN
+  API_SBR_DIGIMARC_TOKEN,
 } from '../config.js';
-import { displayError } from './errorUtils.js';
-
-import { getBase64FromBlob } from './imageUtils.js';
 import { displayProcessStatus } from './statusIndicator.js';
 import Logger from './logger.js';
 
-export const compareManifests = (manifest1, manifest2) => {  
+export const compareManifests = (manifest1, manifest2) => {
   const keys = Object.keys(manifest1).filter((key) => key !== 'validationStatus' && key !== 'thumbnail' && key !== 'watermarkProvider' && key !== 'alert' && key !== 'ingredients');
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
@@ -39,16 +36,19 @@ const displayManifest = (
 ) => {
   let manifest = _manifest;
   if (manifest || retrievedManifest) {
-
     if (retrievedManifest) {
       manifest = retrievedManifest;
       manifest.watermarkProvider = 'Digimarc';
-      manifest.alert = { message: 'Content Credentials were cross-checked using the watermark in the image', type: 'info' };
+      manifest.alert = {
+        message: 'Content Credentials were cross-checked using the watermark in the image',
+        type: 'info',
+      };
 
-      //Ignore assertion.dataHash.mismatch error if it's the only one in the retrieved manifest as it was validated without the image
+      // Ignore assertion.dataHash.mismatch error if it's the only one in the retrieved
+      // manifest as it was validated without the image
       const otpgError = (manifest.error === 'otgp');
-      const dataHashMismatch = (manifest.validationStatus.length === 1) &&
-        (manifest.validationStatus.some(error => error.code === 'assertion.dataHash.mismatch'));
+      const dataHashMismatch = (manifest.validationStatus.length === 1)
+        && (manifest.validationStatus.some((error) => error.code === 'assertion.dataHash.mismatch'));
 
       if (otpgError && dataHashMismatch) {
         manifest.error = null;
@@ -57,7 +57,10 @@ const displayManifest = (
     }
 
     if (!_manifest) {
-      manifest.alert = { message: 'Content Credentials were retrieved using the watermark in the image', type: 'info' };
+      manifest.alert = {
+        message: 'Content Credentials were retrieved using the watermark in the image',
+        type: 'info',
+      };
     }
 
     if (hammingDistance && !pHashIntact(hammingDistance)) {
@@ -66,11 +69,15 @@ const displayManifest = (
 
     if (_manifest && retrievedManifest) {
       // we have both a manifest and a retrieved manifest
-      Logger.warn('Manifest and retrieved manifest comparison', { _manifest, retrievedManifest });
+      Logger.info('Manifest and retrieved manifest comparison', { _manifest, retrievedManifest });
       const comparison = compareManifests(_manifest, retrievedManifest);
 
       if (!comparison) {
-        manifest.alert = { message: "The embedded content credentials didn't match the reference in the watermark, the original content credentials were retrieved.", type: 'error' };
+        manifest.alert = {
+          message: "The embedded content credentials didn't match the reference in the watermark, "
+            + 'the original content credentials were retrieved.',
+          type: 'error',
+        };
         manifest.error = true;
       }
     }
@@ -113,26 +120,36 @@ const displayManifest = (
   Logger.info('Manifest loaded', { manifest });
 };
 
-
 const decodeTrustmark = async (imageURL) => {
   const imageFetched = await fetch(imageURL);
   const imageAsBlob = await imageFetched.blob();
-  const imageAsBase64 = await getBase64FromBlob(imageAsBlob);
+  // Convert blob to base64
+  const imageAsBase64 = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(imageAsBlob);
+  });
 
-  //Detect signpost watermark (trustmark)
+  // Detect signpost watermark (trustmark)
   const trustmarkInfo = await runwmark(imageAsBase64);
   Logger.info('Decoded Watermark Results', { trustmarkInfo });
   return trustmarkInfo;
-}
+};
 
 /**
  * Send a message to the sandbox to get the C2PA manifest for the image.
  * @param {HTMLImageElement} imageElement - The image element to get the C2PA manifest for.
  */
-export const getC2PAManifest = async (imageElement, addIconForImage, singleImageVerification, lookForWatermark) => {
-
+export const getC2PAManifest = async (
+  imageElement,
+  addIconForImage,
+  singleImageVerification,
+  lookForWatermark,
+) => {
   // Start the process
-  const markAsComplete = displayProcessStatus('Please wait while trying to obtain Content Credentials...');
+  const markAsComplete = displayProcessStatus(
+    'Please wait while trying to obtain Content Credentials...',
+  );
 
   const event = {};
   event.type = EVENT_TYPE_C2PA_MANIFEST;
@@ -141,35 +158,32 @@ export const getC2PAManifest = async (imageElement, addIconForImage, singleImage
     src: imageElement.src,
     dataURI: imageElement.dataURI,
     imageId: imgId,
-    lookForWm: lookForWatermark
+    lookForWm: lookForWatermark,
   };
 
   if (lookForWatermark) {
-    //Check for signpost
+    // Check for signpost
     const trustmarkInfo = await decodeTrustmark(imageElement.src);
     if (trustmarkInfo.watermark_present) {
       if (trustmarkInfo.schema === 'BCH_SUPER') {
-        //Signpost
+        // Signpost
         Logger.info('Signpost watermark detected', { trustmarkInfo });
         const payloadBlocks = trustmarkInfo.watermark.match(/.{1,10}/g); // Regular expression to split into chunks of 10
-        const availableWatermarks = payloadBlocks.map(block => parseInt(block, 2)); // Use parseInt with base 2 for binary
+        const availableWatermarks = payloadBlocks.map((block) => parseInt(block, 2));
         Logger.info('Watermarks available', { availableWatermarks });
 
-        for (const watermark of availableWatermarks) {
+        availableWatermarks.forEach((watermark) => {
           if (watermark === 1) {
             event.data.watermarkType = 'digimarc';
-            break;
           }
-        }
-      }
-      else {
-        //Trustmark watermark but no signpost
+        });
+      } else {
+        // Trustmark watermark but no signpost
         event.data.watermarkType = 'trustmark';
-        event.data.softBinding = trustmarkInfo.c2padata['c2pa.soft-binding']
+        event.data.softBinding = trustmarkInfo.c2padata['c2pa.soft-binding'];
       }
-    }
-    else {
-      //Set digimarc type as the watermark to try to detect
+    } else {
+      // Set digimarc type as the watermark to try to detect
       event.data.watermarkType = 'digimarc';
     }
   }
@@ -204,7 +218,7 @@ export const getC2PAManifest = async (imageElement, addIconForImage, singleImage
       markAsComplete(true, 'No Content Credentials found for this media.');
     } else {
       // Mark the process as complete
-      //markAsComplete(false, 'Error retrieving Content Credentials');
+      // markAsComplete(false, 'Error retrieving Content Credentials');
       Logger.error(error);
     }
   }
@@ -213,13 +227,13 @@ export const getC2PAManifest = async (imageElement, addIconForImage, singleImage
 export const fetchManifestFromSBR = async (file, contentType = null) => {
   Logger.info('C2PA Manifest retrieval from SBR started');
 
-  //TODO change to binary call
+  // TODO change to binary call
   const data = new FormData();
   data.append('file', file);
   const requestOptions = {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${API_SBR_DIGIMARC_TOKEN}`
+      Authorization: `Bearer ${API_SBR_DIGIMARC_TOKEN}`,
     },
     body: data,
     redirect: 'follow',
@@ -239,8 +253,8 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
   const manifestsResponse = await fetch(manifestUrl, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${API_SBR_DIGIMARC_TOKEN}`,
-      'Accept': contentType
+      Authorization: `Bearer ${API_SBR_DIGIMARC_TOKEN}`,
+      Accept: contentType,
     },
   });
   Logger.info('Manifest retrieval response', { manifestsResponse });
@@ -251,6 +265,6 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
     manifestData: manifestsResponse,
     similarityScore: matchesByContentResponseJSON?.matches?.[0]?.similarityScore,
     manifestUrl: `${manifestUrl}?access_token=${API_SBR_DIGIMARC_TOKEN}`,
-  }
+  };
   return response;
 };

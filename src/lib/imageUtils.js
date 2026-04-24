@@ -39,7 +39,7 @@ function generateBaseId(imageElement) {
  */
 export function createC2PAComponents(baseId) {
   const caiPopover = document.createElement('cai-popover-dm-plugin');
-  Logger.info('Creating popover',{caiPopover});
+  Logger.info('Creating popover', { caiPopover });
 
   caiPopover.id = `popover-${baseId}`;
   caiPopover.interactive = true;
@@ -334,7 +334,6 @@ function prepareAndHandleAudio(audioElement, singleImageVerification, lookForWat
 
     if (sourceElement) {
       sourceElement.setAttribute('c2paId', baseId);
-      const src = sourceElement.getAttribute('src');
       setImageDataURI(sourceElement).then((imageDataURI) => {
         sourceElement.dataURI = imageDataURI;
         getC2PAManifest(sourceElement, addIconForImage, singleImageVerification, lookForWatermark);
@@ -696,16 +695,16 @@ export function removeC2PAIndicatorOnAudioComponents() {
   // Stop observing the image to avoid adding the components again
   intersectionObserver?.disconnect();
 
-    // Clear the handledMedias list
-    handledMedias = [];
-    visibleMedias = [];
-  } 
-  
-  export function removeC2PAIndicatorOnAllComponents() {
-    removeC2PAIndicatorOnImgComponents();
-    removeC2PAIndicatorOnVideoComponents();
-    removeC2PAIndicatorOnAudioComponents();
-  }
+  // Clear the handledMedias list
+  handledMedias = [];
+  visibleMedias = [];
+}
+
+export function removeC2PAIndicatorOnAllComponents() {
+  removeC2PAIndicatorOnImgComponents();
+  removeC2PAIndicatorOnVideoComponents();
+  removeC2PAIndicatorOnAudioComponents();
+}
 
 /**
  * Converts an image blob to a data URI
@@ -806,7 +805,7 @@ export function getMatchingParent(element) {
 
     if (isDimensionSimilar(currentRect.width, parentRect.width, 10)
       && isDimensionSimilar(currentRect.height, parentRect.height, 10)) {
-      Logger.info('Found matching parent',{parentElement});
+      Logger.info('Found matching parent', { parentElement });
       currentElement = parentElement;
     } else {
       Logger.warn('No matching parent found.');
@@ -846,8 +845,8 @@ export async function getBase64FromBlob(blob) {
 
 export async function resizeImageBlob(blob, maxDimension) {
   // Step 1: Check if the Blob is an image
-  if (!blob.type.startsWith("image/")) {
-      throw new Error("The provided Blob is not an image!");
+  if (!blob.type.startsWith('image/')) {
+    throw new Error('The provided Blob is not an image!');
   }
 
   // Step 2: Load the Blob as an Image
@@ -856,29 +855,27 @@ export async function resizeImageBlob(blob, maxDimension) {
 
   // Wait for the image to load
   await new Promise((resolve, reject) => {
-      img.onload = resolve;
-      img.onerror = reject;
-      img.src = imageUrl;
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = imageUrl;
   });
 
   // Step 3: Resize the Image
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
 
   // Calculate the new dimensions
-  let width = img.width;
-  let height = img.height;
+  let { width } = img;
+  let { height } = img;
 
   if (width > height) {
-      if (width > maxDimension) {
-          height = (height * maxDimension) / width;
-          width = maxDimension;
-      }
-  } else {
-      if (height > maxDimension) {
-          width = (width * maxDimension) / height;
-          height = maxDimension;
-      }
+    if (width > maxDimension) {
+      height = (height * maxDimension) / width;
+      width = maxDimension;
+    }
+  } else if (height > maxDimension) {
+    width = (width * maxDimension) / height;
+    height = maxDimension;
   }
 
   // Set canvas dimensions and draw the resized image
@@ -888,12 +885,12 @@ export async function resizeImageBlob(blob, maxDimension) {
 
   // Convert the canvas back to a Blob
   return new Promise((resolve) => {
-      canvas.toBlob(
-          (resizedBlob) => {
-              resolve(resizedBlob);
-          },
-          blob.type, // Keep the same MIME type as the original image
-          1.0 // High-quality compression
-      );
+    canvas.toBlob(
+      (resizedBlob) => {
+        resolve(resizedBlob);
+      },
+      blob.type, // Keep the same MIME type as the original image
+      1.0, // High-quality compression
+    );
   });
 }

@@ -15,7 +15,7 @@ import {
   WHITELISTED_WM_AUTO_URLS,
 } from '../config.js';
 
-//Utility functions
+// Utility functions
 function disableMenuItem(id) {
   chrome.contextMenus.update(id, { enabled: false }, () => {
     if (chrome.runtime.lastError) {
@@ -77,29 +77,27 @@ const triggerInjectC2PAIndicator = async () => {
             Logger.info(`Sending ${MSG_ENABLE_LOOK_FOR_WATERMARK} to the active tab`);
             chrome.tabs.sendMessage(tabs[0].id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
           }
-        }
-        else if (result.lookForWatermark) {
+        } else if (result.lookForWatermark) {
           Logger.info('Watermark detection is enabled');
           if (tabs.length > 0) {
             Logger.info(`Sending ${MSG_ENABLE_LOOK_FOR_WATERMARK} to the active tab`);
             chrome.tabs.sendMessage(tabs[0].id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
           }
-        }
-        else {
+        } else {
           Logger.info('Watermark detection is disabled');
           if (tabs.length > 0) {
             Logger.info(`Sending ${MSG_DISABLE_LOOK_FOR_WATERMARK} to the active tab`);
             chrome.tabs.sendMessage(tabs[0].id, { type: MSG_DISABLE_LOOK_FOR_WATERMARK });
           }
         }
-      }
+      },
     );
   } catch (error) {
     Logger.error('Error while triggering C2PA indicator injection', { error: error.message });
   }
 };
 
-//Context Menu handling
+// Context Menu handling
 function handleMediaVerification(info, tabs) {
   const messageTypeMap = {
     image: MSG_VERIFY_SINGLE_IMAGE,
@@ -123,7 +121,7 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   }
 });
 
-//Message handling
+// Message handling
 
 // Set badge based on whether the extension is enabled or disabled
 chrome.runtime.onInstalled.addListener(async () => {
@@ -145,7 +143,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 const messageHandlers = {
-  [MSG_PAGE_LOADED]: async () => await triggerInjectC2PAIndicator(),
+  [MSG_PAGE_LOADED]: () => triggerInjectC2PAIndicator(),
   [MSG_DISABLE_RIGHT_CLICK]: () => disableMenuItem('verifyImage'),
   [MSG_ENABLE_RIGHT_CLICK]: () => enableMenuItem('verifyImage'),
 };

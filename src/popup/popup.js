@@ -37,15 +37,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  const disableWatermarkToggle = () => {
+    watermarkToggle.checked = false;
+    chrome.storage.local.set({ lookForWatermark: false });
+    chrome.tabs.sendMessage(tab.id, { type: MSG_DISABLE_LOOK_FOR_WATERMARK });
+  };
+
   const disableAutomaticToggle = () => {
     automaticToggle.checked = false;
     chrome.storage.local.set({ activated: false });
-    
+
     // Set the OFF icon
     const path = chrome.runtime.getURL('assets/icons/icon-off.png');
     chrome.action.setIcon({ path });
-    
+
     chrome.tabs.sendMessage(tab.id, { type: MSG_REVERT_C2PA_INDICATOR });
+  };
+
+  const enableWatermarkToggle = () => {
+    disableAutomaticToggle();
+    chrome.tabs.sendMessage(tab.id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
   };
 
   const enableAutomaticToggle = () => {
@@ -55,17 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     disableWatermarkToggle();
     chrome.tabs.sendMessage(tab.id, { type: MSG_INJECT_C2PA_INDICATOR });
-  };
-
-  const disableWatermarkToggle = () => {
-    watermarkToggle.checked = false;
-    chrome.storage.local.set({ lookForWatermark: false });
-    chrome.tabs.sendMessage(tab.id, { type: MSG_DISABLE_LOOK_FOR_WATERMARK });
-  };
-
-  const enableWatermarkToggle = () => {
-    disableAutomaticToggle();
-    chrome.tabs.sendMessage(tab.id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
   };
 
   automaticToggle.addEventListener('change', async () => {

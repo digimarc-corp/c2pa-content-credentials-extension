@@ -87,15 +87,17 @@ export default (env, argv) => {
                     { from: './src/lib/trustmark/js', to: 'lib/trustmark/js' },
                 ],
             }),
-            new ExtensionReloader({
-                manifest: path.resolve(__dirname, 'src/manifest.json'), // Path to your manifest.json
-                entries: {
-                    background: ['background/background'], // Name of your background script entry
-                    contentScript: ['content/content'], // Name(s) of your content script entries
-                    extensionPage: ['popup/popup'], // Name(s) of your extension page entries
-                },
-                reloadPage: !isProduction, // Enable live reload only in development
-            }),
+            ...(!isProduction ? [
+                new ExtensionReloader({
+                    manifest: path.resolve(__dirname, 'src/manifest.json'), // Path to your manifest.json
+                    entries: {
+                        background: ['background/background'], // Name of your background script entry
+                        contentScript: ['content/content'], // Name(s) of your content script entries
+                        extensionPage: ['popup/popup'], // Name(s) of your extension page entries
+                    },
+                    reloadPage: true, // Enable live reload only in development
+                }),
+            ] : []),
         ],
         devtool: isProduction ? false : 'source-map', // Use source maps only in development
         optimization: {
