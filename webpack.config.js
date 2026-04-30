@@ -59,10 +59,6 @@ export default (env, argv) => {
                         'css-loader', // Resolves CSS imports
                     ],
                 },
-                {
-                    test: /node_modules\/c2pa/,
-                    sideEffects: true, // Prevent tree shaking of c2pa
-                  },
             ],
         },
         plugins: [
@@ -81,8 +77,6 @@ export default (env, argv) => {
                     { from: './src/popup/assets', to: 'popup/assets' },
                     { from: './src/offscreen/offscreen.html', to: 'offscreen/offscreen.html' },
                     { from: './node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js', to: 'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js' },
-                    { from: './node_modules/c2pa/dist/assets/wasm/toolkit_bg.wasm', to: 'node_modules/c2pa/dist/assets/wasm/toolkit_bg.wasm' },
-                    { from: './node_modules/c2pa/dist/c2pa.worker.min.js', to: 'node_modules/c2pa/dist/c2pa.worker.min.js' }, 
                     { from: './src/lib/trustmark/models/*.onnx', to: 'lib/trustmark/models/[name][ext]' },
                     { from: './src/lib/trustmark/js', to: 'lib/trustmark/js' },
                 ],

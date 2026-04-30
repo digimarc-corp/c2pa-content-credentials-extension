@@ -12,6 +12,7 @@ import {
   MSG_INJECT_C2PA_INDICATOR,
   MSG_DISABLE_LOOK_FOR_WATERMARK,
   MSG_ENABLE_LOOK_FOR_WATERMARK,
+  MSG_GET_VERIFY_TRUST_SETTING,
   WHITELISTED_WM_AUTO_URLS,
 } from '../config.js';
 
@@ -148,10 +149,19 @@ const messageHandlers = {
   [MSG_ENABLE_RIGHT_CLICK]: () => enableMenuItem('verifyImage'),
 };
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   Logger.info('Received message', { type: message.type });
+
+  if (message?.type === MSG_GET_VERIFY_TRUST_SETTING) {
+    chrome.storage.local.get({ verifyTrust: true }, (result) => {
+      sendResponse({ verifyTrust: result.verifyTrust });
+    });
+    return true;
+  }
+
   const handler = messageHandlers[message.type];
   if (handler) handler();
+  return false;
 });
 
 // Initialize the extension offscreen document

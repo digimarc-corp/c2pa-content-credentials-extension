@@ -4,3 +4,9 @@ cai-popover-dm-plugin, cai-popover-dm-plugin * {
     --cai-font-family: 'Roboto', Arial, Helvetica, sans-serif;
     font-family: 'Roboto', sans-serif !important;
 }
+
+c2pa-popover, c2pa-popover *,
+c2pa-manifest-summary, c2pa-manifest-summary *,
+c2pa-indicator, c2pa-indicator * {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}

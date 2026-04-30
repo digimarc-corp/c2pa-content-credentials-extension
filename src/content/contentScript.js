@@ -3,6 +3,7 @@
 
 // Import third-party and local dependencies
 import '../../c2pa/packages/c2pa-wc/dist/index.js';
+import '../c2pa-ui/index.js';
 
 import {
   MSG_DISABLE_LOOK_FOR_WATERMARK,
@@ -27,6 +28,13 @@ import {
 import { displayError } from '../lib/errorUtils.js';
 import { findNearestMedia } from '../lib/videoUtils.js';
 import Logger from '../lib/logger.js'; // Import the shared logger
+
+window.__C2PA_UI_LIBRARY__ = 'legacy';
+
+chrome.storage.local.get({ useNewUI: false }, ({ useNewUI }) => {
+  window.__C2PA_UI_LIBRARY__ = useNewUI ? 'new' : 'legacy';
+  Logger.info('Configured C2PA UI library', { library: window.__C2PA_UI_LIBRARY__ });
+});
 
 // Variable to hold the right-clicked element
 let clickedEl = null;

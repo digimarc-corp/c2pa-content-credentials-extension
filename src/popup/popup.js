@@ -3,12 +3,16 @@ import {
   MSG_ENABLE_LOOK_FOR_WATERMARK,
   MSG_INJECT_C2PA_INDICATOR,
   MSG_REVERT_C2PA_INDICATOR,
+  MSG_VERIFY_TRUST_UPDATED,
 } from '../config.js';
 
 /* eslint-disable no-undef */
 document.addEventListener('DOMContentLoaded', async () => {
   const automaticToggle = document.getElementById('toggle');
   const watermarkToggle = document.getElementById('toggle-wm');
+  const verifyTrustToggle = document.getElementById('toggle-verify-trust');
+  const useNewUIToggle = document.getElementById('toggle-use-new-ui');
+  const jsonManifestViewToggle = document.getElementById('toggle-json-manifest-view');
   const tab = {};
 
   // Set the version number from the manifest
@@ -24,16 +28,38 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Load the toggle switch state from storage
-  chrome.storage.local.get({ activated: false, lookForWatermark: false }, (result) => {
+  chrome.storage.local.get({
+    activated: false,
+    lookForWatermark: false,
+    verifyTrust: true,
+    useNewUI: false,
+    enableJsonManifestView: false,
+  }, (result) => {
     automaticToggle.checked = result.activated;
     watermarkToggle.checked = result.lookForWatermark;
+    verifyTrustToggle.checked = result.verifyTrust;
+    useNewUIToggle.checked = result.useNewUI;
+    jsonManifestViewToggle.checked = result.enableJsonManifestView;
   });
 
   // Listen for changes in the local storage
   chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === 'local' && changes.activated && changes.lookForWatermark) {
-      automaticToggle.checked = changes.activated.newValue;
-      watermarkToggle.checked = changes.lookForWatermark.newValue;
+    if (areaName === 'local') {
+      if (changes.activated) {
+        automaticToggle.checked = changes.activated.newValue;
+      }
+      if (changes.lookForWatermark) {
+        watermarkToggle.checked = changes.lookForWatermark.newValue;
+      }
+      if (changes.verifyTrust) {
+        verifyTrustToggle.checked = changes.verifyTrust.newValue;
+      }
+      if (changes.useNewUI) {
+        useNewUIToggle.checked = changes.useNewUI.newValue;
+      }
+      if (changes.enableJsonManifestView) {
+        jsonManifestViewToggle.checked = changes.enableJsonManifestView.newValue;
+      }
     }
   });
 
@@ -87,6 +113,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       disableWatermarkToggle();
     }
+  });
+
+  verifyTrustToggle.addEventListener('change', async () => {
+    chrome.storage.local.set({ verifyTrust: verifyTrustToggle.checked });
+    chrome.runtime.sendMessage({
+      type: MSG_VERIFY_TRUST_UPDATED,
+      verifyTrust: verifyTrustToggle.checked,
+    });
+  });
+
+  useNewUIToggle.addEventListener('change', async () => {
+    chrome.storage.local.set({ useNewUI: useNewUIToggle.checked });
+    // Reload current tab to apply UI library change
+    if (tab.id) {
+      chrome.tabs.reload(tab.id);
+    }
+  });
+
+  jsonManifestViewToggle.addEventListener('change', async () => {
+    chrome.storage.local.set({ enableJsonManifestView: jsonManifestViewToggle.checked });
   });
 });
 

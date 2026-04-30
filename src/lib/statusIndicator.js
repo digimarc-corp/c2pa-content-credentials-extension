@@ -19,28 +19,49 @@ export function displayProcessStatus(message, duration = 5000) {
         border-bottom-color: black;
       }
     }
+    .status-indicator-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-indicator-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .status-indicator-text {
+      white-space: normal;
+      overflow: visible;
+    }
   `;
   document.head.appendChild(style);
 
-  // Create a div for the status indicator
+  // Create a container div for the status indicator
   const statusDiv = document.createElement('div');
-  statusDiv.innerText = `${message}`;
+  const iconPath = chrome.runtime.getURL('assets/icons/cr-info.svg');
+  
+  statusDiv.innerHTML = `
+    <div class="status-indicator-container">
+      <img src="${iconPath}" alt="C2PA" class="status-indicator-icon">
+      <div class="status-indicator-text">${message}</div>
+    </div>
+  `;
 
-  // Add styles to make it appear at the bottom right corner
+  // Add styles to make it appear at the top right
   Object.assign(statusDiv.style, {
     position: 'fixed', // Fixed position
-    bottom: '10px', // 10px from the bottom
-    right: '10px', // 10px from the right
+    top: '20px', // 20px from the top
+    right: '20px', // 20px from the right
     backgroundColor: 'white', // White background
     borderBottom: '7px solid black', // Default black border
+    borderRadius: '12px', // Rounded corners
     color: 'black',
-    padding: '10px', // Padding around the text
+    padding: '16px 24px', // Larger padding
     zIndex: '2147483647', // Ensure it's on top
     maxWidth: '500px', // Maximum width
-    overflow: 'hidden', // Handle long error messages
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.25)',
+    fontSize: '16px', // Larger font size
+    fontWeight: '500', // Slightly bold
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)', // Enhanced shadow
     opacity: '0', // Start fully transparent
     transition: 'opacity 1s ease-in-out', // Smooth transition for opacity change
     fontFamily: 'Roboto, Arial, sans-serif', // Adding font family, fallback to sans-serif
@@ -62,7 +83,10 @@ export function displayProcessStatus(message, duration = 5000) {
 
   // Function to update the statusDiv for completion
   const markAsComplete = (isError = false, completionMessage = 'Process Complete!') => {
-    statusDiv.innerText = completionMessage;
+    const textElement = statusDiv.querySelector('.status-indicator-text');
+    if (textElement) {
+      textElement.innerText = completionMessage;
+    }
     statusDiv.style.animation = ''; // Remove the gradient animation
 
     if (isError) {
