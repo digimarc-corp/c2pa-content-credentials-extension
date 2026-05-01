@@ -474,8 +474,8 @@ function hasBetaAssertion(assertions) {
 }
 
 /**
- * Convert c2pa-web ManifestStore (snake_case) to legacy L2ManifestStore (camelCase)
- * expected by c2pa-wc components.
+ * Convert c2pa-web ManifestStore (snake_case) to the extension L2ManifestStore
+ * consumed by the c2pa-ui components.
  */
 async function createL2ManifestStore(manifestStore, metadata = {}) {
   if (!manifestStore || !manifestStore.manifests) {
@@ -574,7 +574,7 @@ async function createL2ManifestStore(manifestStore, metadata = {}) {
     },
   });
 
-  Logger.debug('L2 manifest store created for c2pa-wc compatibility', { l2ManifestStore });
+  Logger.debug('L2 manifest store created for c2pa-ui compatibility', { l2ManifestStore });
   return { manifestStore: l2ManifestStore };
 }
 
@@ -848,7 +848,7 @@ const getManifestFromWatermark = async (file, contentType) => {
   const { manifestStore: l2ManifestStore } = await createL2ManifestStore(manifestStore, {
     trustSource,
   });
-  TimelineLogger.addToTimeline('c2pa', 'Create c2pa-wc compatible l2ManifestStore');
+  TimelineLogger.addToTimeline('c2pa', 'Create c2pa-ui compatible l2ManifestStore');
 
   // TODO fix the hammingDistance calculation
   return {

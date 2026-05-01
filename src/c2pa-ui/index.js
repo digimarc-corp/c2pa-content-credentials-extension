@@ -1,8 +1,8 @@
 /**
  * C2PA UI Components Library
  * 
- * A lightweight replacement for c2pa-wc that provides custom web components
- * for displaying C2PA content credentials without external dependencies.
+ * The primary custom web component library used by the extension for displaying
+ * C2PA content credentials without external UI dependencies.
  * 
  * This library provides:
  * - c2pa-indicator: Badge component showing credential status

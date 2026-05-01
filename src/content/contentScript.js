@@ -2,7 +2,6 @@
 // Import libraries and other scripts and start the content script
 
 // Import third-party and local dependencies
-import '../../c2pa/packages/c2pa-wc/dist/index.js';
 import '../c2pa-ui/index.js';
 
 import {
@@ -29,12 +28,7 @@ import { displayError } from '../lib/errorUtils.js';
 import { findNearestMedia } from '../lib/videoUtils.js';
 import Logger from '../lib/logger.js'; // Import the shared logger
 
-window.__C2PA_UI_LIBRARY__ = 'legacy';
-
-chrome.storage.local.get({ useNewUI: false }, ({ useNewUI }) => {
-  window.__C2PA_UI_LIBRARY__ = useNewUI ? 'new' : 'legacy';
-  Logger.info('Configured C2PA UI library', { library: window.__C2PA_UI_LIBRARY__ });
-});
+Logger.info('Configured C2PA UI library', { library: 'c2pa-ui' });
 
 // Variable to hold the right-clicked element
 let clickedEl = null;

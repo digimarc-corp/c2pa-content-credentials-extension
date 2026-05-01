@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const automaticToggle = document.getElementById('toggle');
   const watermarkToggle = document.getElementById('toggle-wm');
   const verifyTrustToggle = document.getElementById('toggle-verify-trust');
-  const useNewUIToggle = document.getElementById('toggle-use-new-ui');
   const jsonManifestViewToggle = document.getElementById('toggle-json-manifest-view');
   const tab = {};
 
@@ -32,13 +31,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     activated: false,
     lookForWatermark: false,
     verifyTrust: true,
-    useNewUI: false,
     enableJsonManifestView: false,
   }, (result) => {
     automaticToggle.checked = result.activated;
     watermarkToggle.checked = result.lookForWatermark;
-    verifyTrustToggle.checked = result.verifyTrust;
-    useNewUIToggle.checked = result.useNewUI;
+    // Toggle semantics: checked means signer trust verification is disabled.
+    verifyTrustToggle.checked = !result.verifyTrust;
     jsonManifestViewToggle.checked = result.enableJsonManifestView;
   });
 
@@ -52,10 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         watermarkToggle.checked = changes.lookForWatermark.newValue;
       }
       if (changes.verifyTrust) {
-        verifyTrustToggle.checked = changes.verifyTrust.newValue;
-      }
-      if (changes.useNewUI) {
-        useNewUIToggle.checked = changes.useNewUI.newValue;
+        verifyTrustToggle.checked = !changes.verifyTrust.newValue;
       }
       if (changes.enableJsonManifestView) {
         jsonManifestViewToggle.checked = changes.enableJsonManifestView.newValue;
@@ -116,19 +111,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   verifyTrustToggle.addEventListener('change', async () => {
-    chrome.storage.local.set({ verifyTrust: verifyTrustToggle.checked });
+    const verifyTrust = !verifyTrustToggle.checked;
+    chrome.storage.local.set({ verifyTrust });
     chrome.runtime.sendMessage({
       type: MSG_VERIFY_TRUST_UPDATED,
-      verifyTrust: verifyTrustToggle.checked,
+      verifyTrust,
     });
-  });
-
-  useNewUIToggle.addEventListener('change', async () => {
-    chrome.storage.local.set({ useNewUI: useNewUIToggle.checked });
-    // Reload current tab to apply UI library change
-    if (tab.id) {
-      chrome.tabs.reload(tab.id);
-    }
   });
 
   jsonManifestViewToggle.addEventListener('change', async () => {

@@ -45,7 +45,6 @@
         "@contentauth/c2pa-web": "^0.7.1",
         "@webcomponents/webcomponentsjs": "^2.8.0",
         "browser": "^0.2.6",
-        "c2pa-wc": "^0.14.17",
         "glob": "^11.0.1",
         "path": "^0.12.7"
     },

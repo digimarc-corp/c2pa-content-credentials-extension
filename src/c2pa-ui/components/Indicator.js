@@ -1,6 +1,5 @@
 /**
- * C2paIndicator - Custom web component for displaying C2PA badge indicator
- * Replaces cai-indicator-dm-plugin
+ * C2paIndicator - Custom web component for displaying the C2PA badge indicator.
  */
 
 import { indicatorStyles } from '../styles/shared.js';

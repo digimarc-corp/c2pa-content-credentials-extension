@@ -33,36 +33,13 @@ function generateBaseId(imageElement) {
 }
 
 /**
- * Determine which UI component library is being used
- * @returns {string} Either 'new' (c2pa-ui) or 'legacy' (c2pa-wc)
- */
-function getUILibrary() {
-  return window.__C2PA_UI_LIBRARY__ === 'new' ? 'new' : 'legacy';
-}
-
-/**
- * Get component names based on which library is loaded
- * @returns {object} Object with popover, indicator, and manifestSummary names
- */
-function getComponentNames() {
-  const isNew = getUILibrary() === 'new';
-  return {
-    popover: isNew ? 'c2pa-popover' : 'cai-popover-dm-plugin',
-    indicator: isNew ? 'c2pa-indicator' : 'cai-indicator-dm-plugin',
-    manifestSummary: isNew ? 'c2pa-manifest-summary' : 'cai-manifest-summary-dm-plugin',
-  };
-}
-
-/**
  * Create the C2PA indicator web component.
  * @param {string} baseId - The base ID to use for the C2PA components.
  * @returns {HTMLElement} The created C2PA popover element.
  */
 export function createC2PAComponents(baseId) {
-  const { popover: popoverName, indicator: indicatorName, manifestSummary: manifestName } = getComponentNames();
-
-  const caiPopover = document.createElement(popoverName);
-  Logger.info('Creating popover', { caiPopover, library: getUILibrary() });
+  const caiPopover = document.createElement('c2pa-popover');
+  Logger.info('Creating popover', { caiPopover, library: 'c2pa-ui' });
 
   caiPopover.id = `popover-${baseId}`;
   caiPopover.interactive = true;
@@ -70,11 +47,11 @@ export function createC2PAComponents(baseId) {
   caiPopover.style.top = '10px';
   caiPopover.style.right = '10px';
 
-  const caiIndicator = document.createElement(indicatorName);
+  const caiIndicator = document.createElement('c2pa-indicator');
   caiIndicator.id = `indicator-${baseId}`;
   caiIndicator.slot = 'trigger';
 
-  const caiManifestSummary = document.createElement(manifestName);
+  const caiManifestSummary = document.createElement('c2pa-manifest-summary');
   caiManifestSummary.id = `manifest-${baseId}`;
   caiManifestSummary.slot = 'content';
 
@@ -87,14 +64,11 @@ export function createC2PAComponents(baseId) {
 /**
  * Removes all popover, indicator, and manifest-summary elements from the document
  * body that are not associated with any handled images.
- * Supports both legacy (c2pa-wc) and new (c2pa-ui) components.
  */
 export function removeCaiComponents() {
-  const { popover: popoverSelector, indicator: indicatorSelector, manifestSummary: manifestSelector } = getComponentNames();
-
-  const popoverElements = document.body.querySelectorAll(popoverSelector);
-  const indicatorElements = document.body.querySelectorAll(indicatorSelector);
-  const manifestSummaryElements = document.body.querySelectorAll(manifestSelector);
+  const popoverElements = document.body.querySelectorAll('c2pa-popover, cai-popover-dm-plugin');
+  const indicatorElements = document.body.querySelectorAll('c2pa-indicator, cai-indicator-dm-plugin');
+  const manifestSummaryElements = document.body.querySelectorAll('c2pa-manifest-summary, cai-manifest-summary-dm-plugin');
 
   popoverElements.forEach((element) => {
     if (!handledMedias.map((id) => `popover-${id}`).includes(element.id)) {

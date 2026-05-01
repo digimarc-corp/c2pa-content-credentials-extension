@@ -229,27 +229,26 @@
       </div>
     </label>
   </div>
-  <div class="toggle-container boxShadow">
-    <span>Verify signer trust</span>
-    <label class="toggle-label">
-      <input type="checkbox" class="toggle" id="toggle-verify-trust"/>
-      <div class="toggle-background">
-        <div class="toggle-knob"></div>
-      </div>
-    </label>
-  </div>
-
-  <div class="toggle-container boxShadow" id="debug-section" style="flex-direction: column; align-items: flex-start; height: auto; padding: 10px; border-top: 1px solid #DDD; background-color: #F8F8F8;">
-    <div style="font-size: 12px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 8px; width: 100%;">Debug: UI Component Library</div>
-    <label class="toggle-label" style="width: 100%;">
-      <input type="checkbox" class="toggle" id="toggle-use-new-ui"/>
-      <span style="margin-left: 10px; font-size: 13px;">Use new c2pa-ui components (experimental)</span>
-    </label>
-    <label class="toggle-label" style="width: 100%; margin-top: 8px;">
-      <input type="checkbox" class="toggle" id="toggle-json-manifest-view"/>
-      <span style="margin-left: 10px; font-size: 13px;">Enable JSON manifest view</span>
-    </label>
-    <div style="font-size: 11px; color: #999; margin-top: 6px; width: 100%;">OFF = c2pa-wc (current) | ON = c2pa-ui (new)</div>
+  <div class="toggle-container" id="debug-section" style="flex-direction: column; align-items: flex-start; height: auto; padding: 10px 10px 10px 12px; border-top: 1px solid #DDD; border-bottom: 1px solid #DDD; background-color: #F8F8F8;">
+    <div style="font-size: 12px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 8px; margin-left: 8px; width: 100%;">Experimental</div>
+    <div class="toggle-container" style="width: 100%; height: 34px;">
+      <span style="font-size: 13px;">Disable signer trust verification</span>
+      <label class="toggle-label">
+        <input type="checkbox" class="toggle" id="toggle-verify-trust"/>
+        <div class="toggle-background">
+          <div class="toggle-knob"></div>
+        </div>
+      </label>
+    </div>
+    <div class="toggle-container" style="width: 100%; height: 34px; margin-top: 2px;">
+      <span style="font-size: 13px;">Enable JSON manifest view</span>
+      <label class="toggle-label">
+        <input type="checkbox" class="toggle" id="toggle-json-manifest-view"/>
+        <div class="toggle-background">
+          <div class="toggle-knob"></div>
+        </div>
+      </label>
+    </div>
   </div>
 
   <div id="dm-github">

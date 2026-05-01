@@ -64,8 +64,7 @@
                 "lib/trustmark/models/*",
                 "popup/*",
                 "offscreen/*",
-                "config.js",
-                "c2pa/packages/c2pa-wc/*"
+                "config.js"
             ],
             "matches": [
                 "<all_urls>"

@@ -1,6 +1,5 @@
 /**
- * C2paPopover - Custom web component for positioning indicator and manifest summary
- * Replaces cai-popover-dm-plugin
+ * C2paPopover - Custom web component for positioning indicator and manifest summary.
  */
 
 import { popoverStyles } from '../styles/shared.js';

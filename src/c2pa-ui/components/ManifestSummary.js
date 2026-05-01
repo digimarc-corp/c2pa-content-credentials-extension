@@ -1,6 +1,5 @@
 /**
- * C2paManifestSummary - Custom web component for displaying manifest details
- * Replaces cai-manifest-summary-dm-plugin
+ * C2paManifestSummary - Custom web component for displaying manifest details.
  */
 
 import { manifestSummaryStyles } from '../styles/shared.js';

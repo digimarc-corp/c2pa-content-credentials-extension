@@ -70,22 +70,15 @@ test('Manifests are correctly displayed on contentcredentials.org', async ({ pag
     throw new Error('No C2PA icons found');
   }
 
-  // get the children that is a cai-manifest-summary-dm-plugin
-  const caiManifestSummaryDmPlugin = await iconElement.$('#view-more-container-dm-plugin');
-  // expect that caiManifestSummaryDmPlugin has a child that is a "a" element whose href startsWith https://verify.
-  const a = await caiManifestSummaryDmPlugin.$('a');
+  const manifestSummary = await iconElement.$('c2pa-manifest-summary');
+  if (!manifestSummary) {
+    throw new Error('No c2pa-manifest-summary found');
+  }
+
+  const a = await manifestSummary.$('.provenance-link');
   const href = await a.getAttribute('href');
   expect(href).toMatch(/^https:\/\/verify\..*/);
 
-  const contentSummary = await iconElement.$('cai-content-summary-dm-plugin');
-  // get all its children
-  const contentChildren = await contentSummary.$$('span');
-  const contentChildrenText = (await Promise.all(contentChildren
-    .map((child) => child.textContent())));
-  expect(contentChildrenText[0]).toContain('This content was generated with an AI tool.');
-
-  const sectionAssetsUsed = await iconElement.$('.section-assets-used-dm-plugin');
-  const sectionAssetsUsedChildren = await sectionAssetsUsed.$$('cai-thumbnail-dm-plugin');
-  // expect that sectionAssetsUsed has 46 thumbnails
-  expect(sectionAssetsUsedChildren.length).toBe(46);
+  const aiAlertText = await page.locator('c2pa-manifest-summary').getByText('This media was generated using AI').first().textContent();
+  expect(aiAlertText).toContain('This media was generated using AI');
 });
