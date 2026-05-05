@@ -73,6 +73,7 @@ export default (env, argv) => {
                 patterns: [
                     { from: './src/manifest.json', to: 'manifest.json' },
                     { from: './src/assets', to: 'assets' },
+                    { from: './src/assets/THIRD_PARTY_LICENSES.html', to: 'assets/THIRD_PARTY_LICENSES.html' },
                     { from: './src/popup/popup.html', to: 'popup/popup.html' },
                     { from: './src/popup/assets', to: 'popup/assets' },
                     { from: './src/offscreen/offscreen.html', to: 'offscreen/offscreen.html' },
