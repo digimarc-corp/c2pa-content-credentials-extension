@@ -873,11 +873,17 @@ const dataUrlToFile = async (dataUrl, filename) => {
   }
 
   const blob = new Blob([u8arr], { type: mime });
-  // const file = new File([blob], filename, { type: mime });
+  let fileBlob = blob;
 
-  const resizedImageBlob = await resizeImageBlob(blob, API_SBR_DIGIMARC_RESIZE_PARAM);
-  Logger.info('Resized image blob (718)', { from: blob.size, to: resizedImageBlob.size });
-  const file = new File([resizedImageBlob], filename, { type: mime });
+  if (mime.startsWith('image/')) {
+    const resizedImageBlob = await resizeImageBlob(blob, API_SBR_DIGIMARC_RESIZE_PARAM);
+    Logger.info('Resized image blob (718)', { from: blob.size, to: resizedImageBlob.size });
+    fileBlob = resizedImageBlob;
+  } else {
+    Logger.info('Skipping image resize for non-image media', { mime, size: blob.size });
+  }
+
+  const file = new File([fileBlob], filename, { type: mime });
 
   Logger.info('Data URL converted to file successfully', { filename });
   return file;

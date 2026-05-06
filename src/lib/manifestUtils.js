@@ -348,32 +348,52 @@ export const getC2PAManifest = async (
     lookForWm: lookForWatermark,
   };
 
-  if (lookForWatermark) {
-    // Check for signpost
-    const trustmarkInfo = await decodeTrustmark(sourceUrl);
-    if (trustmarkInfo.watermark_present) {
-      if (trustmarkInfo.schema === 'BCH_SUPER') {
-        // Signpost
-        Logger.info('Signpost watermark detected', { trustmarkInfo });
-        const payloadBlocks = trustmarkInfo.watermark.match(/.{1,10}/g); // Regular expression to split into chunks of 10
-        const availableWatermarks = payloadBlocks.map((block) => parseInt(block, 2));
-        Logger.info('Watermarks available', { availableWatermarks });
-        event.data.availableWatermarks = availableWatermarks;
+  const elementTag = imageElement?.tagName?.toLowerCase();
+  const isImageMedia = elementTag === 'img';
 
-        availableWatermarks.forEach((watermark) => {
-          if (watermark === 1) {
-            event.data.watermarkType = 'digimarc';
-          }
-        });
+  if (lookForWatermark && isImageMedia) {
+    try {
+      // Check for signpost
+      const trustmarkInfo = await decodeTrustmark(sourceUrl);
+      if (trustmarkInfo.watermark_present) {
+        if (trustmarkInfo.schema === 'BCH_SUPER') {
+          // Signpost
+          Logger.info('Signpost watermark detected', { trustmarkInfo });
+          const payloadBlocks = trustmarkInfo.watermark.match(/.{1,10}/g); // Regular expression to split into chunks of 10
+          const availableWatermarks = payloadBlocks.map((block) => parseInt(block, 2));
+          Logger.info('Watermarks available', { availableWatermarks });
+          event.data.availableWatermarks = availableWatermarks;
+
+          availableWatermarks.forEach((watermark) => {
+            if (watermark === 1) {
+              event.data.watermarkType = 'digimarc';
+            }
+          });
+        } else {
+          // Trustmark watermark but no signpost
+          event.data.watermarkType = 'trustmark';
+          event.data.softBinding = trustmarkInfo.c2padata['c2pa.soft-binding'];
+        }
       } else {
-        // Trustmark watermark but no signpost
-        event.data.watermarkType = 'trustmark';
-        event.data.softBinding = trustmarkInfo.c2padata['c2pa.soft-binding'];
+        // Set digimarc type as the watermark to try to detect
+        event.data.watermarkType = 'digimarc';
       }
-    } else {
-      // Set digimarc type as the watermark to try to detect
+    } catch (error) {
+      Logger.warn('Watermark detection skipped due to decode failure', {
+        src: sourceUrl,
+        tag: elementTag,
+        error: error.message,
+      });
+      // Fall back to Digimarc recovery if Trustmark decode fails.
       event.data.watermarkType = 'digimarc';
     }
+  } else if (lookForWatermark) {
+    Logger.info('Skipping watermark detection for non-image media', {
+      tag: elementTag,
+      src: sourceUrl,
+    });
+    // Non-image media should still try Digimarc-based manifest recovery.
+    event.data.watermarkType = 'digimarc';
   }
 
   try {
