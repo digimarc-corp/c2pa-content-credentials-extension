@@ -60,12 +60,13 @@ You can also check out the code and install the extension locally
 
 1. Clone this repository.
 2. Run `npm install`.
-3. Build the extension: `npm run build` or `npm run build:prod`.
-4. Open Chrome and go to `chrome://extensions`.
-5. Enable Developer Mode (top right corner).
-6. Click on `Load unpacked`.
-7. Select the `build` folder after `npm run build`, or the `dist` folder after `npm run build:prod`.
-8. Try it out! (see Usage)
+3. Copy `src/config-template.js` to `src/config.js` and fill in your local configuration values.
+4. Build the extension: `npm run build` or `npm run build:prod`.
+5. Open Chrome and go to `chrome://extensions`.
+6. Enable Developer Mode (top right corner).
+7. Click on `Load unpacked`.
+8. Select the `build` folder after `npm run build`, or the `dist` folder after `npm run build:prod`.
+9. Try it out! (see Usage)
 
 ## Known limitations
 

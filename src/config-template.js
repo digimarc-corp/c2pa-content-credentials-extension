@@ -25,6 +25,8 @@ export const MSG_DISABLE_RIGHT_CLICK = 'disable-right-click';
 export const MSG_ENABLE_RIGHT_CLICK = 'enable-right-click';
 export const MSG_DISABLE_LOOK_FOR_WATERMARK = 'disable-look-for-watermark';
 export const MSG_ENABLE_LOOK_FOR_WATERMARK = 'enable-look-for-watermark';
+export const MSG_GET_VERIFY_TRUST_SETTING = 'get-verify-trust-setting';
+export const MSG_VERIFY_TRUST_UPDATED = 'verify-trust-updated';
 
 export const EVENT_TYPE_C2PA_MANIFEST = 'c2pa-manifest';
 export const EVENT_TYPE_C2PA_MANIFEST_RESPONSE = 'c2pa-manifest-response';
@@ -35,11 +37,17 @@ export const WHITELISTED_WM_AUTO_URLS = [
 
 export const C2PA_VERSION = '0.30.4';
 
-export const API_SBR_DIGIMARC = '';
+export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
 export const API_SBR_DIGIMARC_TOKEN = '';
 export const API_SBR_DIGIMARC_RESIZE_PARAM = 784;
 
-export const API_SBR_ADOBE = '';
+export const C2PA_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/combined-trust-anchors.pem';
+export const C2PA_ALLOWED_LIST_LOCAL_PATH = 'assets/trust/combined-allowed-list.pem';
+export const C2PA_TRUST_CONFIG_LOCAL_PATH = 'assets/trust/ITL-store.cfg';
+export const C2PA_OFFICIAL_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/C2PA-TRUST-LIST.pem';
+export const C2PA_OFFICIAL_TSA_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/C2PA-TSA-TRUST-LIST.pem';
+
+export const API_SBR_ADOBE = 'https://cai-msb.adobe.io/sbapi/matches/byContent';
 export const API_SBR_ADOBE_TOKEN = '';
-export const API_SBR_ADOBE_MANIFEST = '';
+export const API_SBR_ADOBE_MANIFEST = 'https://cai-manifests.adobe.com/manifests';
 export const API_SBR_ADOBE_RESIZE_PARAM = 512;
