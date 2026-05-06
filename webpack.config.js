@@ -99,13 +99,16 @@ export default (env, argv) => {
             usedExports: false, // Disable tree shaking
             minimize: isProduction, // Minify only in production
             minimizer: [
-                // new TerserPlugin({
-                //     extractComments: false, // Disable LICENSE.txt generation
-                //     terserOptions: {
-                //         keep_classnames: true, // Preserve class names
-                //         keep_fnames: true, // Preserve function names
-                //       },
-                // }),
+                new TerserPlugin({
+                    extractComments: false,
+                    terserOptions: {
+                        compress: {
+                            pure_funcs: ['console.log', 'console.info'],
+                        },
+                        keep_classnames: true,
+                        keep_fnames: true,
+                    },
+                }),
             ],
             //runtimeChunk: false, // Include the runtime in each entry point
         },
