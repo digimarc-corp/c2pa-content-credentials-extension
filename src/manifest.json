@@ -41,7 +41,6 @@
     "permissions": [
         "offscreen",
         "tabs",
-        "scripting",
         "storage",
         "contextMenus"
     ],
