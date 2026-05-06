@@ -127,3 +127,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.getElementById('settings-button').addEventListener('click', () => {
   document.getElementById('settings-menu').classList.toggle('hidden');
 });
+
+// Measure both popup heights before the first paint so we can swap between
+// exact px values without any mid-frame layout reads (which cause flicker).
+(function initExperimentalToggle() {
+  const section = document.getElementById('debug-section');
+  const content = document.getElementById('experimental-content');
+  const header = document.getElementById('experimental-header');
+
+  // Content is hidden via CSS (display:none) at this point.
+  const collapsedHeight = document.documentElement.scrollHeight;
+
+  // Temporarily force-show to measure the expanded size.
+  content.style.display = 'block';
+  const expandedHeight = document.documentElement.scrollHeight;
+  content.style.display = ''; // restore CSS control (display:none)
+
+  // Pin the popup to the collapsed size immediately.
+  document.documentElement.style.height = `${collapsedHeight}px`;
+
+  header.addEventListener('click', () => {
+    const isOpen = section.classList.toggle('open');
+    // Swap to the pre-measured height — no layout read at click time.
+    document.documentElement.style.height = `${isOpen ? expandedHeight : collapsedHeight}px`;
+  });
+}());
