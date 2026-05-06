@@ -850,7 +850,7 @@ const getManifestFromWatermark = async (file, contentType) => {
   });
   TimelineLogger.addToTimeline('c2pa', 'Create c2pa-ui compatible l2ManifestStore');
 
-  // TODO fix the hammingDistance calculation
+  // Known limitation: hammingDistance currently mirrors SBR similarityScore.
   return {
     success: true,
     manifest: l2ManifestStore,
@@ -1001,7 +1001,7 @@ const handleC2PAManifestMessage = async (event) => {
         // Fetch manifest from SBR
         const manifestMatch = matchByContentResponseJSON.matches[0];
         if (manifestMatch) {
-          // TODO temporary fix for Adobe SBR manifests Ids
+          // Known limitation: temporary Adobe SBR manifest ID normalization.
           const manifestId = manifestMatch.manifestId.replace(/:/g, '-');
           Logger.info('Manifest match returned by SBR', { manifestId });
 
@@ -1049,7 +1049,7 @@ const handleC2PAManifestMessage = async (event) => {
           response.retrievedManifest = l2ManifestStore;
           response.rawRetrievedManifestStore = manifestStore;
           response.watermarkType = 'trustmark';
-          // TODO update when Adobe SBR supports this
+          // Known limitation: similarity score mapping is a temporary Adobe SBR fallback.
           response.similarityScore = manifestMatch.similarityScore;
 
           TimelineLogger.addToTimeline('c2pa', 'Created retrieved manifest Trustmark');

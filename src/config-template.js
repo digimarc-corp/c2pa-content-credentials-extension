@@ -31,9 +31,8 @@ export const MSG_VERIFY_TRUST_UPDATED = 'verify-trust-updated';
 export const EVENT_TYPE_C2PA_MANIFEST = 'c2pa-manifest';
 export const EVENT_TYPE_C2PA_MANIFEST_RESPONSE = 'c2pa-manifest-response';
 
-export const WHITELISTED_WM_AUTO_URLS = [
-  'non-existing-url',
-];
+// Add URL prefixes here to auto-enable watermark lookup on matching pages.
+export const WHITELISTED_WM_AUTO_URLS = [];
 
 export const C2PA_VERSION = '0.30.4';
 
