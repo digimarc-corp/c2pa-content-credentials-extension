@@ -4,15 +4,12 @@ export const MAXIMAL_ID_LENGTH = 100;
 
 export const HANDLE_IMG_THRESHOLD = 0.2;
 
-export const REFRESH_ICON_INTERVAL = 20;
+export const REFRESH_ICON_INTERVAL = 100;
 
 export const MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS = 365;
 
 export const POPUP_FADE_ANIMATION_DURATION_IN_MS = 1000;
 export const POPUP_DISPLAY_DURATION_IN_MS = 4000;
-
-// not used in inject.js because the script is injected in another way and this is not a module
-export const MSG_SANDBOX_LOADED = 'sandbox-loaded';
 
 export const MSG_PAGE_LOADED = 'page-loaded';
 export const MSG_INJECT_C2PA_INDICATOR = 'inject-c2pa-indicator';

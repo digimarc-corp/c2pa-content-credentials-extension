@@ -6,8 +6,6 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'; // For CSS extractio
 import ExtensionReloader from 'webpack-ext-reloader'; // Import the plugin
 import TerserPlugin from 'terser-webpack-plugin';
 
-import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
-
 import pkg from 'webpack';
 const { DefinePlugin } = pkg;
 
@@ -18,7 +16,6 @@ const __dirname = path.dirname(__filename);
 // Dynamically find all JavaScript files in src/
 const entries = glob.sync('./src/**/*.js', { ignore: ['./src/lib/trustmark/js/**/*.js'] }).reduce((entries, filePath) => {
     const fileName = path.relative('./src', filePath).replace('.js', '');
-    console.log(`Adding entry: ${fileName} -> ${filePath}`);
     entries[fileName] = './' + filePath;
     return entries;
 }, {});
@@ -62,7 +59,6 @@ export default (env, argv) => {
             ],
         },
         plugins: [
-            //new BundleAnalyzerPlugin(),
             new DefinePlugin({
                 'process.env.LOG_LEVEL': JSON.stringify(isProduction ? 'WARN' : 'TRACE'),
               }),
@@ -79,7 +75,7 @@ export default (env, argv) => {
                     { from: './src/offscreen/offscreen.html', to: 'offscreen/offscreen.html' },
                     { from: './node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js', to: 'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js' },
                     { from: './src/lib/trustmark/models/*.onnx', to: 'lib/trustmark/models/[name][ext]' },
-                    { from: './src/lib/trustmark/js', to: 'lib/trustmark/js' },
+                    { from: './src/lib/trustmark/js', to: 'lib/trustmark/js', ignore: ['index.html', 'test.jpg'] },
                 ],
             }),
             ...(!isProduction ? [
