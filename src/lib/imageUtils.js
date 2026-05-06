@@ -381,9 +381,10 @@ const makeIconInvisible = (image) => {
 // Function to place icon correctly on top of each visible image
 function updateIcons() {
   visibleMedias.forEach(adjustIconPosition);
+  requestAnimationFrame(updateIcons); // Sync with browser paint cycle for smooth scrolling
 }
 
-setInterval(updateIcons, REFRESH_ICON_INTERVAL);
+requestAnimationFrame(updateIcons); // Start the animation loop
 
 /**
  * Filter images based on size.

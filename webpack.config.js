@@ -75,7 +75,7 @@ export default (env, argv) => {
                     { from: './src/offscreen/offscreen.html', to: 'offscreen/offscreen.html' },
                     { from: './node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js', to: 'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js' },
                     { from: './src/lib/trustmark/models/*.onnx', to: 'lib/trustmark/models/[name][ext]' },
-                    { from: './src/lib/trustmark/js', to: 'lib/trustmark/js', ignore: ['index.html', 'test.jpg'] },
+                    { from: './src/lib/trustmark/js', to: 'lib/trustmark/js', globOptions: { ignore: ['**/index.html', '**/test.jpg'] } },
                 ],
             }),
             ...(!isProduction ? [

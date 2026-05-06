@@ -14,7 +14,7 @@ export const indicatorStyles = `
     justify-content: center;
     min-width: 36px;
     min-height: 36px;
-    padding: 4px;
+    padding: 12px;
     cursor: pointer;
     border-radius: 4px;
     transition: transform 0.15s, opacity 0.15s;
