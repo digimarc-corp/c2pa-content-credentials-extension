@@ -6,11 +6,11 @@ To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark E
 
 In a world where misinformation or AI generated content can spread rapidly, establishing trust and authenticity in digital media has never been more critical. The Coalition for Content Provenance and Authenticity [C2PA](https://c2pa.org/) is a cross-industry standards development organization addressing the prevalence of misleading information online. This timely issue is tackled through the development of open technical standards for certifying the source and history (or provenance) of media content referred to as [Content Credentials](https://contentcredentials.org/).
 
-This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG images and MPEG videos that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which image should and shouldn’t be trusted. 
+This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG and PNG images, MP4 videos, and MP3 and WAV audio files that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which media should and shouldn’t be trusted.
 
-This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here. 
+This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here.
 
-*Warning:* This is an early and experimental release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues). 
+*Warning:* This is an early and experimental release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues).
 
 ![Animation of extension](docs/c2pa-extension-digimarc.gif)
 
@@ -18,27 +18,28 @@ This project is built on top of the open source C2PA-JS Library built by the [Co
 
 ### Chrome Web Store
 
-The extension is available on the [Chrome Web Store](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en) and can be installed from there. 
+The extension is available on the [Chrome Web Store](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en) and can be installed from there.
 
 ### Local installation
 
 1. Download the zip archive of the [latest release](https://github.com/digimarc-corp/c2pa-content-credentials-extension/releases)
 2. Unzip the archive
-2. Open Chrome and go to `chrome://extensions`.
-3. Enable Developer Mode (top right corner).
-4. Click on `Load unpacked`.
-5. Select the unzipped folder.
-6. Try it out! (see Usage below)
+3. Open Chrome and go to `chrome://extensions`.
+4. Enable Developer Mode (top right corner).
+5. Click on `Load unpacked`.
+6. Select the unzipped folder.
+7. Try it out! (see Usage below)
 
 ### Usage
 
-Once the extension is installed, you have 2 ways of verifying and displaying Content Credentials:
+Once the extension is installed, you have 2 primary ways of verifying and displaying Content Credentials:
 
 #### Manual mode
 
 In this default mode you need to actively seek verification. Right click on an image and select `Verify Content Credentials`. If a C2PA manifest is available the pin icon will appear. Hovering the mouse on the pin will display the provenance information.
 
 #### Automatic mode
+
 In this experimental mode all images are automatically scanned for C2PA manifest in the background. To activate this mode click on the plugin icon on the top right, it will display a popup window.
 
 Switch the toggle `Automatically validate C2PA manifests` to `ON`.
@@ -58,22 +59,20 @@ Test the extension on the 2 images below. One of the photo was taken last year a
 You can also check out the code and install the extension locally
 
 1. Clone this repository.
-2. Fetch the `c2pa-js` fork with: `git submodule update --init --recursive`
-3. Run: `git submodule update --remote`
-4. Run `npm install`.
-5. Build the extension: `npm run build` or `./scripts/build.sh`
-6. Open Chrome and go to `chrome://extensions`.
-7. Enable Developer Mode (top right corner).
-8. Click on `Load unpacked`.
-9. Select the `build` extension folder.
-10. Try it out! (see Usage)
-
+2. Run `npm install`.
+3. Build the extension: `npm run build` or `npm run build:prod`.
+4. Open Chrome and go to `chrome://extensions`.
+5. Enable Developer Mode (top right corner).
+6. Click on `Load unpacked`.
+7. Select the `build` folder after `npm run build`, or the `dist` folder after `npm run build:prod`.
+8. Try it out! (see Usage)
 
 ## Known limitations
 
 ### Restricted to JPEG and PNG images, MP4 videos and MP3 and WAV audio files
 
 The current version of the extension supports:
+
 - JPG / JPEG and PNG images
 - MPEG (MP4) videos
 - MP3 and WAV audio files
@@ -82,11 +81,15 @@ We are working on adding support for more image, video and audio types.
 
 ### Need to override existing C2PA components
 
-In order to handle websites that are already using the official C2PA web components library [c2pa-wc](https://www.npmjs.com/package/c2pa-wc) and to maintain a consistent UI experience, we need to actively remove all the CAI icons that are already present to avoid conflicts and misleading information.
+```sh
+
+```
+
+To maintain a consistent UI experience, the extension actively removes pre-existing CAI icons from pages before injecting the extension-owned c2pa-ui components.
 
 Here is a list of the components we currently remove when the extension is enabled:
 
-- `cai-popover` | `cai-indicator` | `cai-manifest-summary`
+- `c2pa-popover` | `c2pa-indicator` | `c2pa-manifest-summary`
 
 ### Image types and method support
 
@@ -123,11 +126,14 @@ When contributing, make sure to update the version of the library in the `packag
 ## Building
 
 In order to have a light version of the extension, where you have only the necessary files that the extension needs to work, you can run:
-```
+
+```sh
 npm run build 
 ```
+
 or
-```
+
+```sh
 ./scripts/build.sh
 ```
 
@@ -135,7 +141,7 @@ It will create a `build` folder. This contains the final extension code.
 
 ## Testing
 
-```
+```sh
 npm run test
 ```
 
@@ -151,5 +157,5 @@ To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark E
 
 ## Attributions
 
-This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work. 
-The [full list of libraries and their respective licenses](https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here. 
+This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work.
+The [full list of libraries and their respective licenses](https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here.
