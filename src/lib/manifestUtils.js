@@ -127,8 +127,8 @@ const displayManifest = (
 ) => {
   let manifest = _manifest;
   if (manifest || retrievedManifest) {
-    let embeddedManifest = _manifest ? cloneManifestSource(_manifest) : null;
-    let recoveredManifest = retrievedManifest ? cloneManifestSource(retrievedManifest) : null;
+    const embeddedManifest = _manifest ? cloneManifestSource(_manifest) : null;
+    const recoveredManifest = retrievedManifest ? cloneManifestSource(retrievedManifest) : null;
     const embeddedRawSource = cloneManifestSource(rawManifestStore || _manifest);
     const recoveredRawSource = cloneManifestSource(
       rawRetrievedManifestStore || rawManifestStore || retrievedManifest,
@@ -204,7 +204,7 @@ const displayManifest = (
       const watermarkNames = availableWatermarks
         .filter((watermarkId) => watermarkId !== 0)
         .map(
-        (watermarkId) => SIGNPOST_WATERMARK_NAMES[watermarkId] || `Watermark ${watermarkId}`,
+          (watermarkId) => SIGNPOST_WATERMARK_NAMES[watermarkId] || `Watermark ${watermarkId}`,
         );
 
       if (watermarkNames.length > 0) {

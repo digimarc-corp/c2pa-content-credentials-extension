@@ -92,7 +92,6 @@ export class C2paPopover extends HTMLElement {
 
     // Keep click behavior for touch/compatibility.
     this.addEventListener('click', (e) => {
-      const trigger = this.querySelector('[slot="trigger"]');
       if (trigger && (trigger === e.target || trigger.contains(e.target))) {
         e.stopPropagation();
         this.toggle();
@@ -238,7 +237,7 @@ export class C2paPopover extends HTMLElement {
     const panelActualWidth = panelRect.width;
 
     let top = triggerRect.bottom + gap;
-    let left = triggerRect.left;
+    let { left } = triggerRect;
 
     const fitsBelow = top + panelHeight <= viewportHeight - gap;
     const fitsAbove = triggerRect.top - gap - panelHeight >= gap;

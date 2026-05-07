@@ -215,6 +215,22 @@ async function readManifestStoreFromBlob(blob, formatCandidates, logContext, c2p
   return manifestStore;
 }
 
+function extractSuccessStatuses(manifestStore) {
+  if (Array.isArray(manifestStore?.validation_results?.activeManifest?.success)) {
+    return manifestStore.validation_results.activeManifest.success;
+  }
+
+  if (Array.isArray(manifestStore?.validation_status)) {
+    return manifestStore.validation_status.filter((s) => s.success === true);
+  }
+
+  return [];
+}
+
+function hasStatusCode(statuses, code) {
+  return Array.isArray(statuses) && statuses.some((entry) => entry?.code === code);
+}
+
 function isManifestTrusted(manifestStore) {
   if (!manifestStore) {
     return false;
@@ -242,22 +258,6 @@ function mapErrorStatus(validationStatus) {
   }
 
   return 'error';
-}
-
-function extractSuccessStatuses(manifestStore) {
-  if (Array.isArray(manifestStore?.validation_results?.activeManifest?.success)) {
-    return manifestStore.validation_results.activeManifest.success;
-  }
-
-  if (Array.isArray(manifestStore?.validation_status)) {
-    return manifestStore.validation_status.filter((s) => s.success === true);
-  }
-
-  return [];
-}
-
-function hasStatusCode(statuses, code) {
-  return Array.isArray(statuses) && statuses.some((entry) => entry?.code === code);
 }
 
 function parseGenerator(value) {
@@ -500,12 +500,6 @@ async function createL2ManifestStore(manifestStore, metadata = {}) {
     validationStatus = manifestStore.validation_status.filter((s) => s.success !== true);
   }
 
-  const successStatus = extractSuccessStatuses(manifestStore);
-  const onlyDataHashMismatch = validationStatus.length === 1
-    && validationStatus[0]?.code === 'assertion.dataHash.mismatch';
-  const signingCredentialTrusted = hasStatusCode(successStatus, 'signingCredential.trusted');
-  const signatureValidated = hasStatusCode(successStatus, 'claimSignature.validated')
-    || hasStatusCode(successStatus, 'claimSignature.insideValidity');
   // Temporarily disable transformed-delivery detection until the product logic is revisited.
   const transformedDelivery = false;
 

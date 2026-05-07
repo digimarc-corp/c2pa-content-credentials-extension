@@ -35,21 +35,23 @@ test('Manifest summary includes provenance link', async ({ page, extensionId }) 
   await expect.poll(async () => page.evaluate(() => {
     const icons = Array.from(document.querySelectorAll('#icon-container [id^="icon-c2pa"]'));
 
-    for (const icon of icons) {
+    let foundHref = null;
+    icons.some((icon) => {
       const style = window.getComputedStyle(icon);
       if (style.display === 'none' || style.visibility === 'hidden') {
         // Skip icons hidden by viewport/overflow logic.
-        // eslint-disable-next-line no-continue
-        continue;
+        return false;
       }
 
       const manifestSummary = icon.querySelector('c2pa-manifest-summary');
       const href = manifestSummary?.shadowRoot?.querySelector('.provenance-link')?.getAttribute('href');
       if (href) {
-        return href;
+        foundHref = href;
+        return true;
       }
-    }
+      return false;
+    });
 
-    return null;
+    return foundHref;
   }), { timeout: 30000 }).toMatch(/^https:\/\/verify\..*/);
 });

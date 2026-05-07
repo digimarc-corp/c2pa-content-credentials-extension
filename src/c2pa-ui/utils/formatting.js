@@ -9,28 +9,28 @@
  */
 export function formatDate(date) {
   if (!date) return 'Unknown';
-  
-  const dateObj = typeof date === 'string' || typeof date === 'number' 
-    ? new Date(date) 
+
+  const dateObj = typeof date === 'string' || typeof date === 'number'
+    ? new Date(date)
     : date;
-  
-  if (!(dateObj instanceof Date) || isNaN(dateObj)) {
+
+  if (!(dateObj instanceof Date) || Number.isNaN(dateObj)) {
     return 'Unknown';
   }
-  
+
   // Format separately to avoid comma-inserted line break: "Apr 24, 2026 4:37 PM"
   const dateStr = dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
-  
+
   const timeStr = dateObj.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   });
-  
+
   return `${dateStr} ${timeStr}`;
 }
 
@@ -41,7 +41,7 @@ export function formatDate(date) {
  */
 export function formatValidationStatus(status) {
   if (!status) return 'Unknown';
-  
+
   const statusMap = {
     trusted: 'Trusted',
     validated: 'Valid',
@@ -49,7 +49,7 @@ export function formatValidationStatus(status) {
     recovered: 'Recovered',
     unknown: 'Unknown',
   };
-  
+
   return statusMap[status?.toLowerCase()] || status;
 }
 
@@ -72,14 +72,14 @@ export function truncateText(text, maxLength = 50) {
  */
 export function getProducerName(manifest) {
   if (!manifest) return 'Unknown';
-  
+
   // Try various paths where producer info might be
   // Priority: explicit author > producer name > certificate issuer (signer) > fallback
-  return manifest.producer?.name 
-    || manifest.creator?.name 
-    || manifest.producer 
-    || manifest.creator 
-    || manifest.signature?.issuer  // Certificate issuer as fallback signer
+  return manifest.producer?.name
+    || manifest.creator?.name
+    || manifest.producer
+    || manifest.creator
+    || manifest.signature?.issuer // Certificate issuer as fallback signer
     || 'Unknown';
 }
 
@@ -99,13 +99,13 @@ export function hasValidCredentials(manifest) {
  */
 export function getStatusClass(status) {
   const statusLower = status?.toLowerCase();
-  
+
   const classMap = {
     validated: 'status-validated',
     invalid: 'status-invalid',
     recovered: 'status-recovered',
   };
-  
+
   return classMap[statusLower] || 'status-unknown';
 }
 

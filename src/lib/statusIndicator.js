@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 export function displayProcessStatus(message, duration = 5000) {
   // Inject gradient animation keyframes into the document
   const style = document.createElement('style');
@@ -39,7 +41,7 @@ export function displayProcessStatus(message, duration = 5000) {
   // Create a container div for the status indicator
   const statusDiv = document.createElement('div');
   const iconPath = chrome.runtime.getURL('assets/icons/cr-info.svg');
-  
+
   statusDiv.innerHTML = `
     <div class="status-indicator-container">
       <img src="${iconPath}" alt="C2PA" class="status-indicator-icon">

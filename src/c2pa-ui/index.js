@@ -1,9 +1,9 @@
 /**
  * C2PA UI Components Library
- * 
+ *
  * The primary custom web component library used by the extension for displaying
  * C2PA content credentials without external UI dependencies.
- * 
+ *
  * This library provides:
  * - c2pa-indicator: Badge component showing credential status
  * - c2pa-popover: Container for positioning indicator + manifest
@@ -11,6 +11,11 @@
  */
 
 // Export components
+// Register components on import
+import './components/Indicator.js';
+import './components/Popover.js';
+import './components/ManifestSummary.js';
+
 export { C2paIndicator } from './components/Indicator.js';
 export { C2paPopover } from './components/Popover.js';
 export { C2paManifestSummary } from './components/ManifestSummary.js';
@@ -26,18 +31,13 @@ export {
   safeStringify,
 } from './utils/formatting.js';
 
-// Register components on import
-import './components/Indicator.js';
-import './components/Popover.js';
-import './components/ManifestSummary.js';
-
 // Export styles
 export { indicatorStyles, popoverStyles, manifestSummaryStyles } from './styles/shared.js';
 
 /**
  * Helper function to create the full component structure
  * Matches the API of the original createC2PAComponents() function
- * 
+ *
  * @param {string} baseId - Base ID for the components
  * @returns {HTMLElement} The popover element with indicator and manifest
  */

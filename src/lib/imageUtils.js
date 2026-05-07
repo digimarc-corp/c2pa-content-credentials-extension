@@ -5,7 +5,6 @@ import {
   MAXIMAL_ID_LENGTH,
   MINIMAL_IMAGE_SIZE_IN_PIXELS,
   MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS,
-  REFRESH_ICON_INTERVAL,
   WHITELISTED_WM_AUTO_URLS,
 } from '../config.js';
 import Logger from './logger.js';
