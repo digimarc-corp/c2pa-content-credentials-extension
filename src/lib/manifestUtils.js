@@ -358,10 +358,12 @@ export const getC2PAManifest = async (
       if (trustmarkInfo.watermark_present) {
         if (trustmarkInfo.schema === 'BCH_SUPER') {
           // Signpost
-          Logger.info('Signpost watermark detected', { trustmarkInfo });
+          // eslint-disable-next-line no-console
+          console.log('Signpost watermark detected', trustmarkInfo);
           const payloadBlocks = trustmarkInfo.watermark.match(/.{1,10}/g); // Regular expression to split into chunks of 10
           const availableWatermarks = payloadBlocks.map((block) => parseInt(block, 2));
-          Logger.info('Watermarks available', { availableWatermarks });
+          // eslint-disable-next-line no-console
+          console.log('Watermarks available', availableWatermarks);
           event.data.availableWatermarks = availableWatermarks;
 
           availableWatermarks.forEach((watermark) => {
