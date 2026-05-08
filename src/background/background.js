@@ -159,6 +159,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  // Route Trustmark messages to offscreen document
+  if (message?.type === 'trustmark:runTrustmark') {
+    Logger.debug('Routing Trustmark request to offscreen', { senderUrl: sender.url });
+    chrome.runtime.sendMessage(message, (response) => {
+      if (chrome.runtime.lastError) {
+        Logger.error('Trustmark offscreen call failed', { error: chrome.runtime.lastError.message });
+        sendResponse({ error: chrome.runtime.lastError.message, watermark_present: false });
+      } else {
+        sendResponse(response);
+      }
+    });
+    return true; // Async response
+  }
+
   const handler = messageHandlers[message.type];
   if (handler) handler();
   return false;

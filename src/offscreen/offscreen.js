@@ -1125,4 +1125,400 @@ chrome.runtime.onMessage.addListener((event, sender, sendResponse) => {
   return true; // Indicate async response
 });
 
+// ============================================================================
+// TRUSTMARK WATERMARK DECODER INITIALIZATION
+// ============================================================================
+// This runs in offscreen context where ORT can load wasm freely (no CSP restrictions)
+
+// Initialize ECC engines for watermark decoding (from tm_datalayer.js)
+const eccengine = [];
+for (let version = 0; version < 4; version += 1) {
+  eccengine.push(DataLayer_GetECCEngine(version));
+}
+
+const trustmarkSessions = {};
+let trustmarkSessionResize = null;
+let trustmarkIsInitialized = false;
+let trustmarkInitPromise = null;
+
+async function waitForORT(maxWaitMs = 5000) {
+  const startTime = Date.now();
+  // eslint-disable-next-line no-constant-condition
+  while (typeof ort === 'undefined') {
+    if (Date.now() - startTime > maxWaitMs) {
+      throw new Error('ORT failed to load within timeout');
+    }
+    // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return ort;
+}
+
+async function initTrustmarkIfNeeded() {
+  if (trustmarkIsInitialized) {
+    Logger.debug('Trustmark already initialized');
+    return true;
+  }
+  if (trustmarkInitPromise) {
+    Logger.debug('Waiting for Trustmark init promise');
+    return trustmarkInitPromise;
+  }
+
+  trustmarkInitPromise = (async () => {
+    try {
+      Logger.info('Initializing Trustmark in offscreen');
+
+      // Wait for ORT to be available
+      await waitForORT();
+      Logger.info('ORT available in offscreen');
+
+      const modelConfigs = [
+        {
+          variantcode: 'Q', fname: 'decoder_Q.onnx', sessionVar: 'session_wmarkQ', resolution: 256,
+        },
+        {
+          variantcode: 'P', fname: 'decoder_P.onnx', sessionVar: 'session_wmarkP', resolution: 224,
+        },
+      ];
+
+      // Load all Trustmark models
+      // eslint-disable-next-line no-restricted-syntax
+      for (const config of modelConfigs) {
+        try {
+          const modelUrl = chrome.runtime.getURL(`lib/trustmark/models/${config.fname}`);
+          Logger.debug(`Fetching ${config.fname} from ${modelUrl.substring(0, 50)}...`);
+          // eslint-disable-next-line no-await-in-loop
+          const response = await fetch(modelUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          // eslint-disable-next-line no-await-in-loop
+          const modelBuffer = await response.arrayBuffer();
+          Logger.debug(`Creating session for ${config.fname}`);
+          // eslint-disable-next-line no-await-in-loop
+          trustmarkSessions[config.sessionVar] = await ort.InferenceSession.create(modelBuffer, {
+            executionProviders: ['webgpu'],
+          });
+          Logger.info(`✓ Trustmark ${config.fname} loaded in offscreen`);
+        } catch (error) {
+          Logger.error(`Failed to load ${config.fname}`, { error: error.message });
+          throw error;
+        }
+      }
+
+      // Load resizer model
+      try {
+        const resizerUrl = chrome.runtime.getURL('lib/trustmark/models/resizer.onnx');
+        Logger.debug(`Fetching resizer from ${resizerUrl.substring(0, 50)}...`);
+        const response = await fetch(resizerUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const modelBuffer = await response.arrayBuffer();
+        Logger.debug('Creating session for resizer');
+        trustmarkSessionResize = await ort.InferenceSession.create(modelBuffer, {
+          executionProviders: ['wasm'],
+        });
+        Logger.info('✓ Trustmark resizer loaded in offscreen');
+      } catch (error) {
+        Logger.error('Failed to load resizer', { error: error.message });
+        throw error;
+      }
+
+      trustmarkIsInitialized = true;
+      Logger.info('✓ Trustmark fully initialized in offscreen');
+      return true;
+    } catch (error) {
+      Logger.error('Trustmark initialization failed', { error: error.message });
+      trustmarkInitPromise = null;
+      return false;
+    }
+  })();
+
+  return trustmarkInitPromise;
+}
+
+// WebGPU will fail silently if multiple concurrent inference calls are made - ensure sequential calling
+let trustmarkInferenceLock = false;
+
+async function safeRunInference(session, feed) {
+  // eslint-disable-next-line no-constant-condition
+  while (trustmarkInferenceLock) {
+    // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, 30));
+  }
+  trustmarkInferenceLock = true;
+  try {
+    return await session.run(feed);
+  } catch (error) {
+    Logger.error('Inference error:', { error: error.message });
+    throw error;
+  } finally {
+    trustmarkInferenceLock = false;
+  }
+}
+
+// Helper: Load image from data URL into tensor
+async function loadImageAsTensor(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      const canvas = new OffscreenCanvas(img.width, img.height);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return reject(new Error('Cannot get canvas context'));
+
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, img.width, img.height);
+      const { data, width, height } = imgData;
+
+      // Convert to CHW format (channels first): R channel, G channel, B channel
+      const totalPixels = width * height;
+      const imageTensor = new Float32Array(totalPixels * 3);
+
+      let j = 0;
+      const page = width * height;
+      const twopage = 2 * page;
+
+      for (let i = 0; i < totalPixels; i += 1) {
+        const index = i * 4;
+        imageTensor[j] = data[index] / 255.0; // Red channel
+        imageTensor[j + page] = data[index + 1] / 255.0; // Green channel
+        imageTensor[j + twopage] = data[index + 2] / 255.0; // Blue channel
+        j += 1;
+      }
+
+      resolve(new ort.Tensor('float32', imageTensor, [1, 3, height, width]));
+    };
+
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = imageUrl;
+  });
+}
+
+// Helper: Compute precise scale factors for resizing
+function computeScalesFixed(targetDims, inputDims) {
+  const [, , height, width] = inputDims;
+  const [targetHeight, targetWidth] = targetDims;
+
+  function computeScale(originalSize, targetSize) {
+    let minScale = targetSize / originalSize;
+    let maxScale = (targetSize + 1) / originalSize;
+    let scale;
+    let adjustedSize;
+    const tolerance = 1e-12;
+    let iterations = 0;
+
+    while (iterations < 100) {
+      scale = (minScale + maxScale) / 2;
+      adjustedSize = Math.floor(originalSize * scale + tolerance);
+      if (adjustedSize < targetSize) minScale = scale;
+      else if (adjustedSize > targetSize) maxScale = scale;
+      else break;
+      iterations += 1;
+    }
+    return scale;
+  }
+
+  const scaleH = computeScale(height, targetHeight);
+  const scaleW = computeScale(width, targetWidth);
+  return new Float32Array([1.0, 1.0, scaleH, scaleW]);
+}
+
+// Helper: Crop tensor to square
+async function cropTensor(inputTensor, offsetX, offsetY, cropWidth, cropHeight) {
+  const [batch, channels, height, width] = inputTensor.dims;
+  const croppedData = new Float32Array(batch * channels * cropWidth * cropHeight);
+  const inputData = inputTensor.data;
+
+  let k = 0;
+  // eslint-disable-next-line no-restricted-syntax
+  for (let c = 0; c < channels; c += 1) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (let y = 0; y < cropHeight; y += 1) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (let x = 0; x < cropWidth; x += 1) {
+        const srcIndex = c * width * height + (y + offsetY) * width + (x + offsetX);
+        croppedData[k] = inputData[srcIndex];
+        k += 1;
+      }
+    }
+  }
+
+  return new ort.Tensor('float32', croppedData, [batch, channels, cropHeight, cropWidth]);
+}
+
+// Helper: Resize image tensor to square for watermark decoding
+async function runResizeModelSquare(inputTensor, targetSize, forceSquare) {
+  try {
+    const inputDims = inputTensor.dims;
+    const [batch, channels, height, width] = inputDims;
+    const aspectRatio = width / height;
+    const lscape = (aspectRatio >= 1.0);
+
+    let croppedTensor = inputTensor;
+    let cropWidth = width;
+    let cropHeight = height;
+
+    // Square crop for extreme aspect ratios
+    if (lscape && (aspectRatio > 2.0 || forceSquare)) {
+      cropWidth = height;
+      const offsetX = Math.floor((width - cropWidth) / 2);
+      croppedTensor = await cropTensor(inputTensor, offsetX, 0, cropWidth, height);
+    }
+
+    if (!lscape && (aspectRatio < 0.5 || forceSquare)) {
+      cropHeight = width;
+      const offsetY = Math.floor((height - cropHeight) / 2);
+      croppedTensor = await cropTensor(inputTensor, 0, offsetY, width, cropHeight);
+    }
+
+    // Resize to target size using resizer model
+    const targetDims = [targetSize, targetSize];
+    const scales = computeScalesFixed(targetDims, [batch, channels, cropHeight, cropWidth]);
+    const scalesTensor = new ort.Tensor('float32', scales, [4]);
+    const targetSizeTensor = new ort.Tensor('int64', new BigInt64Array([BigInt(targetSize)]), [1]);
+
+    const feeds = {
+      X: croppedTensor,
+      scales: scalesTensor,
+      target_size: targetSizeTensor,
+    };
+
+    const results = await safeRunInference(trustmarkSessionResize, feeds);
+    return results.Y;
+  } catch (error) {
+    Logger.error('Error during resizing:', { error: error.message });
+    return null;
+  }
+}
+
+// Main inference function - matches original pipeline
+async function runTrustmarkInference(imageDataUrl) {
+  const watermarks = [];
+  const watermarksPresent = [];
+
+  try {
+    Logger.info('Starting Trustmark inference with proper BCH decoding');
+
+    // Load image
+    const inputTensor = await loadImageAsTensor(imageDataUrl);
+    Logger.info('Image tensor loaded', { dims: inputTensor.dims });
+
+    const modelConfigs = [
+      {
+        variantcode: 'Q', fname: 'decoder_Q.onnx', sessionVar: 'session_wmarkQ', resolution: 256, squarecrop: false,
+      },
+      {
+        variantcode: 'P', fname: 'decoder_P.onnx', sessionVar: 'session_wmarkP', resolution: 224, squarecrop: true,
+      },
+    ];
+
+    // Try each model
+    // eslint-disable-next-line no-restricted-syntax
+    for (const config of modelConfigs) {
+      const session = trustmarkSessions[config.sessionVar];
+      if (!session) {
+        Logger.debug(`Session for ${config.fname} not available, skipping`);
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      // Resize image
+      // eslint-disable-next-line no-await-in-loop
+      const resizedTensorWM = await runResizeModelSquare(inputTensor, config.resolution, config.squarecrop);
+      if (!resizedTensorWM) throw new Error('Failed to resize tensor for watermark detection.');
+
+      // Run inference
+      const feeds = { image: resizedTensorWM };
+      const startTime = Date.now();
+      // eslint-disable-next-line no-await-in-loop
+      const results = await safeRunInference(session, feeds);
+
+      // Extract and decode watermark
+      const watermarkFloat = results.output.cpuData;
+      const watermarkBool = watermarkFloat.map((v) => v >= 0);
+
+      Logger.debug(`${config.fname} inference completed in ${Date.now() - startTime}ms`, {
+        outputLength: watermarkFloat.length,
+      });
+
+      // Decode using BCH error correction
+      const dataObj = DataLayer_Decode(watermarkBool, eccengine, config.variantcode);
+      Logger.info(`${config.fname} decode result: valid=${dataObj.valid}`, {
+        schema: dataObj.schema,
+        variant: config.variantcode,
+      });
+
+      watermarks.push(dataObj);
+      watermarksPresent.push(dataObj.valid);
+    }
+
+    // Return first valid watermark found
+    const firstValidIndex = watermarksPresent.findIndex((isValid) => isValid === true);
+    if (firstValidIndex !== -1) {
+      const watermark = watermarks[firstValidIndex];
+      Logger.info('Watermark detected', { schema: watermark.schema });
+      return {
+        watermark_present: watermark.valid,
+        watermark: watermark.valid ? watermark.data_binary : null,
+        schema: watermark.schema,
+        c2padata: watermark.softBindingInfo,
+      };
+    }
+    Logger.info('No valid watermark detected');
+    return { watermark_present: false };
+  } catch (error) {
+    Logger.error('Error in watermark decoding', { error: error.message });
+    return { watermark_present: false, watermark: null, schema: null };
+  }
+}
+
+// Message handler for Trustmark requests from content script
+chrome.runtime.onMessage.addListener((event, sender, sendResponse) => {
+  if (event.type === 'trustmark:runTrustmark') {
+    Logger.debug('Received Trustmark request in offscreen', {
+      imageUrl: event.imageUrl?.substring(0, 50),
+      senderUrl: sender.url,
+    });
+
+    initTrustmarkIfNeeded()
+      .then(async (initialized) => {
+        if (!initialized) {
+          Logger.error('Trustmark initialization returned false');
+          sendResponse({
+            error: 'Trustmark initialization failed',
+            watermark_present: false,
+          });
+          return;
+        }
+
+        Logger.info('Trustmark initialized, running inference');
+
+        // Run actual inference with proper BCH decoding
+        const result = await runTrustmarkInference(event.imageUrl);
+        Logger.debug('Inference complete, sending response', { result });
+
+        sendResponse({
+          watermark_present: result.watermark_present,
+          watermark: result.watermark || null,
+          schema: result.schema || null,
+          c2padata: result.c2padata || null,
+          error: result.error || null,
+        });
+      })
+      .catch((error) => {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        Logger.error('Error in Trustmark processing', { error: errorMsg });
+        sendResponse({
+          error: errorMsg,
+          watermark_present: false,
+        });
+      });
+
+    return true; // Indicate async response
+  }
+});
+
 initializeC2pa();
