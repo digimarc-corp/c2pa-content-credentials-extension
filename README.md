@@ -1,10 +1,33 @@
 # C2PA Content Credentials Browser Extension
 
-This project has been built by the team at Digimarc Labs. [Digimarc](https://www.digimarc.com/products/digital-content-authentication) is a digital watermarking leader committed to building a digital ecosystem of trust protecting content creators and consumers.
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Available-green?logo=googlechrome)](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Beta-orange)]
+[![C2PA Standard](https://img.shields.io/badge/C2PA-Compliant-brightgreen)](https://c2pa.org/)
 
-To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark Embedding and Detection Tools to Device and Chip Manufacturers and Content Creation Platforms](https://www.digimarc.com/blog/offering-free-digital-watermark-embedding-and-detection-tools-device-and-chip-manufacturers). Contact us if you'd like to learn more about this offer.
+Verify the authenticity and provenance of digital media directly in your browser. This Chrome extension validates and displays C2PA Content Credentials for images, videos, and audio files—helping you distinguish authentic content from AI-generated or manipulated media.
 
-In a world where misinformation or AI generated content can spread rapidly, establishing trust and authenticity in digital media has never been more critical. The Coalition for Content Provenance and Authenticity [C2PA](https://c2pa.org/) is a cross-industry standards development organization addressing the prevalence of misleading information online. This timely issue is tackled through the development of open technical standards for certifying the source and history (or provenance) of media content referred to as [Content Credentials](https://contentcredentials.org/).
+## Features
+
+- ✅ **Automatic & Manual Modes** - Scan all media automatically or verify on-demand via right-click
+- ✅ **Watermark Detection** - Recover C2PA credentials from Digimarc and Adobe Trustmark watermarks
+- ✅ **Broad Media Support** - JPEG, PNG images, MP4 videos, MP3 and WAV audio files
+- ✅ **Provenance Display** - View detailed content history, signing information, and trust status
+- ✅ **C2PA Compliant** - Built on the official [C2PA-JS Library](https://opensource.contentauthenticity.org/)
+
+---
+
+## Table of Contents
+
+- [Quick Start](#getting-started)
+- [Usage](#usage)  
+- [Prerequisites](#prerequisites)
+- [Development](#building-the-extension-from-the-source)
+- [Contributing](#contributions)
+- [Known Limitations](#known-limitations)
+- [About](#about-digimarc)
+
+---
 
 This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG and PNG images, MP4 videos, and MP3 and WAV audio files that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which media should and shouldn’t be trusted.
 
@@ -14,7 +37,17 @@ This project is built on top of the open source C2PA-JS Library built by the [Co
 
 ![Animation of extension](docs/c2pa-extension-digimarc.gif)
 
-## Getting started
+---
+
+## Prerequisites
+
+- **Chrome 90** or later
+- **Node.js** >= 20.9.0 (for development)
+- **npm** >= 10.2.2 (for development)
+
+---
+
+## Getting Started
 
 ### Chrome Web Store
 
@@ -30,7 +63,7 @@ The extension is available on the [Chrome Web Store](https://chromewebstore.goog
 6. Select the unzipped folder.
 7. Try it out! (see Usage below)
 
-### Usage
+## Usage
 
 Once the extension is installed, you have 2 primary ways of verifying and displaying Content Credentials:
 
@@ -42,11 +75,15 @@ In this mode you need to actively seek verification. Right click on an image and
 
 In this experimental mode all images are automatically scanned for C2PA manifest in the background. To activate this mode click on the plugin icon on the top right, it will display a popup window.
 
-In the popup menu of the extension, switch the toggle `Automatically validate C2PA manifests` to `ON`.
+In the popup menu of the extension, switch the toggle `Scan all media automatically` to `ON`.
 
 When the extension is enabled, you will now see the C2PA pin on top of every image that contains a C2PA manifest in the website loaded in the active tab. Hover the mouse on the pin and the extension will reveal the image provenance information.
 
-#### Embedded vs Recovered manifests
+#### Watermark Detection
+
+When enabled via the `Enable Watermark detection` toggle in the popup, the extension will attempt to recover C2PA manifests from the watermarks embedded in media, allowing it to display credentials even when they are not embedded directly in the media file.
+
+### Embedded vs Recovered Manifests
 
 The extension can display two types of C2PA manifests:
 
@@ -98,10 +135,6 @@ We are working on adding support for more image, video and audio types.
 
 ### Need to override existing C2PA components
 
-```sh
-
-```
-
 To maintain a consistent UI experience, the extension actively removes pre-existing CAI icons from pages before injecting the extension-owned c2pa-ui components.
 
 Here is a list of the components we currently remove when the extension is enabled:
@@ -110,7 +143,7 @@ Here is a list of the components we currently remove when the extension is enabl
 
 ### Image types and method support
 
-Because the browser extension runs completely locally in the browser, there are restrictions to access the website's images depending on how they are made available. Most will be accessed by their property `src` as long as it is a public url, otherwise the extension will try to transform it to a `dataURI` so that it can be processed in the sandbox, but this is also known not to work in all the cases, depending on the type and location of the images.
+Because the extension validates media directly in the browser, access depends on how images are served. For public http(s) URLs, the extension fetches the original source directly — this is preferred as it preserves full file fidelity. For non-public or locally-served sources, it falls back to a `dataURI` representation, which may not work in all cases depending on the type, origin, or CORS policy of the media.
 
 ## Contributions
 
@@ -139,16 +172,6 @@ Alternatively, you can create an issue with a bug report or a new feature reques
 ## Versioning
 
 When contributing, make sure to update the version of the library in the `package.json` file.
-
-## Building
-
-To build the extension for production:
-
-```sh
-npm run build
-```
-
-This will create a `dist` folder containing the final extension code.
 
 ## Testing
 
