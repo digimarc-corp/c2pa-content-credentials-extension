@@ -441,7 +441,7 @@ async function handleImages() {
 
   intersectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      chrome.storage.local.get({ activated: false }, (result) => {
+      chrome.storage.local.get({ activated: false, lookForWatermark: false }, (result) => {
         removeCaiComponents();
 
         // If the image is intersecting the viewport and the plugin status is still O
@@ -468,11 +468,11 @@ async function handleImages() {
           if (!handledMedias.includes(entry.target.getAttribute('c2paId'))) {
             // If the image is already loaded, call the function directly
             if (entry.target.complete) {
-              prepareAndHandleImage(entry.target);
+              prepareAndHandleImage(entry.target, false, result.lookForWatermark);
             } else {
               // Otherwise, add the onload event listener
               entry.target.onload = () => {
-                prepareAndHandleImage(entry.target);
+                prepareAndHandleImage(entry.target, false, result.lookForWatermark);
               };
             }
           }
@@ -508,7 +508,7 @@ function handleVideos() {
 
   intersectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      chrome.storage.local.get({ activated: false }, (result) => {
+      chrome.storage.local.get({ activated: false, lookForWatermark: false }, (result) => {
         removeCaiComponents();
         if (entry.isIntersecting
           && WHITELISTED_WM_AUTO_URLS.some(
@@ -521,7 +521,7 @@ function handleVideos() {
         } else if (entry.isIntersecting && result.activated) {
           // If the image is not in the handled list
           if (!handledMedias.includes(entry.target.getAttribute('c2paId'))) {
-            prepareAndHandleVideo(entry.target);
+            prepareAndHandleVideo(entry.target, false, result.lookForWatermark);
           }
         }
 
@@ -555,13 +555,13 @@ function handleAudios() {
 
   intersectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      chrome.storage.local.get({ activated: false }, (result) => {
+      chrome.storage.local.get({ activated: false, lookForWatermark: false }, (result) => {
         removeCaiComponents();
         // If the image is intersecting the viewport and the plugin status is still ON
         if (entry.isIntersecting && result.activated) {
           // If the image is not in the handled list
           if (!handledMedias.includes(entry.target.getAttribute('c2paId'))) {
-            prepareAndHandleAudio(entry.target);
+            prepareAndHandleAudio(entry.target, false, result.lookForWatermark);
           }
         }
 

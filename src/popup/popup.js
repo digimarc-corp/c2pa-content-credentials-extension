@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const enableWatermarkToggle = () => {
-    disableAutomaticToggle();
     chrome.tabs.sendMessage(tab.id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
   };
 
@@ -85,7 +84,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const path = chrome.runtime.getURL('assets/icons/icon-on.png');
     chrome.action.setIcon({ path });
 
-    disableWatermarkToggle();
+    if (watermarkToggle.checked) {
+      chrome.tabs.sendMessage(tab.id, { type: MSG_ENABLE_LOOK_FOR_WATERMARK });
+    }
     chrome.tabs.sendMessage(tab.id, { type: MSG_INJECT_C2PA_INDICATOR });
   };
 
