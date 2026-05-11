@@ -187,8 +187,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This project has been built by the team at Digimarc Labs. [Digimarc](https://www.digimarc.com/products/digital-content-authentication) is a digital watermarking leader committed to building an digital ecosystem of trust protecting content creators and consumers.
 
-To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark Embedding and Detection Tools to Device and Chip Manufacturers and Content Creation Platforms](https://www.digimarc.com/blog/offering-free-digital-watermark-embedding-and-detection-tools-device-and-chip-manufacturers). Contact us if you'd like to learn more about this offer.
-
 ## Attributions
 
 This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work.
