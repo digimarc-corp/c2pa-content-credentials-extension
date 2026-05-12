@@ -2,7 +2,7 @@
 import {
   EVENT_TYPE_C2PA_MANIFEST,
   API_SBR_DIGIMARC,
-  API_SBR_DIGIMARC_TOKEN,
+  API_SBR_DIGIMARC_CALLER_ID,
 } from '../config.js';
 import { displayProcessStatus } from './statusIndicator.js';
 import Logger from './logger.js';
@@ -452,7 +452,7 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
   const requestOptions = {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${API_SBR_DIGIMARC_TOKEN}`,
+      Authorization: `Bearer ${API_SBR_DIGIMARC_CALLER_ID}`,
     },
     body: data,
     redirect: 'follow',
@@ -470,7 +470,7 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
   const manifestUrl = `${API_SBR_DIGIMARC}/manifests/${encodeURIComponent(manifestId)}`;
 
   const manifestHeaders = {
-    Authorization: `Bearer ${API_SBR_DIGIMARC_TOKEN}`,
+    Authorization: `Bearer ${API_SBR_DIGIMARC_CALLER_ID}`,
   };
   if (contentType) {
     manifestHeaders.Accept = contentType;
@@ -486,7 +486,7 @@ export const fetchManifestFromSBR = async (file, contentType = null) => {
     success: true,
     manifestData: manifestsResponse,
     similarityScore: matchesByContentResponseJSON?.matches?.[0]?.similarityScore,
-    manifestUrl: `${manifestUrl}?access_token=${API_SBR_DIGIMARC_TOKEN}`,
+    manifestUrl: `${manifestUrl}?access_token=${API_SBR_DIGIMARC_CALLER_ID}`,
   };
   return response;
 };

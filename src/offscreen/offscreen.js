@@ -7,7 +7,7 @@ import {
   EVENT_TYPE_C2PA_MANIFEST,
   EVENT_TYPE_C2PA_MANIFEST_RESPONSE,
   API_SBR_ADOBE,
-  API_SBR_ADOBE_TOKEN,
+  API_SBR_ADOBE_CALLER_ID,
   C2PA_VERSION,
   API_SBR_DIGIMARC_RESIZE_PARAM,
   API_SBR_ADOBE_RESIZE_PARAM,
@@ -974,7 +974,7 @@ const handleC2PAManifestMessage = async (event) => {
         // Detect watermark via SBR (two-phase check based on fingerprint)
         const sbrHeaders = new Headers();
         sbrHeaders.append('content-type', 'image/jpeg');
-        sbrHeaders.append('x-api-key', API_SBR_ADOBE_TOKEN);
+        sbrHeaders.append('x-api-key', API_SBR_ADOBE_CALLER_ID);
 
         const fingerPrintAlg = 'com.adobe.icn.dense';
         const hintAlg = event.data.softBinding.alg;

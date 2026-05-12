@@ -34,7 +34,7 @@ export const WHITELISTED_WM_AUTO_URLS = [];
 export const C2PA_VERSION = '0.30.4';
 
 export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
-export const API_SBR_DIGIMARC_TOKEN = '';
+export const API_SBR_DIGIMARC_CALLER_ID = '';
 export const API_SBR_DIGIMARC_RESIZE_PARAM = 784;
 
 export const C2PA_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/combined-trust-anchors.pem';
@@ -44,6 +44,6 @@ export const C2PA_OFFICIAL_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/C2PA-TRUST-L
 export const C2PA_OFFICIAL_TSA_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/C2PA-TSA-TRUST-LIST.pem';
 
 export const API_SBR_ADOBE = 'https://cai-msb.adobe.io/sbapi/matches/byContent';
-export const API_SBR_ADOBE_TOKEN = '';
+export const API_SBR_ADOBE_CALLER_ID = '';
 export const API_SBR_ADOBE_MANIFEST = 'https://cai-manifests.adobe.com/manifests';
 export const API_SBR_ADOBE_RESIZE_PARAM = 512;
