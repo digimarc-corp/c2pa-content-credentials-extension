@@ -15,8 +15,8 @@
             ],
             "js": [
                 "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
-                "lib/trustmark/js/deps/ort.webgpu.min.js",
-                "lib/trustmark/js/deps/bch_ecc.min.js",
+                "node_modules/onnxruntime-web/dist/ort.webgpu.min.js",
+                "lib/trustmark/js/deps/bch_ecc.js",
                 "lib/trustmark/js/tm_datalayer.js",
                 "lib/trustmark/js/tm_watermark.js",
                 "content/contentScript.js"
@@ -61,6 +61,7 @@
                 "lib/trustmark/js/*",
                 "lib/trustmark/deps/*",
                 "lib/trustmark/models/*",
+                "node_modules/onnxruntime-web/dist/*",
                 "popup/*",
                 "offscreen/*",
                 "config.js"
