@@ -56,6 +56,7 @@
             "resources": [                
                 "assets/icons/*",
                 "content/*",
+                "content/fonts/*",
                 "background/*",
                 "lib/*",
                 "lib/trustmark/js/*",
