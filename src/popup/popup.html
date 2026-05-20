@@ -1,0 +1,316 @@
+<html>
+
+<head>
+  <title>C2PA Content Credentials Extension</title>
+  <style>
+    body {
+      width: 400px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+    }
+
+    h2 {
+      margin: 10px 10px;
+      font-weight: bold;
+      color: #333;
+      width: 100%;
+    }
+
+    .toggle-container span {
+      font-size: 16px;
+      margin-left: 10px;
+    }
+
+    .toggle-container label {
+      margin-right: 10px;
+    }
+
+    .title-container {
+      border-bottom: 1px solid #DDD;
+      width: 100%
+    }
+
+    .toggle-container {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .boxShadow {
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+    }
+
+    #dm-github {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      width: 100%;
+        box-sizing: border-box;
+    }
+
+    #dm-github img {
+      display: block;
+    }
+
+    #dm-github button {
+      margin: 0;
+    }
+
+    .toggle {
+      appearance: none;
+      width: 40px;
+      height: 15px;
+      background-color: #F4F6F8;
+      border-radius: 15px;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.3s;
+      border: 1px solid #D1D1D1;
+    }
+
+    .toggle:before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -2px;
+      width: 22px;
+      height: 22px;
+      background-color: #BEC9D1;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      transform: translateX(0);
+    }
+
+    .toggle:checked:before {
+      transform: translateX(20px);
+      /* Adjusted for the increased width and smaller circle size */
+      background-color: #0E686C;
+    }
+
+    .toggle:checked {
+      background-color: #D3E6E7;
+      /* This can be a lighter shade when the toggle is ON for added effect */
+    }
+
+    /* Add hover effect for better user interaction */
+    .toggle:hover {
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle:hover:before {
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    a {
+      text-decoration: none;
+      color: #1D1D1D;
+      font-weight: bold;
+      margin: 16px 0;
+      display: block;
+      text-align: center;
+    }
+
+    img {
+      height: auto;
+      width: 120px;
+    }
+
+    button {
+      width: auto;
+      background-color: #1D1D1D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      padding: 0px 15px
+    }
+
+    button a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: center;
+      line-height: 0.8;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .bottom-bar {
+      height: 5px;
+      background-color: #47CAD1;
+      width: 100%;
+    }
+
+    #settings-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    #settings-button img{
+      width: 20px;
+      height: 20px;
+    }
+    
+    #settings-menu {
+      position: absolute;
+      top: 10px;
+      right: 45px;
+      background-color: white;
+      border: 1px solid #DDD;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+      padding: 8px;
+      z-index: 1;
+    }
+
+    #settings-menu a {
+      display: block;
+      margin: 5px 2px;
+      text-align: left;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .version-container {
+      text-align: right;
+      margin-right: 5px;
+    }
+
+    .experimental-section {
+      width: 100%;
+      border-top: 1px solid #DDD;
+      border-bottom: 1px solid #DDD;
+      background-color: #F8F8F8;
+      box-sizing: border-box;
+    }
+
+    .experimental-summary {
+      font-size: 12px;
+      font-weight: bold;
+      color: #666;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+    }
+
+    .experimental-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .experimental-summary::before {
+      content: '';
+      display: inline-block;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid #666;
+      margin-right: 8px;
+      transition: transform 0.15s ease;
+      transform-origin: 35% 50%;
+    }
+
+    #debug-section.open .experimental-summary::before {
+      transform: rotate(90deg);
+    }
+
+    #experimental-content {
+      display: none;
+    }
+
+    #debug-section.open #experimental-content {
+      display: block;
+    }
+
+    .experimental-content {
+      padding: 0 10px 10px 12px;
+    }
+
+  </style>
+</head>
+
+<body>
+    <div class="title-container">
+      <h2>C2PA Content Credentials Extension</h2>
+      <button id="settings-button">
+        <img src="assets/icons/icon-settings.png" alt="Settings">
+      </button>
+      <div id="settings-menu" class="hidden">
+        <a href="../assets/THIRD_PARTY_LICENSES.html" target="_blank">Third-Party Software</a>
+        <hr/>
+        <div class="version-container">
+          <span>Version: <span id="version-number"></span></span>
+        </div>
+      </div>
+    </div>
+  <div class="toggle-container">
+    <span>Scan all media automatically</span>
+    <label class="toggle-label">
+      <input type="checkbox" class="toggle" id="toggle"/>
+      <div class="toggle-background">
+        <div class="toggle-knob"></div>
+      </div>
+    </label>
+  </div>  
+  <div class="toggle-container boxShadow">
+    <span>Enable watermarks detection</span>
+    <label class="toggle-label">
+      <input type="checkbox" class="toggle" id="toggle-wm"/>
+      <div class="toggle-background">
+        <div class="toggle-knob"></div>
+      </div>
+    </label>
+  </div>
+  <div id="debug-section" class="experimental-section">
+    <div class="experimental-summary" id="experimental-header" role="button" tabindex="0">Experimental</div>
+    <div id="experimental-content" class="experimental-content">
+      <div class="toggle-container" style="width: 100%; height: 34px;">
+        <span style="font-size: 13px;">Disable signer trust verification</span>
+        <label class="toggle-label">
+          <input type="checkbox" class="toggle" id="toggle-verify-trust"/>
+          <div class="toggle-background">
+            <div class="toggle-knob"></div>
+          </div>
+        </label>
+      </div>
+      <div class="toggle-container" style="width: 100%; height: 34px; margin-top: 2px;">
+        <span style="font-size: 13px;">Enable JSON manifest view</span>
+        <label class="toggle-label">
+          <input type="checkbox" class="toggle" id="toggle-json-manifest-view"/>
+          <div class="toggle-background">
+            <div class="toggle-knob"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="dm-github">
+    <a href="https://www.digimarc.com/" target="_blank">
+      <img src="assets/icons/icon-digimarc.svg" alt="digimarc_logo">
+    </a>
+    <button>
+      <a href="https://github.com/digimarc-corp/c2pa-content-credentials-extension" target="_blank">View on GitHub</a>
+    </button>
+  </div>
+  <div class="bottom-bar"></div>
+  <script type="module" src="popup.js"></script>
+</body>
+
+</html>

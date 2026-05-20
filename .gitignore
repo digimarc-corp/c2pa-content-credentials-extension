@@ -3,3 +3,6 @@ node_modules
 package-lock.json
 *.code-workspace
 build/
+dist/
+src/config.js
+test-results/

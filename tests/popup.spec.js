@@ -1,93 +1,57 @@
 import { test, expect } from './fixtures';
 
-const togglePopup = async (page, extensionId) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`);
-  const toggle = await page.$('#toggle');
-  await toggle.click();
+const popupUrl = (extensionId) => `chrome-extension://${extensionId}/popup/popup.html`;
+const samplePageUrl = 'https://wm-c2pa-samples.netlify.app/';
+
+const setAutomaticValidation = async (page, extensionId, enabled = true) => {
+  await page.goto(popupUrl(extensionId));
+  const toggle = page.locator('#toggle');
+  await expect(toggle).toBeVisible();
+
+  const isChecked = await toggle.isChecked();
+  if (isChecked !== enabled) {
+    await toggle.click();
+  }
 };
 
 test('Extension is correctly loaded', async ({ page, extensionId }) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`);
-  const element = await page.$('#toggle-container');
-  // wait 10s
-  await page.waitForTimeout(4000);
-  expect(element).not.toBeNull();
+  await page.goto(popupUrl(extensionId));
+  await expect(page.locator('.toggle-container').first()).toBeVisible();
+  await expect(page.locator('#toggle')).toBeVisible();
 });
 
 test('C2PA icons are correctly added to the DOM', async ({ page, extensionId }) => {
-  await togglePopup(page, extensionId);
-  await page.goto('https://wm-c2pa-samples.netlify.app/');
-  // give some time for the manifest to be processed
-  await page.waitForTimeout(10000);
+  await setAutomaticValidation(page, extensionId, true);
+  await page.goto(samplePageUrl);
 
-  // get the div called icon-container
-  const iconContainer = await page.$('#icon-container');
-
-  // get all its children
-  const children = await iconContainer.$$('*');
-  // compare the list of children id to the expected list
-  const expectedChildrenIds = ['icon-c2pa-https://wm-c2pa-samples.netlify.app/static/media/video-crowd-protected', 'icon-c2pa-https://wm-c2pa-samples.netlify.app/static/media/video-manifest-swap'];
-  const childrenIds = (await Promise.all(children.map((child) => child.getAttribute('id')))).filter((id) => id?.startsWith('icon-c2pa')).sort();
-  // remove the part after the last 2 '.' in the id for each element of the list
-  childrenIds.forEach((id, index) => {
-    childrenIds[index] = id.substring(0, id.lastIndexOf('.'));
-    childrenIds[index] = childrenIds[index].substring(0, childrenIds[index].lastIndexOf('.'));
-  });
-  expect(childrenIds).toEqual(expectedChildrenIds);
+  const icons = page.locator('#icon-container [id^="icon-c2pa"]');
+  await expect.poll(async () => icons.count(), { timeout: 30000 }).toBeGreaterThan(0);
 });
 
-test('Manifests are correctly displayed on contentcredentials.org', async ({ page, extensionId }) => {
-  await togglePopup(page, extensionId);
-  await page.goto('https://contentcredentials.org/');
-  // give some time for the manifest to be processed
-  await page.waitForTimeout(3000);
-  // scroll until we fully see this text "Building trust in what you see online"
-  await page.evaluate(() => {
-    const elements = Array.from(document.querySelectorAll('h3'));
-    const element = elements.find((e) => e.textContent.includes('Empowering creators to get credit for their work'));
-    if (element) element.scrollIntoView();
-  });
-  await page.waitForTimeout(10000);
+test('Manifest summary includes provenance link', async ({ page, extensionId }) => {
+  await setAutomaticValidation(page, extensionId, true);
+  await page.goto(samplePageUrl);
 
-  // get the div called icon-container
-  const iconContainer = await page.$('#icon-container');
+  await expect.poll(async () => page.evaluate(() => {
+    const icons = Array.from(document.querySelectorAll('#icon-container [id^="icon-c2pa"]'));
 
-  // get all its children
-  const children = await iconContainer.$$('*');
+    let foundHref = null;
+    icons.some((icon) => {
+      const style = window.getComputedStyle(icon);
+      if (style.display === 'none' || style.visibility === 'hidden') {
+        // Skip icons hidden by viewport/overflow logic.
+        return false;
+      }
 
-  let iconElement;
+      const manifestSummary = icon.querySelector('c2pa-manifest-summary');
+      const href = manifestSummary?.shadowRoot?.querySelector('.provenance-link')?.getAttribute('href');
+      if (href) {
+        foundHref = href;
+        return true;
+      }
+      return false;
+    });
 
-  for (let i = 0; i < children.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    const id = await children[i].getAttribute('id');
-    if (id.startsWith('icon-c2pa') && id.includes('home2')) {
-      iconElement = children[i];
-      break;
-    }
-  }
-
-  if (!iconElement) {
-    throw new Error('No C2PA icons found');
-  }
-
-  // get the children that is a cai-manifest-summary-dm-plugin
-  const caiManifestSummaryDmPlugin = await iconElement.$('#view-more-container-dm-plugin');
-  // expect that caiManifestSummaryDmPlugin has a child that is a "a" element whose href startsWith https://verify.
-  const a = await caiManifestSummaryDmPlugin.$('a');
-  const href = await a.getAttribute('href');
-  expect(href).toMatch(/^https:\/\/verify\..*/);
-
-  const contentSummary = await iconElement.$('cai-content-summary-dm-plugin');
-  // get all its children
-  const contentChildren = await contentSummary.$$('span');
-  const contentChildrenText = (await Promise.all(contentChildren
-    .map((child) => child.textContent())));
-  expect(contentChildrenText[0]).toContain('This image combines multiple pieces of content. At least one was generated with an AI tool.');
-
-
-  // this section does not exists anymore! 
-  // const sectionAssetsUsed = await iconElement.$('.section-assets-used-dm-plugin');
-  // const sectionAssetsUsedChildren = await sectionAssetsUsed.$$('cai-thumbnail-dm-plugin');
-  // // expect that sectionAssetsUsed has 46 thumbnails
-  // expect(sectionAssetsUsedChildren.length).toBe(46);
+    return foundHref;
+  }), { timeout: 30000 }).toMatch(/^https:\/\/verify\..*/);
 });

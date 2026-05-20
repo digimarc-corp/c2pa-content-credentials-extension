@@ -1,5 +1,6 @@
 node_modules/
-c2pa/
-c2pa-wc/
 code_samples.js
 build/
+dist/
+src/lib/trustmark/
+src/lib/trustmark/js/deps/

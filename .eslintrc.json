@@ -13,6 +13,10 @@
         "import/extensions": "off",
         "import/no-relative-packages": "off",
         "import/no-extraneous-dependencies": "off",
-        "no-empty-pattern": ["error", { "allowObjectPatternsAsParameters": true }]
+        "no-empty-pattern": ["error", { "allowObjectPatternsAsParameters": true }],
+        "no-underscore-dangle": "off",
+        "class-methods-use-this": "off",
+        "max-len": "off",
+        "no-console": "off"
     }
 }

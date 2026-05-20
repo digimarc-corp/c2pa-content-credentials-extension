@@ -1,0 +1,49 @@
+export const MINIMAL_IMAGE_SIZE_IN_PIXELS = 15000;
+
+export const MAXIMAL_ID_LENGTH = 100;
+
+export const HANDLE_IMG_THRESHOLD = 0.2;
+
+export const REFRESH_ICON_INTERVAL = 100;
+
+export const MIN_DISTANCE_FROM_LEFT_BORDER_IN_PIXELS = 365;
+
+export const POPUP_FADE_ANIMATION_DURATION_IN_MS = 1000;
+export const POPUP_DISPLAY_DURATION_IN_MS = 4000;
+
+export const MSG_PAGE_LOADED = 'page-loaded';
+export const MSG_INJECT_C2PA_INDICATOR = 'inject-c2pa-indicator';
+export const MSG_REVERT_C2PA_INDICATOR = 'revert-c2pa-indicator';
+export const MSG_VERIFY_SINGLE_IMAGE = 'verify-single-image';
+export const MSG_VERIFY_SINGLE_VIDEO = 'verify-single-video';
+export const MSG_VERIFY_SINGLE_AUDIO = 'verify-single-audio';
+export const MSG_GET_HTML_COMPONENT = 'get-html-component';
+export const MSG_DISABLE_RIGHT_CLICK = 'disable-right-click';
+export const MSG_ENABLE_RIGHT_CLICK = 'enable-right-click';
+export const MSG_DISABLE_LOOK_FOR_WATERMARK = 'disable-look-for-watermark';
+export const MSG_ENABLE_LOOK_FOR_WATERMARK = 'enable-look-for-watermark';
+export const MSG_GET_VERIFY_TRUST_SETTING = 'get-verify-trust-setting';
+export const MSG_VERIFY_TRUST_UPDATED = 'verify-trust-updated';
+
+export const EVENT_TYPE_C2PA_MANIFEST = 'c2pa-manifest';
+export const EVENT_TYPE_C2PA_MANIFEST_RESPONSE = 'c2pa-manifest-response';
+
+// Add URL prefixes here to auto-enable watermark lookup on matching pages.
+export const WHITELISTED_WM_AUTO_URLS = [];
+
+export const C2PA_VERSION = '0.30.4';
+
+export const API_SBR_DIGIMARC = 'https://sbr.c2pa.labs.dmrc.app';
+export const API_SBR_DIGIMARC_CALLER_ID = '';
+export const API_SBR_DIGIMARC_RESIZE_PARAM = 784;
+
+export const C2PA_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/combined-trust-anchors.pem';
+export const C2PA_ALLOWED_LIST_LOCAL_PATH = 'assets/trust/combined-allowed-list.pem';
+export const C2PA_TRUST_CONFIG_LOCAL_PATH = 'assets/trust/ITL-store.cfg';
+export const C2PA_OFFICIAL_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/C2PA-TRUST-LIST.pem';
+export const C2PA_OFFICIAL_TSA_TRUST_ANCHORS_LOCAL_PATH = 'assets/trust/C2PA-TSA-TRUST-LIST.pem';
+
+export const API_SBR_ADOBE = 'https://cai-msb.adobe.io/sbapi/matches/byContent';
+export const API_SBR_ADOBE_CALLER_ID = '';
+export const API_SBR_ADOBE_MANIFEST = 'https://cai-manifests.adobe.com/manifests';
+export const API_SBR_ADOBE_RESIZE_PARAM = 512;

@@ -1,79 +1,134 @@
 # C2PA Content Credentials Browser Extension
 
-This project has been built by the team at Digimarc Labs. [Digimarc](https://www.digimarc.com/products/digital-content-authentication) is a digital watermarking leader committed to building an digital ecosystem of trust protecting content creators and consumers.
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Available-green?logo=googlechrome)](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Beta-orange)]
+[![C2PA Standard](https://img.shields.io/badge/C2PA-Compliant-brightgreen)](https://c2pa.org/)
 
-To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark Embedding and Detection Tools to Device and Chip Manufacturers and Content Creation Platforms](https://www.digimarc.com/blog/offering-free-digital-watermark-embedding-and-detection-tools-device-and-chip-manufacturers). Contact us if you'd like to learn more about this offer.
+Verify the authenticity and provenance of digital media directly in your browser. This Chrome extension validates and displays C2PA Content Credentials for images, videos, and audio files—helping you distinguish authentic content from AI-generated or manipulated media.
 
-In a world where misinformation or AI generated content can spread rapidly, establishing trust and authenticity in digital media has never been more critical. The Coalition for Content Provenance and Authenticity [C2PA](https://c2pa.org/) is a cross-industry standards development organization addressing the prevalence of misleading information online. This timely issue is tackled through the development of open technical standards for certifying the source and history (or provenance) of media content referred to as [Content Credentials](https://contentcredentials.org/).
+## Features
 
-This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG images and MPEG videos that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which image should and shouldn’t be trusted. 
+- ✅ **Automatic & Manual Modes** - Scan all media automatically or verify on-demand via right-click
+- ✅ **Watermark Detection** - Recover C2PA credentials from Digimarc and Adobe Trustmark watermarks
+- ✅ **Broad Media Support** - JPEG, PNG images, MP4 videos, MP3 and WAV audio files
+- ✅ **Provenance Display** - View detailed content history, signing information, and trust status
+- ✅ **C2PA Compliant** - Built on the official [C2PA-JS Library](https://opensource.contentauthenticity.org/)
 
-This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here. 
+---
 
-*Warning:* This is an early and experimental release of this extension subject to material changes. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues). 
+## Table of Contents
+
+- [Quick Start](#getting-started)
+- [Usage](#usage)
+- [Prerequisites](#prerequisites)
+- [Development](#building-the-extension-from-the-source)
+- [Contributing](#contributions)
+- [Known Limitations](#known-limitations)
+- [About](#about-digimarc)
+- [Permissions & Data Use](#permissions--data-use)
+
+---
+
+This repository provides an implementation of a C2PA manifest validator running directly in Chrome as a browser extension. Its purpose is to validate and display Content Credentials for JPEG and PNG images, MP4 videos, and MP3 and WAV audio files that embed a C2PA compliant manifest. Thanks to the validation being done independently of the site a user is surfing on, it should enable users to make better decisions about which media should and shouldn’t be trusted.
+
+This project is built on top of the open source C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/) and we would like to thank them here for their pioneering work. The [full list of libraries](THIRD_PARTY_LICENSES.md) used in this project can be found here.
+
+*Warning:* This is still a beta release and an onging work subject to material changes as the specifications evolve and project matures. A number of issues are known and we welcome feedback by submitting [issues](https://github.com/digimarc-corp/c2pa-content-credentials-extension/issues).
 
 ![Animation of extension](docs/c2pa-extension-digimarc.gif)
 
-## Getting started
+---
+
+## Prerequisites
+
+- **Chrome 90** or later
+- **Node.js** >= 20.9.0 (for development)
+- **npm** >= 10.2.2 (for development)
+
+---
+
+## Getting Started
 
 ### Chrome Web Store
 
-The extension is available on the [Chrome Web Store](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en) and can be installed from there. 
+The extension is available on the [Chrome Web Store](https://chromewebstore.google.com/detail/mjkaocdlpjmphfkjndocehcdhbigaafp?hl=en) and can be installed from there.
 
 ### Local installation
 
 1. Download the zip archive of the [latest release](https://github.com/digimarc-corp/c2pa-content-credentials-extension/releases)
 2. Unzip the archive
-2. Open Chrome and go to `chrome://extensions`.
-3. Enable Developer Mode (top right corner).
-4. Click on `Load unpacked`.
-5. Select the unzipped folder.
-6. Try it out! (see Usage below)
+3. Open Chrome and go to `chrome://extensions`.
+4. Enable Developer Mode (top right corner).
+5. Click on `Load unpacked`.
+6. Select the unzipped folder.
+7. Try it out! (see Usage below)
 
-### Usage
+## Usage
 
-Once the extension is installed, you have 2 ways of verifying and displaying Content Credentials:
+Once the extension is installed, you have 2 primary ways of verifying and displaying Content Credentials:
 
-#### Manual mode
+#### Manual mode (Default)
 
-In this default mode you need to actively seek verification. Right click on an image and select `Verify Content Credentials`. If a C2PA manifest is available the pin icon will appear. Hovering the mouse on the pin will display the provenance information.
+In this mode you need to actively seek verification. Right click on an image and select `Verify Content Credentials`. If a C2PA manifest is available the pin icon will appear. Hovering the mouse on the pin will display the content credentials information and its validation status.
 
 #### Automatic mode
+
 In this experimental mode all images are automatically scanned for C2PA manifest in the background. To activate this mode click on the plugin icon on the top right, it will display a popup window.
 
-Switch the toggle `Automatically validate C2PA manifests` to `ON`.
+In the popup menu of the extension, switch the toggle `Scan all media automatically` to `ON`.
 
 When the extension is enabled, you will now see the C2PA pin on top of every image that contains a C2PA manifest in the website loaded in the active tab. Hover the mouse on the pin and the extension will reveal the image provenance information.
 
+#### Watermark Detection
+
+When enabled via the `Enable Watermark detection` toggle in the popup, the extension will attempt to recover C2PA manifests from the watermarks embedded in media, allowing it to display credentials even when they are not embedded directly in the media file.
+
+### Embedded vs Recovered Manifests
+
+The extension can display two types of C2PA manifests:
+
+- **Embedded manifests** - C2PA data stored directly within the media file itself
+- **Recovered manifests** - C2PA data recovered by reading a watermark on the image itself and resolving via the corresponding SBR API (Soft Binding Resolution API). The extension currently supports the following watermarking algorithms and signpost:
+   - com.digimarc.validate.1 (Digimarc Watermark)
+   - com.adobe.trustmark.P and com.adobe.trustmark.Q (Adobe Trustmark)
+   - Signpost Trustmark - [Learn more](https://opensource.contentauthenticity.org/docs/trustmark/c2pa/#signpost-watermark)
+
+Both types are displayed in the manifest summary, allowing you to understand the provenance of the content regardless of how the credentials were preserved. You can use any of these trustmark technologies to embed credentials that the extension will recover and display.
+
 #### Testing it
 
-Test the extension on the 2 images below. One of the photo was taken last year and one was generated by AI. Can you guess which one is real? The extension will help you!
+Test the extension on the 2 images below. One of the photo was taken last year and one was modified by AI. Can you guess which one is real? The extension will help you!
 
-![Test image 1](https://raw.githubusercontent.com/digimarc-corp/c2pa-content-credentials-extension/main/docs/genai-picture-validate-protected.jpg)
+![Test image 1](docs/genai-picture-validate-protected.png)
 
-![Test image 2](https://raw.githubusercontent.com/digimarc-corp/c2pa-content-credentials-extension/main/docs/photo-rddm-validate-protected.jpg)
+![Test image 2](docs/photo-rddm-validate-protected.jpg)
 
 ## Building the extension from the source
 
 You can also check out the code and install the extension locally
 
 1. Clone this repository.
-2. Fetch the `c2pa-js` fork with: `git submodule update --init --recursive`
-3. Run: `git submodule update --remote`
-4. Run `npm install`.
-5. Build the extension: `npm run build` or `./scripts/build.sh`
-6. Open Chrome and go to `chrome://extensions`.
-7. Enable Developer Mode (top right corner).
-8. Click on `Load unpacked`.
-9. Select the `build` extension folder.
-10. Try it out! (see Usage)
+2. Run `npm install`.
+3. Copy `src/config-template.js` to `src/config.js` and fill in your local configuration values.
+4. Build the extension using one of:
+   - `npm run build` - Production build (optimized, minified)
+   - `npm run build:dev` - Development build (faster, with source maps)
+   - `npm run watch` - Watch mode (automatic rebuilds during development, run in a separate terminal)
 
+5. Open Chrome and go to `chrome://extensions`.
+6. Enable Developer Mode (top right corner).
+7. Click on `Load unpacked`.
+8. Select the `dist` folder.
+9. Run `npm run test` to ensure all tests pass before creating a Pull Request.
+10. Try it out! (see Usage)
 
 ## Known limitations
 
 ### Restricted to JPEG and PNG images, MP4 videos and MP3 and WAV audio files
 
 The current version of the extension supports:
+
 - JPG / JPEG and PNG images
 - MPEG (MP4) videos
 - MP3 and WAV audio files
@@ -82,15 +137,15 @@ We are working on adding support for more image, video and audio types.
 
 ### Need to override existing C2PA components
 
-In order to handle websites that are already using the official C2PA web components library [c2pa-wc](https://www.npmjs.com/package/c2pa-wc) and to maintain a consistent UI experience, we need to actively remove all the CAI icons that are already present to avoid conflicts and misleading information.
+To maintain a consistent UI experience, the extension actively removes pre-existing CAI icons from pages before injecting the extension-owned c2pa-ui components.
 
 Here is a list of the components we currently remove when the extension is enabled:
 
-- `cai-popover` | `cai-indicator` | `cai-manifest-summary`
+- `c2pa-popover` | `c2pa-indicator` | `c2pa-manifest-summary`
 
 ### Image types and method support
 
-Because the browser extension runs completely locally in the browser, there are restrictions to access the website's images depending on how they are made available. Most will be accessed by their property `src` as long as it is a public url, otherwise the extension will try to transform it to a `dataURI` so that it can be processed in the sandbox, but this is also known not to work in all the cases, depending on the type and location of the images.
+Because the extension validates media directly in the browser, access depends on how images are served. For public http(s) URLs, the extension fetches the original source directly — this is preferred as it preserves full file fidelity. For non-public or locally-served sources, it falls back to a `dataURI` representation, which may not work in all cases depending on the type, origin, or CORS policy of the media.
 
 ## Contributions
 
@@ -104,7 +159,7 @@ We currently use the following versions of Node and NPM:
 `npm: >= 10.2.2`
 `node: >= 20.9.0`
 
-Follow the `Local Installation` instructions above to get your local version ready.
+Follow the instructions in the **"Building the extension from the source"** section above to get your local version ready.
 
 Run `npm run test` to ensure that all tests are passing.
 
@@ -120,22 +175,9 @@ Alternatively, you can create an issue with a bug report or a new feature reques
 
 When contributing, make sure to update the version of the library in the `package.json` file.
 
-## Building
-
-In order to have a light version of the extension, where you have only the necessary files that the extension needs to work, you can run:
-```
-npm run build 
-```
-or
-```
-./scripts/build.sh
-```
-
-It will create a `build` folder. This contains the final extension code.
-
 ## Testing
 
-```
+```sh
 npm run test
 ```
 
@@ -147,9 +189,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This project has been built by the team at Digimarc Labs. [Digimarc](https://www.digimarc.com/products/digital-content-authentication) is a digital watermarking leader committed to building an digital ecosystem of trust protecting content creators and consumers.
 
-To make C2PA manifests more resilient, [Digimarc offers free Digital Watermark Embedding and Detection Tools to Device and Chip Manufacturers and Content Creation Platforms](https://www.digimarc.com/blog/offering-free-digital-watermark-embedding-and-detection-tools-device-and-chip-manufacturers). Contact us if you'd like to learn more about this offer.
-
 ## Attributions
 
-This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work. 
-The [full list of libraries and their respective licenses](https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here. 
+This project is built on top of many great open source projects starting with C2PA-JS Library built by the [Content Authenticity Initiative team](https://opensource.contentauthenticity.org/). We would like to thank them here for their pioneering work.
+The [full list of libraries and their respective licenses](https://github.com/digimarc-corp/c2pa-content-credentials-extension/blob/main/THIRD_PARTY_LICENSES.md) used in this project can be found here.
+
+## Permissions & Data Use
+
+This extension’s single purpose is to let users verify C2PA content credentials and watermark-linked provenance for media they view in the browser.
+
+- **Why all-site access is required**: C2PA-enabled media can appear on any website. The extension must run across sites to provide consistent verification where users encounter media.
+- **What data is processed**: media URLs and media bytes required to validate embedded manifests or recover manifests from supported watermark methods.
+- **When external requests occur**: on explicit user verification (manual mode), or when users enable automatic scanning and/or watermark detection.
+- **External services**: public Digimarc and Adobe SBR endpoints are used to resolve supported watermark-linked manifests.
+- **User control**: users can enable or disable automatic scanning and watermark detection in extension settings.
