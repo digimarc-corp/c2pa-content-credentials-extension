@@ -332,7 +332,7 @@ export const getC2PAManifest = async (
   singleImageVerification,
   lookForWatermark,
 ) => {
-  const noCredentialsMessage = 'No Content Credentials found for this media.';
+  const noCredentialsMessage = 'No Content Credentials found';
 
   // Start the process
   const markAsComplete = displayProcessStatus(
