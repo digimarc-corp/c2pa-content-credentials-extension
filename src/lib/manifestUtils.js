@@ -332,6 +332,8 @@ export const getC2PAManifest = async (
   singleImageVerification,
   lookForWatermark,
 ) => {
+  const noCredentialsMessage = 'No Content Credentials found for this media.';
+
   // Start the process
   const markAsComplete = displayProcessStatus(
     'Please wait while checking Content Credentials...',
@@ -409,12 +411,17 @@ export const getC2PAManifest = async (
       hammingDistance,
     } = await chrome.runtime.sendMessage(event);
 
-    if (!manifest && !retrievedManifest) {
+    const hasAnyManifest = Boolean(manifest || retrievedManifest);
+
+    if (!hasAnyManifest) {
       if (singleImageVerification) {
         // Mark the process as complete
-        markAsComplete(true, 'No Content Credentials found for this media.');
-        return;
+        markAsComplete(true, noCredentialsMessage);
+      } else {
+        // Automatic mode: close with explicit not-found feedback.
+        markAsComplete(true, noCredentialsMessage);
       }
+      return;
     }
 
     // Mark the process as complete
@@ -434,8 +441,10 @@ export const getC2PAManifest = async (
   } catch (error) {
     if (singleImageVerification) {
       // Mark the process as complete
-      markAsComplete(true, 'No Content Credentials found for this media.');
+      markAsComplete(true, noCredentialsMessage);
     } else {
+      // Automatic mode: avoid leaving the in-progress indicator visible on failures.
+      markAsComplete(true, noCredentialsMessage);
       // Mark the process as complete
       // markAsComplete(false, 'Error retrieving Content Credentials');
       Logger.error(error);
